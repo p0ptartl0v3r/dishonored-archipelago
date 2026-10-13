@@ -1,0 +1,7 @@
+{
+  // If you clone Archipelago into ./Archipelago, this makes its modules resolve.
+  "python.analysis.extraPaths": ["Archipelago"],
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": ["tests"],
+  "files.exclude": { "**/__pycache__": true }
+}

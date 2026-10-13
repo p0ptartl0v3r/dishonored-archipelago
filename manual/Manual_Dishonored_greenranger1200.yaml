@@ -1,0 +1,8 @@
+name: greenranger1200
+description: Default template created by the Manual Builder tool
+
+game: Manual_Dishonored_greenranger1200
+
+Manual_Dishonored_greenranger1200:
+    progression_balancing: 50
+    accessibility: items

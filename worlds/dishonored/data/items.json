@@ -1,0 +1,549 @@
+[
+  {
+    "count": "2",
+    "name": "Progressive Sword",
+    "category": [
+      "Combat"
+    ],
+    "useful": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Bullets",
+    "category": [
+      "Combat"
+    ],
+    "progression": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Crossbow Bolts",
+    "category": [
+      "Combat"
+    ],
+    "progression": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Sleep Darts",
+    "category": [
+      "Combat"
+    ],
+    "progression": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Grenades",
+    "category": [
+      "Gadgets",
+      "Combat"
+    ],
+    "useful": true
+  },
+  {
+    "count": 1,
+    "name": "Rewire Tool",
+    "category": [
+      "Gadgets"
+    ],
+    "useful": true
+  },
+  {
+    "count": 1,
+    "name": "Spring Razor",
+    "category": [
+      "Gadgets",
+      "Combat"
+    ],
+    "useful": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Blink",
+    "category": [
+      "Power"
+    ],
+    "progression": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Dark Vision",
+    "category": [
+      "Power"
+    ],
+    "useful": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Devouring Swarm",
+    "category": [
+      "Power",
+      "Combat"
+    ],
+    "useful": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Possession",
+    "category": [
+      "Power"
+    ],
+    "useful": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Bend Time",
+    "category": [
+      "Power"
+    ],
+    "useful": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Windblast",
+    "category": [
+      "Power",
+      "Combat"
+    ],
+    "useful": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Vitality",
+    "category": [
+      "Passive"
+    ],
+    "useful": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Agility",
+    "category": [
+      "Passive"
+    ],
+    "useful": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Blood Thirsty",
+    "category": [
+      "Passive"
+    ],
+    "useful": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Shadow Kill",
+    "category": [
+      "Passive"
+    ],
+    "useful": true
+  },
+  {
+    "count": "10",
+    "name": "Bone Charm Slot",
+    "category": [
+      "Bone Charm Slots"
+    ],
+    "useful": true
+  },
+  {
+    "count": 1,
+    "name": "Corvo's Pistol",
+    "category": [
+      "Gun Upgrades"
+    ],
+    "useful": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Pistol Accuracy",
+    "category": [
+      "Gun Upgrades"
+    ],
+    "useful": true
+  },
+  {
+    "count": "3",
+    "name": "Progressive Pistol Magazine",
+    "category": [
+      "Gun Upgrades"
+    ],
+    "useful": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Pistol Reload Speed",
+    "category": [
+      "Gun Upgrades"
+    ],
+    "useful": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Bullet Capacity",
+    "category": [
+      "Gun Upgrades"
+    ],
+    "useful": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Bolt Capacity",
+    "category": [
+      "Crossbow Upgrades"
+    ],
+    "useful": true
+  },
+  {
+    "count": 1,
+    "name": "Crossbow Accuracy",
+    "category": [
+      "Crossbow Upgrades"
+    ],
+    "useful": true
+  },
+  {
+    "count": 1,
+    "name": "Crossbow Range",
+    "category": [
+      "Crossbow Upgrades"
+    ],
+    "useful": true
+  },
+  {
+    "count": 1,
+    "name": "Crossbow Reload",
+    "category": [
+      "Crossbow Upgrades"
+    ],
+    "useful": true
+  },
+  {
+    "count": 1,
+    "name": "Grenade Capacity",
+    "category": [
+      "Gadget Upgrades"
+    ],
+    "useful": true
+  },
+  {
+    "count": 1,
+    "name": "Spring Razor Capacity",
+    "category": [
+      "Gadget Upgrades"
+    ],
+    "useful": true
+  },
+  {
+    "count": 1,
+    "name": "Spring Razor Radius",
+    "category": [
+      "Gadget Upgrades"
+    ],
+    "useful": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Mask Optics",
+    "category": [
+      "Gadget Upgrades"
+    ],
+    "useful": true
+  },
+  {
+    "count": 1,
+    "name": "Improved Armor",
+    "category": [
+      "Gadget Upgrades"
+    ],
+    "useful": true
+  },
+  {
+    "count": "2",
+    "name": "Progressive Boot Stealth",
+    "category": [
+      "Gadget Upgrades"
+    ],
+    "useful": true
+  },
+  {
+    "count": 1,
+    "name": "Dunwall Prison Zone Key",
+    "category": [
+      "Zone Keys",
+      "Intro"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Dunwall Sewers Zone Key",
+    "category": [
+      "Zone Keys",
+      "Intro"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Hound Pits Pub Zone Key",
+    "category": [
+      "Zone Keys",
+      "Intro"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "The Void Zone Key",
+    "category": [
+      "Zone Keys",
+      "Intro"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Distillery District (HOC) Zone Key",
+    "category": [
+      "Zone Keys",
+      "High Overseer Campbell"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Old Dunwall Distillery (HOC) Zone Key",
+    "category": [
+      "Zone Keys",
+      "High Overseer Campbell"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Dr Galvani's Offices (HOC) Zone Key",
+    "category": [
+      "Zone Keys",
+      "High Overseer Campbell"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "High Overseer's Office Zone Key",
+    "category": [
+      "Zone Keys",
+      "High Overseer Campbell"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Kennels Zone Key",
+    "category": [
+      "Zone Keys",
+      "High Overseer Campbell"
+    ],
+    "useful": true
+  },
+  {
+    "count": 1,
+    "name": "Backyard Zone Key",
+    "category": [
+      "Zone Keys",
+      "High Overseer Campbell"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Distillery District (HoP) Zone Key",
+    "category": [
+      "Zone Keys",
+      "House of Pleasure"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Old Dunwall Distillery (HoP) Zone Key",
+    "category": [
+      "Zone Keys",
+      "House of Pleasure"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Dr Galvani's Offices (HoP) Zone Key",
+    "category": [
+      "Zone Keys",
+      "House of Pleasure"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Art Dealer's Apartment Zone Key",
+    "category": [
+      "Zone Keys",
+      "House of Pleasure"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "The Golden Cat Bathhouse Zone Key",
+    "category": [
+      "Zone Keys",
+      "House of Pleasure"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Southside Gate Zone Key",
+    "category": [
+      "Zone Keys",
+      "The Royal Physician"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Drawbridge Control Zone Key",
+    "category": [
+      "Zone Keys",
+      "The Royal Physician"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Midrow Substation Zone Key",
+    "category": [
+      "Zone Keys",
+      "The Royal Physician"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "North End Zone Key",
+    "category": [
+      "Zone Keys",
+      "The Royal Physician"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Lady Boyle's Last Party Exterior Zone Key",
+    "category": [
+      "Zone Keys",
+      "Lady Boyle's Last Party"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Boyle Mansion Interior Zone Key",
+    "category": [
+      "Zone Keys",
+      "Lady Boyle's Last Party"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Tower Exterior Zone Key",
+    "category": [
+      "Zone Keys",
+      "Return to the Tower"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Tower Interior Zone Key",
+    "category": [
+      "Zone Keys",
+      "Return to the Tower"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Rudshore Waterfront Zone Key",
+    "category": [
+      "Zone Keys",
+      "The Flooded District"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Central Rudshore Zone Key",
+    "category": [
+      "Zone Keys",
+      "The Flooded District"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Greaves Refinery Zone Key",
+    "category": [
+      "Zone Keys",
+      "The Flooded District"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Rudshore Gate Zone Key",
+    "category": [
+      "Zone Keys",
+      "The Flooded District"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Old Dunwall Sewers Zone Key",
+    "category": [
+      "Zone Keys",
+      "The Flooded District"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Hound Pits Pub (The Loyalists) Zone Key",
+    "category": [
+      "Zone Keys",
+      "The Loyalists"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Kingsparrow Fort Zone Key",
+    "category": [
+      "Zone Keys",
+      "The Light At The End"
+    ],
+    "progression": true
+  },
+  {
+    "count": 1,
+    "name": "Burrows Lighthouse Zone Key",
+    "category": [
+      "Zone Keys",
+      "The Light At The End"
+    ],
+    "progression": true
+  }
+]

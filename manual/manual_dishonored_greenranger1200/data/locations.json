@@ -1,0 +1,807 @@
+[
+  {
+    "name": "Prologue: Hide And Seek",
+    "region": "Prologue",
+    "category": [
+      "Intro"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Dunwall Sewers",
+    "name": "Dishonored (Mission): Victory",
+    "category": [
+      "Intro"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Hound Pits Pub",
+    "name": "The Pub: Shop Rune",
+    "category": [
+      "Intro"
+    ],
+    "requires": "|The Void Zone Key|"
+  },
+  {
+    "name": "The Pub: River Rune",
+    "region": "Hound Pits Pub",
+    "category": [
+      "Intro"
+    ],
+    "requires": "|The Void Zone Key|"
+  },
+  {
+    "region": "The Void",
+    "name": "The Void: Outsider's Gift Rune",
+    "category": [
+      "Intro"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Distillery District (HOC)",
+    "name": "Distillery District: Granny Rags Shrine Rune",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Distillery District (HOC)",
+    "name": "Distillery District: Granny Rags Gentlemen Callers Reward Rune",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": "|@Combat:2|"
+  },
+  {
+    "region": "Old Dunwall Distillery (HOC)",
+    "name": "Distillery District: Granny Rags Poison Bootleg Elixer Reward Rune",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": "|Dr Galvani's Offices (HOC) Zone Key|"
+  },
+  {
+    "region": "Distillery District (HOC)",
+    "name": "Distillery District: Boulevard Confiscated Rune",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": []
+  },
+  {
+    "region": "High Overseer's Office",
+    "name": "High Overseer's Office: Meeting Room Rune",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Backyard",
+    "victory": false,
+    "name": "High Overseer Campbell: Victory",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": "|Old Dunwall Distillery (HOC) Zone Key| AND |Dr Galvani's Offices (HOC) Zone Key|"
+  },
+  {
+    "name": "High Overseer's Office: Campbell's Secret Room Rune",
+    "region": "High Overseer's Office",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Backyard: Workshop Rune",
+    "region": "Backyard",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Backyard",
+    "name": "The Pub: Weeper Chest Rune",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Backyard",
+    "name": "The Pub: Weeper Underwater Rune",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Dr Galvani's Offices (HoP)",
+    "name": "Dr Galvani's Offices: Galvani's Secret Room Rune",
+    "category": [
+      "House of Pleasure"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Art Dealer's Apartment: Art Dealer's Safe",
+    "region": "Art Dealer's Apartment",
+    "category": [
+      "House of Pleasure"
+    ],
+    "requires": "|The Golden Cat Bathhouse Zone Key|"
+  },
+  {
+    "region": "The Golden Cat Bathhouse",
+    "name": "The Golden Cat Bathhouse: Opposite Golden Cat Rune",
+    "category": [
+      "House of Pleasure"
+    ],
+    "requires": []
+  },
+  {
+    "region": "The Golden Cat Bathhouse",
+    "name": "The Golden Cat Bathhouse: Golden Cat Second Floor Rune",
+    "category": [
+      "House of Pleasure"
+    ],
+    "requires": []
+  },
+  {
+    "region": "The Golden Cat Bathhouse",
+    "name": "The Golden Cat Bathhouse: Courtesans Room Rune",
+    "category": [
+      "House of Pleasure"
+    ],
+    "requires": []
+  },
+  {
+    "name": "House of Pleasure: Victory",
+    "region": "The Golden Cat Bathhouse",
+    "category": [
+      "House of Pleasure"
+    ],
+    "requires": "|Art Dealer's Apartment Zone Key| AND |Old Dunwall Distillery (HoP) Zone Key| AND |Dr Galvani's Offices (HoP) Zone Key|"
+  },
+  {
+    "region": "Southside Gate",
+    "name": "Southside Gate: Apartment Rune",
+    "category": [
+      "The Royal Physician"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Drawbridge Control",
+    "name": "Drawbridge Control: Pratchett's Safe Rune",
+    "category": [
+      "The Royal Physician"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Drawbridge Control",
+    "name": "Drawbridge Control: Outsider Shrine Rune",
+    "category": [
+      "The Royal Physician"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Midrow Substation: Rune outside entry",
+    "region": "Midrow Substation",
+    "category": [
+      "The Royal Physician"
+    ],
+    "requires": []
+  },
+  {
+    "name": "North End: Sokolov's Laboratory Rune",
+    "region": "North End",
+    "category": [
+      "The Royal Physician"
+    ],
+    "requires": []
+  },
+  {
+    "region": "North End",
+    "name": "The Royal Physician: Victory",
+    "category": [
+      "The Royal Physician"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Boyle Mansion Exterior",
+    "name": "Boyle Mansion Exterior: Outsider Shrine Rune",
+    "category": [
+      "Lady Boyle's Last Party"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Boyle Mansion Exterior: Waterway Rune",
+    "region": "Boyle Mansion Exterior",
+    "category": [
+      "Lady Boyle's Last Party"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Boyle Mansion Interior: Underground Vault Rune",
+    "region": "Boyle Mansion Interior",
+    "category": [
+      "Lady Boyle's Last Party"
+    ],
+    "requires": []
+  },
+  {
+    "name": "The Pub: Spare a Boyle Rune",
+    "region": "Boyle Mansion Interior",
+    "category": [
+      "Lady Boyle's Last Party"
+    ],
+    "requires": []
+  },
+  {
+    "name": "The Pub: Find Emily Rune",
+    "region": "Boyle Mansion Interior",
+    "category": [
+      "Lady Boyle's Last Party"
+    ],
+    "requires": []
+  },
+  {
+    "name": "The Pub: Reward for a duel with Shaw Rune",
+    "region": "Boyle Mansion Interior",
+    "category": [
+      "Lady Boyle's Last Party"
+    ],
+    "requires": "|Progressive Bullets| OR |Progressive Crossbow Bolts| OR |Progressive Sleep Darts|"
+  },
+  {
+    "region": "Tower Exterior",
+    "name": "Return to the Tower: Bunkhouse Rune",
+    "category": [
+      "Return to the Tower"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Tower Interior",
+    "name": "Return to the Tower: Torture Chamber Shrine Rune",
+    "category": [
+      "Return to the Tower"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Return to the Tower: Bedroom Rune",
+    "region": "Tower Interior",
+    "category": [
+      "Return to the Tower"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Tower Exterior",
+    "name": "Return to the Tower: Safehouse Rune",
+    "category": [
+      "Return to the Tower"
+    ],
+    "requires": "|Tower Interior Zone Key|"
+  },
+  {
+    "region": "Greaves Refinery",
+    "name": "The Flooded District: Refinery Rune",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Central Rudshore",
+    "name": "The Flooded District: Sewer Exit Rune",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Rudshore Gate",
+    "name": "The Flooded District: Rudshore Gate Rooftop Rune",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "name": "The Flooded District: Granny's Outsider Shrine Rune",
+    "region": "Old Dunwall Sewers",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "name": "The Flooded District: Survivor Camp Rune",
+    "region": "Old Dunwall Sewers",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Hound Pits Pub (The Loyalists)",
+    "name": "The Loyalists: Piero's Workshop Rune",
+    "category": [
+      "The Loyalists"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Kingsparrow Fort",
+    "name": "The Light at the End: Drainage Rune",
+    "category": [
+      "The Light at the End"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Boyle Mansion Interior",
+    "name": "Lady Boyle's Last Party: Victory",
+    "category": [
+      "Lady Boyle's Last Party"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Tower Interior",
+    "name": "Return to the Tower: Victory",
+    "category": [
+      "Return to the Tower"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Old Dunwall Sewers",
+    "name": "The Flooded District: Victory",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Hound Pits Pub (The Loyalists)",
+    "name": "The Loyalists: Victory",
+    "category": [
+      "The Loyalists"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Burrows Lighthouse",
+    "victory": true,
+    "name": "The Light at the End: Victory",
+    "category": [
+      "The Light at the End"
+    ],
+    "requires": []
+  },
+  {
+    "name": "The Void: Receive the Mark",
+    "region": "The Void",
+    "category": [
+      "Intro"
+    ],
+    "requires": [],
+    "place_item": [
+      "Progressive Blink"
+    ]
+  },
+  {
+    "name": "Dishonored (Mission): Clockwork Explosive",
+    "region": "Dunwall Prison",
+    "category": [
+      "Intro"
+    ],
+    "requires": []
+  },
+  {
+    "name": "High Overseer's Office: Campbell's Secret Room Painting",
+    "region": "High Overseer's Office",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Art Dealer's Apartment",
+    "name": "Art Dealer's Apartment: Second Floor Painting",
+    "category": [
+      "House of Pleasure"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Art Dealer's Apartment",
+    "name": "Art Dealer's Apartment: Third Floor Painting",
+    "category": [
+      "House of Pleasure"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Art Dealer's Apartment",
+    "name": "Art Dealer's Apartment: Inside Safe Painting",
+    "category": [
+      "House of Pleasure"
+    ],
+    "requires": "|The Golden Cat Bathhouse Zone Key|"
+  },
+  {
+    "name": "North End: Sokolov's Safehouse Painting",
+    "region": "North End",
+    "category": [
+      "The Royal Physician"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Dishonored (Mission): Corvo's Cell Key",
+    "region": "Dunwall Prison",
+    "category": [
+      "Intro"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Prologue: Get Framed",
+    "region": "Prologue",
+    "category": [
+      "Intro"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Dishonored (Mission): Folding Blade and Crossbow",
+    "region": "Dunwall Sewers",
+    "category": [
+      "Intro"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Dishonored (Mission): Open Jelly's Safe",
+    "region": "Dunwall Sewers",
+    "category": [
+      "Intro"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Boyle Mansion Interior: Bedroom Painting",
+    "region": "Boyle Mansion Interior",
+    "category": [
+      "Lady Boyle's Last Party"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Boyle Mansion Interior: Display Room Painting",
+    "region": "Boyle Mansion Interior",
+    "category": [
+      "Lady Boyle's Last Party"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Tower Interior",
+    "name": "Tower Interior: Piano Room Painting",
+    "category": [
+      "Return to the Tower"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Rudshore Waterfront",
+    "name": "Rudshore Waterfront: Weeper Room Painting",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Central Rudshore: Daud's Base Exit Painting",
+    "region": "Central Rudshore",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Old Dunwall Sewers",
+    "name": "Old Dunwall Sewers: Granny Rags Painting",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Distillery District (HOC)",
+    "name": "Distillery District: Griff's Shop Lens Magnification Blueprint",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Distillery District (HOC)",
+    "name": "Distillery District: Griff's Shop Sokolov's Formula Blueprint",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Backyard",
+    "name": "Backyard: Bonded Galvani Weave Blueprint",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Old Dunwall Distillery: Incandescent Paste Blueprint",
+    "region": "Old Dunwall Distillery (HoP)",
+    "category": [
+      "House of Pleasure"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Southside Gate: Folded Galvani Resin Blueprint",
+    "region": "Southside Gate",
+    "category": [
+      "The Royal Physician"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Boyle Mansion Exterior: Spiked Grenade Housing Blueprint",
+    "region": "Boyle Mansion Exterior",
+    "category": [
+      "Lady Boyle's Last Party"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Tower Interior: Small-scale Combustion Refinement Blueprint",
+    "region": "Tower Interior",
+    "category": [
+      "Return to the Tower"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Distillery District (HOC)",
+    "name": "Distillery District: Bridge End Bone Charm",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Distillery District (HOC)",
+    "name": "Distillery District: Griff's Building Bone Charm",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Old Dunwall Distillery (HOC)",
+    "name": "Old Dunwall Distillery: Rafter Bone Charm",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Backyard",
+    "name": "Backyard: Rat Infested Building Bone Charm",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Backyard",
+    "name": "Backyard: Overseer Stolen Bone Charm",
+    "category": [
+      "High Overseer Campbell"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Distillery District (HoP)",
+    "name": "Distillery District: Apartment Bone Charm",
+    "category": [
+      "House of Pleasure"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Distillery District (HoP)",
+    "name": "Distillery District: Granny Rags Bone Charm",
+    "category": [
+      "House of Pleasure"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Distillery District (HOC)",
+    "name": "Distillery District: Captain's Chair Hotel Bone Charm",
+    "category": [
+      "House of Pleasure"
+    ],
+    "requires": []
+  },
+  {
+    "region": "The Golden Cat Bathhouse",
+    "name": "The Golden Cat Bathhouse: Stairwell Room Bone Charm",
+    "category": [
+      "House of Pleasure"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Old Dunwall Distillery (HoP)",
+    "name": "Old Dunwall Distillery: Weeper Containment Room Bone Charm",
+    "category": [
+      "House of Pleasure"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Southside Gate",
+    "name": "Southside Gate: Past Metal Bridge Bone Charm",
+    "category": [
+      "The Royal Physician"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Midrow Substation",
+    "name": "Midrow Substation: Rat Infested Basement Bone Charm",
+    "category": [
+      "The Royal Physician"
+    ],
+    "requires": []
+  },
+  {
+    "name": "North End: Building By Entry Bone Charm",
+    "region": "North End",
+    "category": [
+      "The Royal Physician"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Hound Pits Pub: Abandoned Apartment Bone Charm",
+    "region": "North End",
+    "category": [
+      "The Royal Physician"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Boyle Mansion Exterior",
+    "name": "Boyle Mansion Exterior: Outsider's Shrine Room Bone Charm",
+    "category": [
+      "Lady Boyle's Last Party"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Boyle Mansion Exterior",
+    "name": "Boyle Mansion Exterior: Building by Mansion Bone Charm",
+    "category": [
+      "Lady Boyle's Last Party"
+    ],
+    "requires": []
+  },
+  {
+    "name": "Tower Exterior: Waterlock Bone Charm",
+    "region": "Tower Exterior",
+    "category": [
+      "Return to the Tower"
+    ],
+    "requires": "|Progressive Blink:2|"
+  },
+  {
+    "region": "Tower Interior",
+    "name": "Tower Interior: Jessamine's Secret Room Bone Charm",
+    "category": [
+      "Return to the Tower"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Rudshore Waterfront",
+    "name": "Rudshore Waterfront: End of Street Bone Charm",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Greaves Refinery",
+    "name": "Greaves Refinery: Back of Tower Bone Charm",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Central Rudshore",
+    "name": "Central Rudshore: Wolfhound Guarded Bone Charm",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Central Rudshore",
+    "name": "Central Rudshore: Daud's Bone Charm",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Rudshore Gate",
+    "name": "Rudshore Gate: Zone Entry Bone Charm",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Old Dunwall Sewers",
+    "name": "Old Dunwall Sewers: Collapsed Building Bone Charm",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Old Dunwall Sewers",
+    "name": "Old Dunwall Sewers: Safe Bone Charm",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Old Dunwall Sewers",
+    "name": "Old Dunwall Sewers: Past Survivor's Camp Bone Charm",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  },
+  {
+    "region": "Greaves Refinery",
+    "name": "Greaves Refinery: Retrieve your Gear",
+    "category": [
+      "The Flooded District"
+    ],
+    "requires": []
+  }
+]
