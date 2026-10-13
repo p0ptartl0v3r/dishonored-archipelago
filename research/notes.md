@@ -1,8 +1,8 @@
 # Research notes
 
 ## Game build
-- Store / version:
-- `Dishonored.exe` size / hash:
+- Store / version: Steam / 8335061
+- `Dishonored.exe` size / hash: 66443f3d68a6c658b0ed943260c3eb2f4cc9e3400d5809a94d6ec41eb725e17e
 
 ## UnrealScript (UE Explorer)
 Packages are in `Dishonored\DishonoredGame\CookedPCConsole`.
