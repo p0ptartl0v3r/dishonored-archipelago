@@ -6,7 +6,7 @@ on:
 
 env:
   # Bump deliberately; see minimum_ap_version in worlds/dishonored/archipelago.json.
-  ARCHIPELAGO_REF: main
+  ARCHIPELAGO_REF: "0.6.8"
 
 jobs:
   test:
