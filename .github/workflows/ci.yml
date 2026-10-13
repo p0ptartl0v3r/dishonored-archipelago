@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+env:
+  # Bump deliberately; see minimum_ap_version in worlds/dishonored/archipelago.json.
+  ARCHIPELAGO_REF: main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Standalone tests
+        run: |
+          pip install pytest
+          python tools/sync_ids.py --check
+          python -m pytest -q tests
+
+      - name: Check out Archipelago
+        uses: actions/checkout@v4
+        with:
+          repository: ArchipelagoMW/Archipelago
+          ref: ${{ env.ARCHIPELAGO_REF }}
+          path: Archipelago
+
+      - name: World tests inside Archipelago
+        working-directory: Archipelago
+        env:
+          SKIP_REQUIREMENTS_UPDATE: "1"
+        run: |
+          pip install colorama "websockets<14" PyYAML jellyfish jinja2 schema bsdiff4 platformdirs certifi orjson typing_extensions pathspec requests Pymem pytest
+          ln -s "$GITHUB_WORKSPACE/worlds/dishonored" worlds/dishonored
+          python -m pytest -q worlds/dishonored/test
+
+      - name: Build apworld
+        run: python tools/build_apworld.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dishonored.apworld
+          path: dist/dishonored.apworld

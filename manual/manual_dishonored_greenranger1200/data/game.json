@@ -1,0 +1,7 @@
+{
+  "$schema": "https://github.com/ManualForArchipelago/Manual/raw/main/schemas/Manual.game.schema.json",
+  "game": "Dishonored",
+  "creator": "greenranger1200",
+  "filler_item_name": "Whalebone",
+  "starting_items": []
+}

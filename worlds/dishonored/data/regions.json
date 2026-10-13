@@ -1,0 +1,181 @@
+{
+  "Prologue": {
+    "starting": true,
+    "connects_to": [
+      "Dunwall Prison"
+    ],
+    "requires": []
+  },
+  "Dunwall Prison": {
+    "connects_to": [
+      "Dunwall Sewers"
+    ],
+    "requires": "|Dunwall Prison Zone Key|"
+  },
+  "Dunwall Sewers": {
+    "connects_to": [
+      "Hound Pits Pub"
+    ],
+    "requires": "|Dunwall Sewers Zone Key|"
+  },
+  "Hound Pits Pub": {
+    "connects_to": [
+      "The Void"
+    ],
+    "requires": "|Hound Pits Pub Zone Key|"
+  },
+  "The Void": {
+    "connects_to": [
+      "Distillery District (HOC)"
+    ],
+    "requires": "|The Void Zone Key|"
+  },
+  "Distillery District (HOC)": {
+    "connects_to": [
+      "Old Dunwall Distillery (HOC)",
+      "Dr Galvani's Offices (HOC)",
+      "High Overseer's Office"
+    ],
+    "requires": "|Distillery District (HOC) Zone Key|"
+  },
+  "Old Dunwall Distillery (HOC)": {
+    "connects_to": [],
+    "requires": "|Old Dunwall Distillery (HOC) Zone Key|"
+  },
+  "Dr Galvani's Offices (HOC)": {
+    "connects_to": [],
+    "requires": "|Dr Galvani's Offices (HOC) Zone Key|"
+  },
+  "High Overseer's Office": {
+    "connects_to": [
+      "Backyard"
+    ],
+    "requires": "|High Overseer's Office Zone Key|"
+  },
+  "Backyard": {
+    "connects_to": [
+      "Distillery District (HoP)"
+    ],
+    "requires": "|Backyard Zone Key|"
+  },
+  "Distillery District (HoP)": {
+    "connects_to": [
+      "Old Dunwall Distillery (HoP)",
+      "Dr Galvani's Offices (HoP)",
+      "Art Dealer's Apartment",
+      "The Golden Cat Bathhouse"
+    ],
+    "requires": "|Distillery District (HoP) Zone Key| AND |Dr Galvani's Offices (HOC) Zone Key| AND |Old Dunwall Distillery (HOC) Zone Key|"
+  },
+  "Old Dunwall Distillery (HoP)": {
+    "connects_to": [],
+    "requires": "|Old Dunwall Distillery (HoP) Zone Key|"
+  },
+  "Dr Galvani's Offices (HoP)": {
+    "connects_to": [],
+    "requires": "|Dr Galvani's Offices (HoP) Zone Key|"
+  },
+  "Art Dealer's Apartment": {
+    "connects_to": [],
+    "requires": "|Art Dealer's Apartment Zone Key|"
+  },
+  "The Golden Cat Bathhouse": {
+    "connects_to": [
+      "Southside Gate"
+    ],
+    "requires": "|The Golden Cat Bathhouse Zone Key|"
+  },
+  "Southside Gate": {
+    "connects_to": [
+      "Drawbridge Control"
+    ],
+    "requires": "|Old Dunwall Distillery (HoP) Zone Key| AND |Dr Galvani's Offices (HoP) Zone Key| AND |Art Dealer's Apartment Zone Key|"
+  },
+  "Drawbridge Control": {
+    "connects_to": [
+      "Midrow Substation"
+    ],
+    "requires": "|Drawbridge Control Zone Key|"
+  },
+  "Midrow Substation": {
+    "connects_to": [
+      "North End"
+    ],
+    "requires": "|Midrow Substation Zone Key|"
+  },
+  "North End": {
+    "connects_to": [
+      "Boyle Mansion Exterior"
+    ],
+    "requires": "|North End Zone Key|"
+  },
+  "Boyle Mansion Exterior": {
+    "connects_to": [
+      "Boyle Mansion Interior"
+    ],
+    "requires": "|Lady Boyle's Last Party Exterior Zone Key|"
+  },
+  "Boyle Mansion Interior": {
+    "connects_to": [
+      "Tower Exterior"
+    ],
+    "requires": "|Boyle Mansion Interior Zone Key|"
+  },
+  "Tower Exterior": {
+    "connects_to": [
+      "Tower Interior"
+    ],
+    "requires": "|Tower Exterior Zone Key|"
+  },
+  "Tower Interior": {
+    "connects_to": [
+      "Rudshore Waterfront"
+    ],
+    "requires": "|Tower Interior Zone Key|"
+  },
+  "Rudshore Waterfront": {
+    "connects_to": [
+      "Central Rudshore",
+      "Greaves Refinery"
+    ],
+    "requires": "|Rudshore Waterfront Zone Key|"
+  },
+  "Central Rudshore": {
+    "connects_to": [
+      "Rudshore Gate"
+    ],
+    "requires": "|Central Rudshore Zone Key|"
+  },
+  "Greaves Refinery": {
+    "connects_to": [],
+    "requires": "|Greaves Refinery Zone Key|"
+  },
+  "Rudshore Gate": {
+    "connects_to": [
+      "Old Dunwall Sewers"
+    ],
+    "requires": "|Rudshore Gate Zone Key|"
+  },
+  "Old Dunwall Sewers": {
+    "connects_to": [
+      "Hound Pits Pub (The Loyalists)"
+    ],
+    "requires": "|Old Dunwall Sewers Zone Key|"
+  },
+  "Hound Pits Pub (The Loyalists)": {
+    "connects_to": [
+      "Kingsparrow Fort"
+    ],
+    "requires": "|Hound Pits Pub (The Loyalists) Zone Key| AND |Greaves Refinery Zone Key|"
+  },
+  "Kingsparrow Fort": {
+    "connects_to": [
+      "Burrows Lighthouse"
+    ],
+    "requires": "|Kingsparrow Fort Zone Key|"
+  },
+  "Burrows Lighthouse": {
+    "connects_to": [],
+    "requires": "|Burrows Lighthouse Zone Key|"
+  }
+}
