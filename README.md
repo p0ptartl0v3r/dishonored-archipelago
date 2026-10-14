@@ -9,7 +9,8 @@ item and location design comes from the Manual version by greenranger1200 (see `
 
 **Status:** the apworld generates seeds, and the client connects and plays the
 same as the Manual (send checks with `/check`, items are listed for you to apply
-by hand). Automatic detection and item application are in progress: see
+by hand). Powers can be applied automatically through the in-game DLL in
+`native/` (written, not yet tested in-game). Location detection is next: see
 [docs/roadmap.md](docs/roadmap.md).
 
 ## Layout
@@ -22,7 +23,7 @@ worlds/dishonored/      the apworld (copy or link into Archipelago's worlds/)
 tests/                  tests that run without Archipelago
 tools/                  sync_ids.py, build_apworld.py
 research/               reverse-engineering notes and the location table
-native/                 future injected DLL
+native/                 in-game DLL (dinput8.dll proxy): runs console commands, logs calls
 manual/                 original Manual apworld and docs
 docs/                   dev environment and roadmap
 ```

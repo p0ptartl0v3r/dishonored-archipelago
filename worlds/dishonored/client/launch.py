@@ -13,9 +13,10 @@ def launch_dishonored_client(*args: Sequence[str]) -> None:
     parser.add_argument("--name", default=None, help="Slot name to connect as.")
     parser.add_argument(
         "--backend",
-        choices=("manual", "memory"),
+        choices=("manual", "memory", "native"),
         default="manual",
-        help="How to talk to the game. 'manual' detects nothing; use /check to send locations.",
+        help="How to talk to the game. 'manual' detects nothing (use /check); "
+        "'native' grants items through the in-game DLL in native/.",
     )
     parser.add_argument("url", nargs="?", help="Archipelago connection url")
     launch_args = handle_url_arg(parser.parse_args(args), parser=parser)

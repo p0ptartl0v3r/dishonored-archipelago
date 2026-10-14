@@ -27,6 +27,12 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
 - [x] Client with `/check` and `/goal`, which plays the same as the Manual
 - [x] Tests and CI
 
+### 0.5 In-game DLL, first slice (written, untested in-game)
+- [x] `native/`: `dinput8.dll` proxy, `ProcessEvent` hook, named pipe to the client
+- [x] Client `--backend native` runs `AddPower` etc. for received items
+- [x] Call logging (`LogCalls=unique|filter`, F8 marker) for pickup research
+- [ ] First in-game test (see native/README.md, "First test")
+
 ### 1. Look inside the game
 - [ ] Pick and record the game build you'll support
 - [ ] Open the packages in UE Explorer and note the classes behind pickups, runes,
@@ -48,7 +54,8 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
 ### 4. Items
 - [ ] Equipment and ammo
 - [ ] Powers (block buying them, or grant them and hand out runes)
-- [ ] Upgrades (Piero's shop)
+- [ ] Upgrades (Piero's shop). The console cheats are stripped from the release build,
+      so call the player pawn's `OnGiveUpgrade` with a `UDisSeqAct_GiveUpgrade` through the DLL
 - [ ] Bone charm slots
 - [ ] Zone keys (hardest; may stay honor-system for a long time)
 - [ ] Store "items already applied" in the save file, not just in the client

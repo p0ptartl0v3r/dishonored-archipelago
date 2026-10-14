@@ -1,0 +1,209 @@
+#include "game_hooks.hpp"
+
+#include <windows.h>
+
+#include <MinHook.h>
+
+#include <atomic>
+#include <deque>
+#include <mutex>
+#include <unordered_set>
+#include <vector>
+
+#include "log.hpp"
+#include "memory.hpp"
+#include "ue3.hpp"
+
+namespace ap {
+namespace {
+
+// UObject::ProcessEvent(UFunction*, void* params, void* result) is __thiscall.
+// A __fastcall function with a dummy EDX argument has the same calling convention
+// and, unlike __thiscall, can be written as a free function.
+using ProcessEventFn = void(__fastcall*)(ue3::UObject* self, void* edx, ue3::UFunction* function, void* params,
+                                         void* result);
+
+// Byte pattern for ProcessEvent's prologue (credit: ectrc/dismod).
+constexpr const char* kProcessEventPattern =
+    "55 8B EC 6A ?? 68 ?? ?? ?? ?? 64 A1 ?? ?? ?? ?? 50 83 EC ?? A1 ?? ?? ?? ?? 33 C5 89 45 ?? 53 56 57 50 8D 45 ?? 64 "
+    "A3 ?? ?? ?? ?? 8B F1";
+
+struct ConsoleCommandParams {
+  ue3::FString command;
+  uint32_t write_to_log;
+  ue3::FString return_value;
+};
+static_assert(offsetof(ConsoleCommandParams, return_value) == 0x10);
+
+Config g_config;
+ProcessEventFn g_original = nullptr;
+
+std::mutex g_queue_mutex;
+std::deque<std::string> g_queue;
+std::atomic<bool> g_queue_pending = false;
+
+std::atomic<bool> g_engine_ready = false;
+// Looked up on the game thread (the object table can change under another thread).
+std::atomic<ue3::UFunction*> g_console_command = nullptr;
+DWORD g_last_resolve_tick = 0;
+int g_resolve_attempts = 0;
+std::vector<int32_t> g_drain_names;  // FName indices of DrainOn functions
+std::atomic<DWORD> g_last_drain_tick = 0;
+thread_local bool g_inside_hook_work = false;
+
+std::atomic<bool> g_call_logging = true;
+std::mutex g_seen_mutex;
+std::unordered_set<ue3::UFunction*> g_seen_functions;
+
+bool contains_any(const std::string& text, const std::vector<std::string>& words) {
+  for (const auto& word : words) {
+    if (!word.empty() && text.find(word) != std::string::npos) return true;
+  }
+  return false;
+}
+
+void log_call(ue3::UObject* self, ue3::UFunction* function) {
+  if (g_config.call_log == CallLogMode::Unique) {
+    {
+      std::lock_guard lock(g_seen_mutex);
+      if (!g_seen_functions.insert(function).second) return;
+    }
+    log("call {} on {}", ue3::full_name(function), ue3::class_name(self));
+    return;
+  }
+  // Filter mode: building names for every call is slow, which is fine for research.
+  const std::string function_name = ue3::full_name(function);
+  const std::string object_name = ue3::full_name(self);
+  if (contains_any(function_name, g_config.log_filter) || contains_any(object_name, g_config.log_filter)) {
+    log("call {} on {}", function_name, object_name);
+  }
+}
+
+std::wstring widen(const std::string& text) {
+  // Console commands are ASCII; MultiByteToWideChar keeps any UTF-8 intact anyway.
+  const int size = MultiByteToWideChar(CP_UTF8, 0, text.c_str(), -1, nullptr, 0);
+  std::wstring out(size > 0 ? size - 1 : 0, L'\0');
+  if (size > 1) MultiByteToWideChar(CP_UTF8, 0, text.c_str(), -1, out.data(), size);
+  return out;
+}
+
+std::string narrow(const ue3::FString& text) {
+  std::string out;
+  for (int32_t i = 0; text.data != nullptr && i < text.count && text.data[i]; ++i) {
+    out.push_back(static_cast<char>(text.data[i]));
+  }
+  return out;
+}
+
+void run_console_command(ue3::UObject* player_controller, const std::string& command) {
+  const std::wstring wide = widen(command);
+  ConsoleCommandParams params{};
+  params.command = {wide.c_str(), static_cast<int32_t>(wide.size() + 1), static_cast<int32_t>(wide.size() + 1)};
+  params.write_to_log = 1;
+  g_original(player_controller, nullptr, g_console_command.load(), &params, nullptr);
+  // The engine allocated return_value; we leave it rather than free it with the wrong allocator.
+  const std::string result = narrow(params.return_value);
+  log("console: {}{}", command, result.empty() ? "" : " -> " + result);
+}
+
+void drain_queue(ue3::UObject* player_controller) {
+  std::deque<std::string> commands;
+  {
+    std::lock_guard lock(g_queue_mutex);
+    commands.swap(g_queue);
+    g_queue_pending = false;
+  }
+  for (const auto& command : commands) run_console_command(player_controller, command);
+}
+
+bool is_drain_point(ue3::UObject* self, ue3::UFunction* function) {
+  for (int32_t index : g_drain_names) {
+    if (function->name.index == index) {
+      return ue3::class_name(self).find("PlayerController") != std::string::npos;
+    }
+  }
+  return false;
+}
+
+// Finds ConsoleCommand and the DrainOn names. Retried until the Engine package is loaded.
+void resolve_engine_objects() {
+  const DWORD now = GetTickCount();
+  if (now - g_last_resolve_tick < 1000) return;
+  g_last_resolve_tick = now;
+
+  ue3::UFunction* console_command = ue3::find_object("Function Engine.PlayerController.ConsoleCommand");
+  if (console_command == nullptr) {
+    if (++g_resolve_attempts == 30) log("WARNING: PlayerController.ConsoleCommand still not found after 30s");
+    return;
+  }
+  for (const auto& name : g_config.drain_on) {
+    const int32_t index = ue3::find_name_index(name);
+    if (index < 0) {
+      log("WARNING: DrainOn function name '{}' does not exist", name);
+    } else {
+      g_drain_names.push_back(index);
+    }
+  }
+  g_console_command = console_command;
+  log("found PlayerController.ConsoleCommand; ready for console commands");
+}
+
+void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction* function, void* params,
+                                   void* result) {
+  if (self != nullptr && function != nullptr && g_engine_ready && !g_inside_hook_work) {
+    g_inside_hook_work = true;
+    if (g_console_command == nullptr) resolve_engine_objects();
+    if (g_config.call_log != CallLogMode::Off && g_call_logging) log_call(self, function);
+    if (g_console_command != nullptr && is_drain_point(self, function)) {
+      g_last_drain_tick = GetTickCount();
+      if (g_queue_pending) drain_queue(self);
+    }
+    g_inside_hook_work = false;
+  }
+  g_original(self, edx, function, params, result);
+}
+
+}  // namespace
+
+bool install_hooks(const Config& config) {
+  g_config = config;
+  uintptr_t target = 0;
+  if (config.process_event_offset != 0) {
+    target = reinterpret_cast<uintptr_t>(GetModuleHandleW(nullptr)) + config.process_event_offset;
+  } else {
+    target = find_pattern(kProcessEventPattern);
+  }
+  if (target == 0) {
+    log("ERROR: ProcessEvent not found (pattern did not match exactly once). Set ProcessEventOffset.");
+    return false;
+  }
+  log("ProcessEvent at exe+0x{:X}", target - reinterpret_cast<uintptr_t>(GetModuleHandleW(nullptr)));
+
+  if (MH_Initialize() != MH_OK ||
+      MH_CreateHook(reinterpret_cast<void*>(target), reinterpret_cast<void*>(&process_event_hook),
+                    reinterpret_cast<void**>(&g_original)) != MH_OK ||
+      MH_EnableHook(reinterpret_cast<void*>(target)) != MH_OK) {
+    log("ERROR: failed to hook ProcessEvent");
+    return false;
+  }
+  return true;
+}
+
+void on_engine_ready() { g_engine_ready = true; }
+
+void queue_console_command(const std::string& command) {
+  std::lock_guard lock(g_queue_mutex);
+  g_queue.push_back(command);
+  g_queue_pending = true;
+}
+
+bool commands_ready() {
+  return g_console_command != nullptr && GetTickCount() - g_last_drain_tick.load() < 2000;
+}
+
+void toggle_call_logging() {
+  g_call_logging = !g_call_logging;
+  log("---- call logging {} ----", g_call_logging ? "resumed" : "paused");
+}
+
+}  // namespace ap
