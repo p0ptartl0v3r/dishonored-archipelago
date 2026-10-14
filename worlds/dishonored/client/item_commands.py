@@ -28,33 +28,24 @@ def _power(internal_name: str) -> CommandBuilder:
 
 
 ITEM_COMMANDS: dict[str, CommandBuilder] = {
-    # Active powers (internal names from the EDisPowerWheelItem enum)
+    # Names as listed by the in-game AddPower command (confirmed in-game).
     "Progressive Blink": _power("Blink"),
     "Progressive Dark Vision": _power("DarkVision"),
     "Progressive Devouring Swarm": _power("DevouringSwarm"),
-    "Progressive Possession": _power("Possession"),
+    "Progressive Possession": _power("Possess"),
     "Progressive Bend Time": _power("BendTime"),
     "Progressive Windblast": _power("WindBlast"),
-    # Passive powers: names are guesses
     "Progressive Vitality": _power("Vitality"),
-    "Progressive Agility": _power("Agility"),
+    "Progressive Agility": _power("Celerity"),  # Agility's internal name
     "Progressive Blood Thirsty": _power("BloodThirsty"),
     "Progressive Shadow Kill": _power("ShadowKill"),
 }
 
-# Commands not yet confirmed to work in-game with these exact arguments.
-# Remove an entry once you have tried it (and record it in research/notes.md).
-UNVERIFIED: set[str] = {
-    "Progressive Dark Vision",
-    "Progressive Devouring Swarm",
-    "Progressive Possession",
-    "Progressive Bend Time",
-    "Progressive Windblast",
-    "Progressive Vitality",
-    "Progressive Agility",
-    "Progressive Blood Thirsty",
-    "Progressive Shadow Kill",
-}
+# Commands whose names haven't been confirmed in-game. The client shows these to
+# the player instead of sending them, because a wrong name silently does nothing.
+# Blink is confirmed working end to end; the other powers' names come from the
+# in-game AddPower command's own list.
+UNVERIFIED: set[str] = set()
 
 
 def commands_for(item_name: str, level: int) -> list[str]:

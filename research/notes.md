@@ -90,7 +90,7 @@ Other notes:
 |---|---|
 | `giverunes N` | Adds N runes. **Works** |
 | `AbstractInventoryList` | Nothing on screen. Native; check `Logs\Launch.log` / `-log`, may be compiled out |
-| `AddPower <Name> <Level>` | **Works.** Active power names from the SDK: `Blink`, `DarkVision`, `DevouringSwarm`, `Possession`, `BendTime`, `WindBlast`. Passive names unknown. Track per power in `client/item_commands.py` |
+| `AddPower <Name> <Level>` | **Works** (levels 1 and 2). Names from the command's own in-game list: `Blink`, `DarkVision`, `DevouringSwarm`, `Possess`, `BendTime`, `WindBlast`, `Vitality`, `BloodThirsty`, `Celerity` (= Agility), `ShadowKill`, plus others that are probably Daud/DLC powers. Re-applying on every load works (Blink 1+2 restored after reload) |
 | `AddUpgrade <Name>` | ? |
 | `GiveBoneCharm` | ? |
 | `RemovePower <Name>` | ? (needed to undo powers bought early) |

@@ -154,7 +154,10 @@ def test_waits_while_cheats_are_off():
     assert pipe.sent == ["ping"]
 
 
-def test_unverified_commands_are_shown_not_sent():
+def test_unverified_commands_are_shown_not_sent(monkeypatch):
+    from dishonored.client import game_interface
+
+    monkeypatch.setattr(game_interface, "UNVERIFIED", {"Progressive Blood Thirsty"})
     pipe = FakePipe()
     assert attached(pipe).give_item(0, "Progressive Blood Thirsty", 1)
     assert pipe.sent == []
@@ -171,6 +174,6 @@ def test_loading_a_save_requests_a_resync():
 def test_replayed_manual_unlocks_are_not_repeated(caplog):
     game = attached(FakePipe())
     with caplog.at_level("INFO"):
-        game.give_item(0, "Progressive Blood Thirsty", 1)
-        game.give_item(0, "Progressive Blood Thirsty", 1)
-    assert sum("Unlocked: Progressive Blood Thirsty" in r.message for r in caplog.records) == 1
+        game.give_item(0, "Bone Charm Slot", 1)
+        game.give_item(0, "Bone Charm Slot", 1)
+    assert sum("Unlocked: Bone Charm Slot" in r.message for r in caplog.records) == 1

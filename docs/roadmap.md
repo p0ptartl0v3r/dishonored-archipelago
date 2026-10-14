@@ -55,7 +55,8 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
 
 ### 4. Items
 - [ ] Equipment and ammo
-- [ ] Powers (block buying them, or grant them and hand out runes)
+- [x] Powers: granted automatically with confirmed names, re-applied after loads
+- [ ] Powers: stop buying them with runes before they're received
 - [ ] Upgrades (Piero's shop). The console cheats are stripped from the release build,
       so call the player pawn's `OnGiveUpgrade` with a `UDisSeqAct_GiveUpgrade` through the DLL
 - [ ] Bone charm slots

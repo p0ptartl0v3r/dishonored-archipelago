@@ -20,3 +20,8 @@ def test_mapped_names_are_real_items():
     names = {i["name"] for i in json.loads(ITEMS.read_text("utf-8"))}
     assert set(ITEM_COMMANDS) <= names
     assert UNVERIFIED <= set(ITEM_COMMANDS)
+
+
+def test_internal_names_that_differ_from_item_names():
+    assert commands_for("Progressive Possession", 1) == ["AddPower Possess 1"]
+    assert commands_for("Progressive Agility", 2) == ["AddPower Celerity 2"]
