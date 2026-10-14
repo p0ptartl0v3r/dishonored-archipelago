@@ -69,24 +69,60 @@ In `archipelago_native.ini`, set `[Research] LogCalls=`:
 
 ## Build
 
-### Visual Studio 2022 (Windows)
+You don't have to build it to try it: every push to GitHub builds `dinput8.dll`
+in CI. Open the repository's **Actions** tab, click the latest **CI** run, and
+download **native-dll** under *Artifacts* (you must be signed in to GitHub). It's a
+zip containing `dinput8.dll` and `archipelago_native.ini`.
 
+Build it yourself when you want to change the C++.
+
+### Windows, Visual Studio 2022
+
+One-time setup:
+
+1. Install [Visual Studio 2022 Community](https://visualstudio.microsoft.com/vs/community/).
+   In the installer, tick the **Desktop development with C++** workload. Its
+   defaults include the MSVC compiler, the Windows SDK and "C++ CMake tools for
+   Windows", which is everything this needs.
+2. Install [Git for Windows](https://git-scm.com/download/win) if you don't have it.
+   The build downloads MinHook with git.
+
+**From the command line** (simplest): open **Developer PowerShell for VS 2022**
+from the Start menu, go to the repo, and run:
+
+```powershell
+cd native
+cmake --preset windows-x86
+cmake --build --preset windows-x86-release
 ```
-cmake -S native -B native/build -A Win32
-cmake --build native/build --config Release
-```
 
-Output: `native/build/Release/dinput8.dll`. Or open the `native` folder in
-Visual Studio ("Open a local folder"); it picks up the CMake project. Pick an
-x86 configuration.
+The DLL is at `native\build\windows-x86\Release\dinput8.dll`.
 
-### MinGW (Linux, or what CI uses)
+**From the Visual Studio UI:** *File > Open > Folder...* and pick the `native`
+folder. When it asks, choose the **Windows 32-bit (Visual Studio 2022)** preset
+(it's also in the toolbar dropdown), then *Build > Build All*. Don't use the
+default x64 configuration: the build refuses 64-bit on purpose, because the
+game is 32-bit.
 
-```
+The first configure takes a minute because it downloads MinHook.
+
+### Linux (what CI does)
+
+```bash
 sudo apt install g++-mingw-w64-i686 cmake
-cmake -S native -B native/build-mingw -DCMAKE_TOOLCHAIN_FILE="$PWD/native/cmake-mingw-i686.cmake" -DCMAKE_BUILD_TYPE=Release
-cmake --build native/build-mingw
+cd native
+cmake --preset mingw-x86
+cmake --build --preset mingw-x86
 ```
+
+Output: `native/build/mingw-x86/dinput8.dll`. It runs on Windows like the
+Visual Studio build.
+
+### If the Visual Studio build fails
+
+The MinGW build is checked by CI; the Visual Studio build hasn't been tried
+yet. Paste the first error and it should be a small fix. Meanwhile, use the CI
+download.
 
 ## Debugging
 

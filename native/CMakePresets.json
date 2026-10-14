@@ -1,0 +1,27 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": { "major": 3, "minor": 21, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "windows-x86",
+      "displayName": "Windows 32-bit (Visual Studio 2022)",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "Win32",
+      "binaryDir": "${sourceDir}/build/windows-x86",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+    },
+    {
+      "name": "mingw-x86",
+      "displayName": "32-bit MinGW cross-compile (Linux)",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/mingw-x86",
+      "toolchainFile": "${sourceDir}/cmake-mingw-i686.cmake",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "windows-x86-release", "displayName": "Release", "configurePreset": "windows-x86", "configuration": "Release" },
+    { "name": "windows-x86-debug", "displayName": "Debug", "configurePreset": "windows-x86", "configuration": "Debug" },
+    { "name": "mingw-x86", "configurePreset": "mingw-x86" }
+  ]
+}
