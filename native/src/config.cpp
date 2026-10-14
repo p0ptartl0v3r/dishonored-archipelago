@@ -46,7 +46,6 @@ Config load_config(const std::wstring& ini) {
   config.gnames_offset = read_uint(ini, L"Engine", L"GNamesOffset", config.gnames_offset);
   config.gobjects_offset = read_uint(ini, L"Engine", L"GObjectsOffset", config.gobjects_offset);
   config.process_event_offset = read_uint(ini, L"Engine", L"ProcessEventOffset", 0);
-  config.drain_on = read_list(ini, L"Commands", L"DrainOn", config.drain_on);
   const std::string mode = read(ini, L"Research", L"LogCalls");
   if (mode == "unique") config.call_log = CallLogMode::Unique;
   if (mode == "filter") config.call_log = CallLogMode::Filter;

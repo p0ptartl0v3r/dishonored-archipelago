@@ -110,4 +110,18 @@ UObject* find_object(const std::string& full) {
   return nullptr;
 }
 
+UObject* find_instance(const std::string& wanted_class) {
+  if (!ready()) return nullptr;
+  const int32_t class_index = find_name_index(wanted_class);
+  if (class_index < 0) return nullptr;
+  for (int32_t i = 0; i < g_objects->count; ++i) {
+    UObject* object = g_objects->data[i];
+    if (object != nullptr && object->klass != nullptr && object->klass->name.index == class_index &&
+        object_name(object).rfind("Default__", 0) != 0) {
+      return object;
+    }
+  }
+  return nullptr;
+}
+
 }  // namespace ue3

@@ -51,6 +51,16 @@ static_assert(offsetof(UObject, klass) == 0x30);
 
 using UFunction = UObject;
 
+// Field offsets inside larger classes (from the SDK), read as raw memory.
+inline constexpr size_t kEngineGamePlayers = 0x480;  // UEngine::GamePlayers (TArray<ULocalPlayer*>)
+inline constexpr size_t kPlayerActor = 0x3C;         // UPlayer::Actor (APlayerController*)
+inline constexpr size_t kControllerPawn = 0x248;     // AController::Pawn
+
+template <typename T>
+T field(const UObject* object, size_t offset) {
+  return *reinterpret_cast<const T*>(reinterpret_cast<const uint8_t*>(object) + offset);
+}
+
 // FString is a TArray<wchar_t> whose count includes the terminating null.
 struct FString {
   const wchar_t* data;
@@ -73,5 +83,7 @@ std::string class_name(const UObject* object);
 std::string full_name(const UObject* object);
 // Finds an object by full name. Linear scan: cache the result.
 UObject* find_object(const std::string& full);
+// First object of this class that isn't a class default object ("Default__...").
+UObject* find_instance(const std::string& class_name);
 
 }  // namespace ue3

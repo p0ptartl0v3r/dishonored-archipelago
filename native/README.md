@@ -36,7 +36,8 @@ To uninstall, delete `dinput8.dll`.
    Archipelago native module loaded
    ProcessEvent at exe+0x...
    engine tables found
-   found PlayerController.ConsoleCommand; ready for console commands
+   found DishonoredEngine (...) and PlayerController.ConsoleCommand
+   in gameplay
    ```
 3. Run `python tools/native_console.py ping`. Expect `pong ready`
    (`pong waiting` means commands aren't running yet; see Troubleshooting).
@@ -66,7 +67,7 @@ In `archipelago_native.ini`, set `[Research] LogCalls=`:
 | no log file in either place | The game didn't load the DLL. Check it's in `Binaries\Win32`, named exactly `dinput8.dll` (Windows may hide the extension, so watch for `dinput8.dll.dll`) |
 | `ProcessEvent not found` | Your exe differs from the one the byte pattern came from. Find the function (e.g. with dismod or x32dbg) and set `ProcessEventOffset` |
 | `engine tables not usable` | `GNamesOffset`/`GObjectsOffset` are wrong for your build |
-| `pong waiting` forever in gameplay | `DrainOn` function never fires. Run with `LogCalls=unique`, find a per-frame function on the PlayerController, add it to `DrainOn` |
+| `pong waiting` forever in gameplay, no `in gameplay` line | The DLL can't see the player's pawn. Send the log; the offsets in `src/ue3.hpp` may differ for your build |
 | a command runs but nothing happens | Same as typing it in the console: check the name, or it's one of the stripped cheats |
 
 ## Build
