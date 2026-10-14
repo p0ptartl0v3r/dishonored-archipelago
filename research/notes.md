@@ -88,11 +88,13 @@ Other notes:
 
 | Command | Effect |
 |---|---|
-| `giverunes N` | Adds N runes |
-| `AbstractInventoryList` | ? (should list abstract item names) |
-| `AddPower <Name> <Level>` | ? |
+| `giverunes N` | Adds N runes. **Works** |
+| `AbstractInventoryList` | Nothing on screen. Native; check `Logs\Launch.log` / `-log`, may be compiled out |
+| `AddPower <Name> <Level>` | **Works.** Active power names from the SDK: `Blink`, `DarkVision`, `DevouringSwarm`, `Possession`, `BendTime`, `WindBlast`. Passive names unknown. Track per power in `client/item_commands.py` |
 | `AddUpgrade <Name>` | ? |
 | `GiveBoneCharm` | ? |
+| `RemovePower <Name>` | ? (needed to undo powers bought early) |
+| `MaxUpgrades` / `MinUpgrades` | ? |
 | `GivePlayerItem <TweakString>` | ? |
 
 ## Memory (Cheat Engine)

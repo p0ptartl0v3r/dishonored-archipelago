@@ -13,6 +13,8 @@ from __future__ import annotations
 import logging
 from abc import ABC, abstractmethod
 
+from .item_commands import UNVERIFIED, commands_for
+
 logger = logging.getLogger("DishonoredClient")
 
 
@@ -37,8 +39,19 @@ class GameInterface(ABC):
     def poll_goal_reached(self) -> bool: ...
 
     @abstractmethod
-    def give_item(self, item_id: int, item_name: str) -> bool:
-        """Apply one received item in the game. Return False to retry later."""
+    def give_item(self, item_id: int, item_name: str, level: int) -> bool:
+        """Apply one received item in the game. Return False to retry later.
+
+        ``level`` counts copies of this item received so far, including this one.
+        """
+
+
+def log_unlock_for_player(item_name: str, level: int) -> None:
+    """Tell the player what they got and, if known, what to type in the console."""
+    logger.info(f"Unlocked: {item_name}" + (f" ({level})" if level > 1 else ""))
+    for command in commands_for(item_name, level):
+        note = " (unverified)" if item_name in UNVERIFIED else ""
+        logger.info(f"    console: {command}{note}")
 
 
 class ManualInterface(GameInterface):
@@ -61,8 +74,8 @@ class ManualInterface(GameInterface):
     def poll_goal_reached(self) -> bool:
         return False
 
-    def give_item(self, item_id: int, item_name: str) -> bool:
-        logger.info(f"Unlocked: {item_name}")
+    def give_item(self, item_id: int, item_name: str, level: int) -> bool:
+        log_unlock_for_player(item_name, level)
         return True
 
 
@@ -119,9 +132,9 @@ class MemoryInterface(GameInterface):
         # TODO: detect finishing "The Light at the End".
         return False
 
-    def give_item(self, item_id: int, item_name: str) -> bool:
-        # TODO: grant powers/equipment/upgrades. Until then, behave like the Manual.
-        logger.info(f"Unlocked (apply by hand for now): {item_name}")
+    def give_item(self, item_id: int, item_name: str, level: int) -> bool:
+        # TODO: run item_commands.commands_for(...) in-game. Until then, behave like the Manual.
+        log_unlock_for_player(item_name, level)
         return True
 
 

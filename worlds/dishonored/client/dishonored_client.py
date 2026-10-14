@@ -121,7 +121,8 @@ async def sync_with_server(ctx: DishonoredContext, game: GameInterface) -> None:
     while ctx.items_applied < len(ctx.items_received):
         net_item = ctx.items_received[ctx.items_applied]
         name = ctx.item_names.lookup_in_game(net_item.item)
-        if not game.give_item(net_item.item, name):
+        level = sum(1 for i in ctx.items_received[: ctx.items_applied + 1] if i.item == net_item.item)
+        if not game.give_item(net_item.item, name, level):
             break
         ctx.items_applied += 1
 
