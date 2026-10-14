@@ -60,7 +60,11 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
       so call the player pawn's `OnGiveUpgrade` with a `UDisSeqAct_GiveUpgrade` through the DLL
 - [ ] Bone charm slots
 - [ ] Zone keys (hardest; may stay honor-system for a long time)
-- [ ] Store "items already applied" in the save file, not just in the client
+- [x] Survive save reloads: the client re-applies every received item after each
+      load (`gameplay` event). Requires every item's command to set absolute
+      state (verify that `AddPower X 1` doesn't downgrade/duplicate when replayed)
+- Decisions: upgrades are granted outright (no shop changes for now); zone keys
+  warn first, block later
 
 ### Later
 - Knife of Dunwall / Brigmore Witches, Dunwall City Trials, "smooth intro"

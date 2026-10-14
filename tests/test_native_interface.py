@@ -151,3 +151,19 @@ def test_unverified_commands_are_shown_not_sent():
     pipe = FakePipe()
     assert attached(pipe).give_item(0, "Progressive Blood Thirsty", 1)
     assert pipe.sent == []
+
+
+def test_loading_a_save_requests_a_resync():
+    pipe = FakePipe(events=["gameplay", "mapchange L_Ovrsr_P", "gameplay"])
+    game = attached(pipe)
+    game.poll_checked_locations()
+    assert game.take_resync_request()
+    assert not game.take_resync_request()  # only once per load
+
+
+def test_replayed_manual_unlocks_are_not_repeated(caplog):
+    game = attached(FakePipe())
+    with caplog.at_level("INFO"):
+        game.give_item(0, "Progressive Blood Thirsty", 1)
+        game.give_item(0, "Progressive Blood Thirsty", 1)
+    assert sum("Unlocked: Progressive Blood Thirsty" in r.message for r in caplog.records) == 1

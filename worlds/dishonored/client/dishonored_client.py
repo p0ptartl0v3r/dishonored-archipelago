@@ -63,9 +63,8 @@ class DishonoredContext(CommonContext):
         self.pending_checks: set[int] = set()
         self.goal_reached = False
         self.goal_sent = False
-        # Index into items_received of the next item to apply. TODO: once items are
-        # really applied in-game, this must be stored in the save file instead, or
-        # loading an old save will hand out items twice / not at all.
+        # Index into items_received of the next item to apply. Reset to 0 (replay
+        # everything) whenever the game reports that a save was loaded.
         self.items_applied = 0
         self.slot_data: dict[str, Any] = {}
 
@@ -137,6 +136,12 @@ async def send_checks_and_goal(ctx: DishonoredContext, found: set[int], goal: bo
 
 async def sync_with_game(ctx: DishonoredContext, game: GameInterface) -> None:
     await send_checks_and_goal(ctx, game.poll_checked_locations(), game.poll_goal_reached())
+
+    # After a save is loaded the game may lack items granted since that save, so
+    # replay everything. Commands set absolute state (AddPower Blink 2), so
+    # replaying is safe.
+    if game.take_resync_request():
+        ctx.items_applied = 0
 
     # Received items wait here until the game can take them (give_item returns False).
     while ctx.items_applied < len(ctx.items_received):

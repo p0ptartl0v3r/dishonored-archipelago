@@ -46,6 +46,11 @@ class GameInterface(ABC):
         ``level`` counts copies of this item received so far, including this one.
         """
 
+    def take_resync_request(self) -> bool:
+        """True (once) when the game's state was reset, e.g. a save was loaded,
+        so every received item must be applied again."""
+        return False
+
 
 def log_unlock_for_player(item_name: str, level: int) -> None:
     """Tell the player what they got and, if known, what to type in the console."""
@@ -187,6 +192,8 @@ class NativeInterface(GameInterface):
         self._next_event = 0
         self._goal_reached = False
         self._warned_no_cheats = False
+        self._resync = False
+        self._shown: set[tuple[str, int]] = set()  # manual unlocks already shown to the player
         data = load_game_data()
         # (event prefix, location id or None for the goal)
         self._detectors: list[tuple[str, int | None]] = [
@@ -256,6 +263,11 @@ class NativeInterface(GameInterface):
             while (reply := self._request(f"event {self._next_event}")) != "none":
                 _, _, text = reply.split(" ", 2)
                 self._next_event += 1
+                if text == "gameplay":
+                    # A save was loaded (or a new level started): the game may have
+                    # forgotten items granted since that save, so grant them all again.
+                    self._resync = True
+                    continue
                 matches = self.match_event(text)
                 if not matches:
                     # Shown so you can copy it into a location's "detect" list.
@@ -272,11 +284,17 @@ class NativeInterface(GameInterface):
     def poll_goal_reached(self) -> bool:
         return self._goal_reached
 
+    def take_resync_request(self) -> bool:
+        resync, self._resync = self._resync, False
+        return resync
+
     def give_item(self, item_id: int, item_name: str, level: int) -> bool:
         commands = commands_for(item_name, level)
         # Unverified command names would silently do nothing, so show those to the player instead.
         if not commands or item_name in UNVERIFIED:
-            log_unlock_for_player(item_name, level)
+            if (item_name, level) not in self._shown:  # don't repeat on every reload
+                log_unlock_for_player(item_name, level)
+                self._shown.add((item_name, level))
             return True
         try:
             # Only send while in-game; in menus or during loading, retry later.
@@ -287,7 +305,9 @@ class NativeInterface(GameInterface):
                     return False
         except OSError:
             return False
-        logger.info(f"Unlocked: {item_name}" + (f" ({level})" if level > 1 else "") + " (applied in-game)")
+        if (item_name, level) not in self._shown:
+            logger.info(f"Unlocked: {item_name}" + (f" ({level})" if level > 1 else "") + " (applied in-game)")
+            self._shown.add((item_name, level))
         return True
 
 
