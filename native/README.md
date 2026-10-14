@@ -10,7 +10,7 @@ function to the real system `dinput8.dll` and, inside the game:
   what fires when you pick up a rune.
 
 The Python client talks to it over the named pipe `\\.\pipe\dishonored_archipelago`
-(protocol in `src/pipe_server.hpp`), using `--backend native`.
+(protocol in `src/pipe_server.hpp`). That is the client's default mode.
 
 **Status:** compiles (MinGW cross-build, checked in CI) but **has not been run
 in the game yet**. Expect the first in-game test to need fixes; the log file
@@ -43,7 +43,7 @@ To uninstall, delete `dinput8.dll`.
    (`pong waiting` means commands aren't running yet; see Troubleshooting).
 4. Run `python tools/native_console.py "console GiveRunes 1"`. Your rune count
    should go up, and the log shows `console: GiveRunes 1`.
-5. Finally, the real thing: launch the Dishonored Client with `--backend native`.
+5. Finally, the real thing: open **Dishonored Client** from the Archipelago Launcher.
    Received powers are applied automatically.
 
 ## Game events (for location checks)

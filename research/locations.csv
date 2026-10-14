@@ -5,7 +5,7 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480068,The Pub: River Rune,Rune,Intro,Hound Pits Pub,,,
 219480069,The Void: Outsider's Gift Rune,Rune,Intro,The Void,,,
 219480070,Distillery District: Granny Rags Shrine Rune,Rune,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisAbstractItemPickup_19,Granny Rags' basement
-219480071,Distillery District: Granny Rags Gentlemen Callers Reward Rune,Rune,High Overseer Campbell,Distillery District (HOC),pickup (spawned),"DishonoredGameFull_P...DisAbstractItemPickup_N, match by position",spawns on Granny's top floor after the gentlemen callers; position TODO
+219480071,Distillery District: Granny Rags Gentlemen Callers Reward Rune,Rune,High Overseer Campbell,Distillery District (HOC),pickup (spawned),"DishonoredGameFull_P...DisAbstractItemPickup_N at -6138,-5804,3261",spawns on Granny's top floor after the gentlemen callers
 219480072,Distillery District: Granny Rags Poison Bootleg Elixer Reward Rune,Rune,High Overseer Campbell,Old Dunwall Distillery (HOC),,,
 219480073,Distillery District: Boulevard Confiscated Rune,Rune,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisAbstractItemPickup_26,guard station before the Overseer's office
 219480074,High Overseer's Office: Meeting Room Rune,Rune,High Overseer Campbell,High Overseer's Office,,,
@@ -71,7 +71,7 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480134,Southside Gate: Folded Galvani Resin Blueprint,Blueprint,The Royal Physician,Southside Gate,,,
 219480135,Boyle Mansion Exterior: Spiked Grenade Housing Blueprint,Blueprint,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
 219480136,Tower Interior: Small-scale Combustion Refinement Blueprint,Blueprint,Return to the Tower,Tower Interior,,,
-219480137,Distillery District: Bridge End Bone Charm,Bone Charm,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisWhaleBoneCharm_0,"behind the gate where guards unload bodies; probable, seen only as (load)"
+219480137,Distillery District: Bridge End Bone Charm,Bone Charm,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisWhaleBoneCharm_0,"behind the gate where guards unload bodies (seen twice as (load), at 642,-10745,2985)"
 219480138,Distillery District: Griff's Building Bone Charm,Bone Charm,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisWhaleBoneCharm_1,2nd floor of the building where Griff is saved
 219480139,Old Dunwall Distillery: Rafter Bone Charm,Bone Charm,High Overseer Campbell,Old Dunwall Distillery (HOC),,,
 219480140,Backyard: Rat Infested Building Bone Charm,Bone Charm,High Overseer Campbell,Backyard,,,

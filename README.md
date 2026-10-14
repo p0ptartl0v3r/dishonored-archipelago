@@ -9,8 +9,9 @@ item and location design comes from the Manual version by greenranger1200 (see `
 
 **Status:** the apworld generates seeds, and the client connects and plays the
 same as the Manual (send checks with `/check`, items are listed for you to apply
-by hand). Powers can be applied automatically through the in-game DLL in
-`native/` (written, not yet tested in-game). Location detection is next: see
+by hand). With the in-game DLL from `native/` installed, the client applies
+powers automatically and sends the locations that have `detect` patterns
+(a handful so far). See
 [docs/roadmap.md](docs/roadmap.md).
 
 ## Layout

@@ -56,7 +56,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": "|@Combat:2|"
+    "requires": "|@Combat:2|",
+    "detect": [
+      "pickup Rune_AbsItm near=-6138,-5804,3261"
+    ]
   },
   {
     "region": "Old Dunwall Distillery (HOC)",

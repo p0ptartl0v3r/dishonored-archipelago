@@ -132,5 +132,10 @@ def test_real_events_from_the_distillery_district():
     }
     for event, location in cases.items():
         assert game.match_event(event) == [ids[location]], event
+    spawned = (
+        "pickup DishonoredGameFull_P.TheWorld.PersistentLevel.DisAbstractItemPickup_64 DisAbstractItemPickup "
+        "Rune_AbsItm at=-6138,-5804,3261"
+    )
+    assert game.match_event(spawned) == [ids["Distillery District: Granny Rags Gentlemen Callers Reward Rune"]]
     # Coins and similar must not match anything.
     assert game.match_event(prefix + "DisAbstractItemPickup_29 DisAbstractItemPickup Coins_AbsItm at=0,0,0") == []
