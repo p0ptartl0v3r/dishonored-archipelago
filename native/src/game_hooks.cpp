@@ -55,6 +55,14 @@ DWORD g_last_resolve_tick = 0;
 int g_resolve_attempts = 0;
 DWORD g_last_check_tick = 0;
 std::atomic<bool> g_in_gameplay = false;
+// The main menu's background scene has a player pawn too, so "has a pawn" isn't
+// enough. The game starts in the menu; mapchange Dishonored_MainMenu returns to it;
+// gameplay that resumes after a loading screen (pawn lost, then regained) is a real level.
+std::atomic<bool> g_in_menu = true;
+bool g_ever_lost_gameplay = false;
+// A loaded save restores its own state for a moment after the pawn appears and would
+// overwrite anything granted earlier, so commands wait this long after gameplay starts.
+constexpr DWORD kSettleMs = 3000;
 thread_local bool g_inside_hook_work = false;
 
 // Names (FName indices) of the functions that signal check-relevant events.
@@ -216,14 +224,19 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
   if (name == g_names.destroyed) {
     if (!ue3::is_a(self, g_names.pickup_base)) return;
     // Pickups already collected in a save are destroyed while the level loads.
-    const bool during_load = !g_in_gameplay || GetTickCount() - g_gameplay_started_tick < 3000;
+    const bool during_load = !g_in_gameplay || GetTickCount() - g_gameplay_started_tick < kSettleMs;
     // Pickups spawned at runtime (rewards, drops) live in the persistent level and get
     // numbered in spawn order, so their names aren't stable; the position is.
     const auto at = ue3::field<ue3::FVector>(self, ue3::kActorLocation);
     emit_event(std::format("pickup {} {} {} at={:.0f},{:.0f},{:.0f}{}", ue3::path_name(self), ue3::class_name(self),
                            pickup_item_name(self), at.x, at.y, at.z, during_load ? " (load)" : ""));
   } else if (name == g_names.client_prepare_map_change) {
-    emit_event("mapchange " + ue3::name_string(*static_cast<ue3::FName*>(params)));
+    const std::string level = ue3::name_string(*static_cast<ue3::FName*>(params));
+    emit_event("mapchange " + level);
+    if (level.find("MainMenu") != std::string::npos && !g_in_menu) {
+      g_in_menu = true;
+      log("in main menu");
+    }
   } else if (name == g_names.on_add_abstract_item) {
     auto* action = *static_cast<ue3::UObject**>(params);
     if (action == nullptr) return;
@@ -283,8 +296,13 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
       ue3::UObject* controller = local_player_controller();
       // A pawn means we're playing, not in the main menu or a loading screen.
       const bool in_gameplay = controller != nullptr && ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn);
+      if (!in_gameplay && g_in_gameplay) g_ever_lost_gameplay = true;
       if (in_gameplay && !g_in_gameplay) {
         g_gameplay_started_tick = now;
+        if (g_ever_lost_gameplay && g_in_menu) {
+          g_in_menu = false;  // came back from a loading screen: a real level
+          log("left main menu");
+        }
         // Every level streams into one persistent map (DishonoredGameFull_P), so the map name
         // says nothing; the zone comes from pickup paths and mapchange events instead.
         emit_event("gameplay");
@@ -292,7 +310,8 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
       if (in_gameplay != g_in_gameplay) log("{}", in_gameplay ? "in gameplay" : "not in gameplay");
       if (!in_gameplay) g_cheats_tried_for = nullptr;  // a new controller may reuse the old address
       g_in_gameplay = in_gameplay;
-      g_cheats_ready = in_gameplay && ensure_cheat_manager(controller);
+      const bool settled = in_gameplay && !g_in_menu && now - g_gameplay_started_tick >= kSettleMs;
+      g_cheats_ready = settled && ensure_cheat_manager(controller);
       if (g_cheats_ready && g_queue_pending) drain_queue(controller);
     }
     g_inside_hook_work = false;
@@ -335,7 +354,10 @@ void queue_console_command(const std::string& command) {
 }
 
 CommandState command_state() {
-  if (g_console_command == nullptr || !g_in_gameplay) return CommandState::Waiting;
+  if (g_console_command == nullptr || !g_in_gameplay || g_in_menu ||
+      GetTickCount() - g_gameplay_started_tick < kSettleMs) {
+    return CommandState::Waiting;
+  }
   return g_cheats_ready ? CommandState::Ready : CommandState::NoCheats;
 }
 

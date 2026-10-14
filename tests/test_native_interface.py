@@ -137,6 +137,13 @@ def test_real_events_from_the_distillery_district():
         "Rune_AbsItm at=-6138,-5804,3261"
     )
     assert game.match_event(spawned) == [ids["Distillery District: Granny Rags Gentlemen Callers Reward Rune"]]
+    office = "pickup L_Ovrsr_Script.TheWorld.PersistentLevel."
+    assert game.match_event(office + "DisAbstractItemPickup_74 DisAbstractItemPickup Rune_AbsItm at=-1712,-27217,-255") == [
+        ids["High Overseer's Office: Campbell's Secret Room Rune"]
+    ]
+    assert game.match_event(office + "DisAbstractItemPickup_2 DisAbstractItemPickup Rune_AbsItm at=-2681,-27365,1542") == [
+        ids["High Overseer's Office: Meeting Room Rune"]
+    ]
     # Coins and similar must not match anything.
     assert game.match_event(prefix + "DisAbstractItemPickup_29 DisAbstractItemPickup Coins_AbsItm at=0,0,0") == []
 

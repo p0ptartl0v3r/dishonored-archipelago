@@ -123,6 +123,14 @@ through `ProcessEvent`.
   `EnableCheats` has nothing to instantiate. The F1 console unlocker evidently
   sets it. The DLL now sets CheatClass to `Class DishonoredGame.DishonoredCheatManager`
   before running EnableCheats (unconfirmed).
+- Setting CheatClass to `DishonoredCheatManager` then running `EnableCheats`
+  works: confirmed in-game, no F1 needed.
+- The main menu's background scene also has a player pawn, and a loaded save
+  keeps restoring itself for ~0.5s after the pawn appears (its `(load)` pickup
+  events come after). `AddPower` sent in either window was lost, so the DLL
+  now waits for real gameplay (not the menu) plus 3 seconds.
+- `L_Ovrsr_Kennel_P` is its own streaming level (mapchange from the office):
+  the Kennels zone key could gate it.
 - `CheatClass`/`CheatManager` are per controller: a new one after every load, so
   cheats have to be re-enabled after each load (the DLL does this).
 - The client must not mark an item delivered unless the command can work:

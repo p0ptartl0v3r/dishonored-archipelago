@@ -63,6 +63,14 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
 - [x] Survive save reloads: the client re-applies every received item after each
       load (`gameplay` event). Requires every item's command to set absolute
       state (verify that `AddPower X 1` doesn't downgrade/duplicate when replayed)
+- [ ] Block vanilla grants of randomized items. NPCs and level scripts hand out
+      powers, equipment and upgrades through Kismet actions that reach the player
+      as `OnAddPower`, `OnGiveUpgrade` and `OnGivePickup` (see research/notes.md).
+      The DLL sees each one in `ProcessEvent` and can skip it (not call the
+      original) when that item is randomized and hasn't been received, and report
+      it as an event (it may itself become a check). Same idea for buying powers
+      with runes and upgrades at Piero's. In-game door keys (`OnAddKey`) are not
+      randomized and stay untouched; the Archipelago "zone keys" are separate
 - Decisions: upgrades are granted outright (no shop changes for now); zone keys
   warn first, block later
 
