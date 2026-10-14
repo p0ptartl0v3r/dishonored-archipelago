@@ -9,13 +9,14 @@ Packages are in `Dishonored\DishonoredGame\CookedPCConsole`.
 
 | What | Class / function | Notes |
 |---|---|---|
-| Rune pickup | | |
-| Bone charm pickup | | |
-| Painting / blueprint pickup | | |
-| Buy Outsider power | | |
-| Piero upgrade purchase | | |
+| Any pickup | `ADisPickup_Base` | Base class of all pickups (from dismod's SDK, see prior-art.md) |
+| Rune pickup | `ADisAbstractItemPickup`? | Abstract item = `UDisTweaks_PlayerPawn.m_pRuneItem`. Unverified |
+| Bone charm pickup | `ADisWhaleBoneCharm` | |
+| Painting / blueprint pickup | ? | Stat `ePlayerStat_SokolovPaintingFound` exists |
+| Buy Outsider power | ? | `UDisPowerMenu`, cheat `AddPower` |
+| Piero upgrade purchase | ? | `ADisUpgrade`, `UDisTweaks_Upgrade`, cheat `AddUpgrade` |
 | Map load / transition | | |
-| Mission end screen | | |
+| Mission end screen | `UDisSeqAct_ShowMissionStats`? | `UDisGFxMoviePlayerMissionStats` |
 
 ## Packages worth opening (CookedPCConsole)
 
@@ -88,6 +89,11 @@ Other notes:
 | Command | Effect |
 |---|---|
 | `giverunes N` | Adds N runes |
+| `AbstractInventoryList` | ? (should list abstract item names) |
+| `AddPower <Name> <Level>` | ? |
+| `AddUpgrade <Name>` | ? |
+| `GiveBoneCharm` | ? |
+| `GivePlayerItem <TweakString>` | ? |
 
 ## Memory (Cheat Engine)
 
