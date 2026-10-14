@@ -116,8 +116,13 @@ through `ProcessEvent`.
 - `PlayerTick` doesn't exist as a script function in Dishonored (moved to native
   code), so the DLL finds the player via `DishonoredEngine.GamePlayers[0].Actor`.
 - Cheat commands only work once `PlayerController.CheatManager` (+0x45C) exists.
-  Enabling the console in-game (F1 with the console unlocker) creates it. The DLL
-  now calls `PlayerController.EnableCheats` itself when it's missing (unconfirmed).
+  Enabling the console in-game (F1 with the console unlocker) creates it.
+  Calling `PlayerController.EnableCheats` directly through ProcessEvent right
+  after loading did **not** create it. The DLL now runs `EnableCheats` as a
+  console command (what F1 does) and retries every 5s (unconfirmed).
+- The client must not mark an item delivered unless the command can work:
+  items now wait for `pong ready` (cheats on), and unverified power names are
+  shown to the player instead of being sent.
 
 ### From the first call log (unique mode)
 - F1 / console unlock = `Engine.PlayerController.EnableCheats`.

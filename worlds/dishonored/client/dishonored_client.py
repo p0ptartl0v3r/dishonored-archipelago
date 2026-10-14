@@ -63,9 +63,8 @@ class DishonoredContext(CommonContext):
         self.pending_checks: set[int] = set()
         self.goal_reached = False
         self.goal_sent = False
-        # Index into items_received of the next item to apply. TODO: once items are
-        # really applied in-game, this must be stored in the save file instead, or
-        # loading an old save will hand out items twice / not at all.
+        # Index into items_received of the next item to apply. Reset to 0 (replay
+        # everything) whenever the game reports that a save was loaded.
         self.items_applied = 0
         self.slot_data: dict[str, Any] = {}
 
@@ -93,17 +92,27 @@ class DishonoredContext(CommonContext):
 
 async def game_loop(ctx: DishonoredContext) -> None:
     game = ctx.game_interface
+    waiting_logged = False
+    next_attach = 0.0
     while not ctx.exit_event.is_set():
         try:
-            if not game.is_attached():
-                if game.attach():
+            attached = game.is_attached()
+            if not attached and asyncio.get_running_loop().time() >= next_attach:
+                attached = game.attach()
+                if attached:
                     logger.info(f"Game backend '{game.name}' attached")
+                    waiting_logged = False
                 else:
-                    await asyncio.sleep(2)
-                    continue
+                    next_attach = asyncio.get_running_loop().time() + 2
+                    if not waiting_logged:
+                        logger.info("Waiting for Dishonored (with the Archipelago dinput8.dll installed)...")
+                        waiting_logged = True
 
             if ctx.slot:
-                await sync_with_server(ctx, game)
+                if attached:
+                    await sync_with_game(ctx, game)
+                # /check and /goal work even while the game isn't running.
+                await send_checks_and_goal(ctx, set(), False)
         except Exception:
             logger.exception("Error in game loop")
             game.detach()
@@ -111,13 +120,30 @@ async def game_loop(ctx: DishonoredContext) -> None:
         await asyncio.sleep(POLL_SECONDS)
 
 
-async def sync_with_server(ctx: DishonoredContext, game: GameInterface) -> None:
-    found = game.poll_checked_locations() | ctx.pending_checks
+async def send_checks_and_goal(ctx: DishonoredContext, found: set[int], goal: bool) -> None:
+    found = found | ctx.pending_checks
     ctx.pending_checks.clear()
     new = found - ctx.locations_checked
     if new:
         await ctx.check_locations(new)
 
+    if (ctx.goal_reached or goal) and not ctx.goal_sent:
+        await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
+        ctx.finished_game = True
+        ctx.goal_sent = True
+        logger.info("Goal sent!")
+
+
+async def sync_with_game(ctx: DishonoredContext, game: GameInterface) -> None:
+    await send_checks_and_goal(ctx, game.poll_checked_locations(), game.poll_goal_reached())
+
+    # After a save is loaded the game may lack items granted since that save, so
+    # replay everything. Commands set absolute state (AddPower Blink 2), so
+    # replaying is safe.
+    if game.take_resync_request():
+        ctx.items_applied = 0
+
+    # Received items wait here until the game can take them (give_item returns False).
     while ctx.items_applied < len(ctx.items_received):
         net_item = ctx.items_received[ctx.items_applied]
         name = ctx.item_names.lookup_in_game(net_item.item)
@@ -125,12 +151,6 @@ async def sync_with_server(ctx: DishonoredContext, game: GameInterface) -> None:
         if not game.give_item(net_item.item, name, level):
             break
         ctx.items_applied += 1
-
-    if (ctx.goal_reached or game.poll_goal_reached()) and not ctx.goal_sent:
-        await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
-        ctx.finished_game = True
-        ctx.goal_sent = True
-        logger.info("Goal sent!")
 
 
 async def main(args) -> None:

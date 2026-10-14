@@ -16,8 +16,12 @@ void on_engine_ready();
 // Queue a console command; it runs on the game thread within ~100ms while in gameplay.
 void queue_console_command(const std::string& command);
 
-// True when commands can run: the engine objects were found and the player has a pawn.
-bool commands_ready();
+enum class CommandState {
+  Waiting,   // not in gameplay (menu, loading) or engine objects not found yet
+  NoCheats,  // in gameplay, but cheats couldn't be enabled, so cheat commands would fail
+  Ready,
+};
+CommandState command_state();
 
 void toggle_call_logging();
 

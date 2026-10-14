@@ -14,7 +14,14 @@ namespace {
 constexpr const wchar_t* kPipeName = L"\\\\.\\pipe\\dishonored_archipelago";
 
 std::string handle(const std::string& request) {
-  if (request == "ping") return commands_ready() ? "pong ready" : "pong waiting";
+  if (request == "ping") {
+    switch (command_state()) {
+      case CommandState::Ready: return "pong ready";
+      case CommandState::NoCheats: return "pong nocheats";
+      case CommandState::Waiting: break;
+    }
+    return "pong waiting";
+  }
   if (request.rfind("console ", 0) == 0) {
     queue_console_command(request.substr(8));
     return "queued";

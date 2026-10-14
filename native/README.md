@@ -10,7 +10,7 @@ function to the real system `dinput8.dll` and, inside the game:
   what fires when you pick up a rune.
 
 The Python client talks to it over the named pipe `\\.\pipe\dishonored_archipelago`
-(protocol in `src/pipe_server.hpp`), using `--backend native`.
+(protocol in `src/pipe_server.hpp`). That is the client's default mode.
 
 **Status:** compiles (MinGW cross-build, checked in CI) but **has not been run
 in the game yet**. Expect the first in-game test to need fixes; the log file
@@ -43,7 +43,7 @@ To uninstall, delete `dinput8.dll`.
    (`pong waiting` means commands aren't running yet; see Troubleshooting).
 4. Run `python tools/native_console.py "console GiveRunes 1"`. Your rune count
    should go up, and the log shows `console: GiveRunes 1`.
-5. Finally, the real thing: launch the Dishonored Client with `--backend native`.
+5. Finally, the real thing: open **Dishonored Client** from the Archipelago Launcher.
    Received powers are applied automatically.
 
 ## Game events (for location checks)
@@ -96,7 +96,7 @@ In `archipelago_native.ini`, set `[Research] LogCalls=`:
 | `ProcessEvent not found` | Your exe differs from the one the byte pattern came from. Find the function (e.g. with dismod or x32dbg) and set `ProcessEventOffset` |
 | `engine tables not usable` | `GNamesOffset`/`GObjectsOffset` are wrong for your build |
 | `pong waiting` forever in gameplay, no `in gameplay` line | The DLL can't see the player's pawn. Send the log; the offsets in `src/ue3.hpp` may differ for your build |
-| `EnableCheats did not create a CheatManager`, commands "not recognized" | Cheats couldn't be switched on from the DLL. Enable the console in-game the usual way (your console unlocker's key), then retry |
+| `EnableCheats did not create a CheatManager` | The DLL couldn't switch cheats on (it retries every 5s). Items wait meanwhile, and `ping` answers `pong nocheats`. Enable the console in-game the usual way (F1) and they'll go through. Please send the log line, including the `CheatClass` it names |
 | a command runs but nothing happens | Same as typing it in the console: check the name, or it's one of the stripped cheats |
 
 ## Build
