@@ -46,6 +46,34 @@ To uninstall, delete `dinput8.dll`.
 5. Finally, the real thing: launch the Dishonored Client with `--backend native`.
    Received powers are applied automatically.
 
+## Game events (for location checks)
+
+The DLL reports these as they happen. They're written to the log as
+`event: ...`, the client shows unmatched ones as `Game event (no location): ...`,
+and `python tools/native_console.py "event 0"` (1, 2, ...) reads them directly.
+
+| Event | When |
+|---|---|
+| `gameplay <map>` | Gameplay starts in a map (after loading a save or a level transition), e.g. `gameplay L_Streets1_P` |
+| `mapchange <level>` | The game starts loading another level |
+| `pickup <object path> <class> <item>` | A pickup actor was taken (destroyed). `<item>` is the abstract item (e.g. the rune item) or the bone charm type. Ends in `(load)` when it happened while a level was loading, which is how already-collected pickups are removed from a save |
+| `additem <kismet action path> <item>` | A level script gave the player an item (scripted rewards) |
+| `objective <kismet action path> <class> <objectives>` | A level script changed objectives |
+
+To turn an event into a check, add its text (or the start of it) to the
+location's `detect` list in `worlds/dishonored/data/locations.json`:
+
+```json
+{
+  "name": "Distillery District: Boulevard Confiscated Rune",
+  "region": "Distillery District (HOC)",
+  "detect": ["pickup L_Streets1_P.TheWorld.PersistentLevel.DisAbstractItemPickup_12 "]
+}
+```
+
+A trailing space after the object name stops `..._12` also matching `..._120`.
+Put a `detect` on the victory location to make finishing the game send the goal.
+
 ## Researching pickups (call logging)
 
 In `archipelago_native.ini`, set `[Research] LogCalls=`:

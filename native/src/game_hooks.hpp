@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <string>
 
 #include "config.hpp"
@@ -19,5 +20,9 @@ void queue_console_command(const std::string& command);
 bool commands_ready();
 
 void toggle_call_logging();
+
+// Game events seen since the game started (pickups, map changes, ...), in order.
+// Index-based so a reconnecting client can replay from 0.
+std::optional<std::string> get_event(size_t index);
 
 }  // namespace ap

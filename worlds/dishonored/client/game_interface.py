@@ -13,6 +13,7 @@ from __future__ import annotations
 import logging
 from abc import ABC, abstractmethod
 
+from ..game_data import load as load_game_data
 from .item_commands import UNVERIFIED, commands_for
 
 logger = logging.getLogger("DishonoredClient")
@@ -141,8 +142,9 @@ class MemoryInterface(GameInterface):
 class NativeInterface(GameInterface):
     """Talks to the in-game DLL (native/) over a named pipe.
 
-    Location detection is not implemented yet; items with a known console command
-    are granted automatically, everything else is shown to the player as before.
+    Locations with "detect" patterns in locations.json are sent when the DLL reports
+    a matching game event. Items with a known console command are granted
+    automatically; everything else is shown to the player as before.
     """
 
     name = "native"
@@ -150,10 +152,20 @@ class NativeInterface(GameInterface):
 
     def __init__(self) -> None:
         self._pipe = None
+        self._next_event = 0
+        self._goal_reached = False
+        data = load_game_data()
+        # (event prefix, location id or None for the goal)
+        self._detectors: list[tuple[str, int | None]] = [
+            (pattern, location.id) for location in data.locations.values() for pattern in location.detect
+        ]
 
     def attach(self) -> bool:
         try:
             self._pipe = open(self.PIPE_PATH, "r+b", buffering=0)
+            # The DLL keeps every event since the game started; replay them all
+            # (the server ignores locations it already has).
+            self._next_event = 0
             self._request("ping")
         except OSError:
             self._pipe = None
@@ -192,12 +204,32 @@ class NativeInterface(GameInterface):
     def _ready(self) -> bool:
         return self._request("ping") == "pong ready"
 
+    def match_event(self, text: str) -> list[int | None]:
+        """Location IDs (None = goal) that a game event completes."""
+        text = text.removesuffix(" (load)")
+        return [location for pattern, location in self._detectors if text.startswith(pattern)]
+
     def poll_checked_locations(self) -> set[int]:
-        # TODO: report pickups once the DLL detects them.
-        return set()
+        found: set[int] = set()
+        try:
+            while (reply := self._request(f"event {self._next_event}")) != "none":
+                _, _, text = reply.split(" ", 2)
+                self._next_event += 1
+                matches = self.match_event(text)
+                if not matches:
+                    # Shown so you can copy it into a location's "detect" list.
+                    logger.info(f"Game event (no location): {text}")
+                for location in matches:
+                    if location is None:
+                        self._goal_reached = True
+                    else:
+                        found.add(location)
+        except (OSError, ValueError):
+            pass
+        return found
 
     def poll_goal_reached(self) -> bool:
-        return False
+        return self._goal_reached
 
     def give_item(self, item_id: int, item_name: str, level: int) -> bool:
         commands = commands_for(item_name, level)

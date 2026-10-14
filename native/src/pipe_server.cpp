@@ -2,6 +2,7 @@
 
 #include <windows.h>
 
+#include <format>
 #include <string>
 
 #include "game_hooks.hpp"
@@ -17,6 +18,16 @@ std::string handle(const std::string& request) {
   if (request.rfind("console ", 0) == 0) {
     queue_console_command(request.substr(8));
     return "queued";
+  }
+  if (request.rfind("event ", 0) == 0) {
+    size_t index = 0;
+    try {
+      index = std::stoul(request.substr(6));
+    } catch (...) {
+      return "error bad index";
+    }
+    const auto event = get_event(index);
+    return event ? std::format("event {} {}", index, *event) : "none";
   }
   if (request.rfind("mark", 0) == 0) {
     log("==== MARK {} ====", request.size() > 5 ? request.substr(5) : "");

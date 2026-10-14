@@ -119,6 +119,20 @@ through `ProcessEvent`.
   Enabling the console in-game (F1 with the console unlocker) creates it. The DLL
   now calls `PlayerController.EnableCheats` itself when it's missing (unconfirmed).
 
+### From the first call log (unique mode)
+- F1 / console unlock = `Engine.PlayerController.EnableCheats`.
+- Loading a save: `OnLoadGameConfirm` -> `PreClientTravel` -> `GameEnding`, then the
+  new level. Pickups already collected are removed with `Destroyed` right after
+  load (`KActor.Destroyed on DisStatPickup`).
+- Rune-related: `DishonoredPawn.OnAddAbstractItem` (scripted item gift),
+  `KActor.SpawnedByKismet on DisAbstractItemPickup` (a pickup spawned by a level
+  script), `DishonoredPlayerController.OnObjectiveAction`, `DishonoredPlayerPawn.OnAddKey`.
+- Map changes: `PlayerController.ClientPrepareMapChange` / `ClientCommitMapChange`.
+- Death: player death shows up as the pause menu's `OnLoadLastSaveClicked` after
+  `NotifyTakeHit`; NPC deaths call `GameInfo.NotifyKilled` / `DishonoredPawn.PlayDying`.
+- Unique mode hides repeats (only the first rune pickup appears), so the DLL now
+  reports pickups, map changes, scripted items and objectives as events instead.
+
 ## Memory (Cheat Engine)
 
 | Value | Module + pointer path | Type | Notes |

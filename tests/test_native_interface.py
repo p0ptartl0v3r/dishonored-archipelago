@@ -4,8 +4,9 @@ from dishonored.client.game_interface import NativeInterface
 
 
 class FakePipe:
-    def __init__(self, ready: bool = True) -> None:
+    def __init__(self, ready: bool = True, events: list[str] | None = None) -> None:
         self.ready = ready
+        self.events = events or []
         self.sent: list[str] = []
         self._out = bytearray()
 
@@ -16,6 +17,9 @@ class FakePipe:
             reply = "pong ready" if self.ready else "pong waiting"
         elif request.startswith("console "):
             reply = "queued"
+        elif request.startswith("event "):
+            index = int(request.split()[1])
+            reply = f"event {index} {self.events[index]}" if index < len(self.events) else "none"
         else:
             reply = "error unknown request"
         self._out += (reply + "\n").encode()
@@ -60,3 +64,23 @@ def test_lost_pipe_detaches_and_retries():
     game = attached(BrokenPipe())
     assert not game.give_item(0, "Progressive Blink", 1)
     assert not game.is_attached()
+
+
+def test_events_become_locations_and_goal():
+    pipe = FakePipe(
+        events=[
+            "gameplay L_Prison_P",
+            "pickup L_Prison_P.TheWorld.PersistentLevel.DisAbstractItemPickup_3 DisAbstractItemPickup Rune (load)",
+            "mapchange L_Out_P",
+        ]
+    )
+    game = attached(pipe)
+    game._detectors = [
+        ("pickup L_Prison_P.TheWorld.PersistentLevel.DisAbstractItemPickup_3 ", 111),
+        ("mapchange L_Out_", None),
+    ]
+    assert game.poll_checked_locations() == {111}
+    assert game.poll_goal_reached()
+    # Already-read events are not fetched again.
+    assert game.poll_checked_locations() == set()
+    assert pipe.sent.count("event 0") == 1

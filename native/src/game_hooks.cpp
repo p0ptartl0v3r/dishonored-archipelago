@@ -54,6 +54,22 @@ DWORD g_last_check_tick = 0;
 std::atomic<bool> g_in_gameplay = false;
 thread_local bool g_inside_hook_work = false;
 
+// Names (FName indices) of the functions that signal check-relevant events.
+struct EventNames {
+  int32_t destroyed = -1;                  // Actor.Destroyed: a pickup was taken (or removed on load)
+  int32_t client_prepare_map_change = -1;  // PlayerController.ClientPrepareMapChange(LevelName, ...)
+  int32_t on_add_abstract_item = -1;       // DishonoredPawn.OnAddAbstractItem: scripted item reward
+  int32_t on_objective_action = -1;        // DishonoredPlayerController.OnObjectiveAction
+  int32_t pickup_base = -1;                // class DisPickup_Base
+  int32_t abstract_item_pickup = -1;       // class DisAbstractItemPickup
+  int32_t whale_bone_charm = -1;           // class DisWhaleBoneCharm
+};
+EventNames g_names;
+DWORD g_gameplay_started_tick = 0;
+
+std::mutex g_events_mutex;
+std::vector<std::string> g_events;
+
 std::atomic<bool> g_call_logging = true;
 std::mutex g_seen_mutex;
 std::unordered_set<ue3::UFunction*> g_seen_functions;
@@ -143,6 +159,53 @@ ue3::UObject* local_player_controller() {
   return ue3::field<ue3::UObject*>(players.data[0], ue3::kPlayerActor);
 }
 
+void emit_event(std::string text) {
+  log("event: {}", text);
+  std::lock_guard lock(g_events_mutex);
+  g_events.push_back(std::move(text));
+}
+
+std::string pickup_item_name(ue3::UObject* pickup) {
+  auto* tweaks = ue3::field<ue3::UObject*>(pickup, ue3::kPickupTweaks);
+  if (tweaks == nullptr) return "?";
+  if (ue3::is_a(pickup, g_names.abstract_item_pickup)) {
+    return ue3::object_name(ue3::field<ue3::UObject*>(tweaks, ue3::kAbstractPickupTweaksItem));
+  }
+  if (ue3::is_a(pickup, g_names.whale_bone_charm)) return ue3::object_name(tweaks);
+  return "-";
+}
+
+// Called on the game thread for every ProcessEvent, before the function runs
+// (so the object is still intact). Cheap integer compares unless something matches.
+void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
+  const int32_t name = function->name.index;
+  if (name == g_names.destroyed) {
+    if (!ue3::is_a(self, g_names.pickup_base)) return;
+    // Pickups already collected in a save are destroyed while the level loads.
+    const bool during_load = !g_in_gameplay || GetTickCount() - g_gameplay_started_tick < 3000;
+    emit_event(std::format("pickup {} {} {}{}", ue3::path_name(self), ue3::class_name(self), pickup_item_name(self),
+                           during_load ? " (load)" : ""));
+  } else if (name == g_names.client_prepare_map_change) {
+    emit_event("mapchange " + ue3::name_string(*static_cast<ue3::FName*>(params)));
+  } else if (name == g_names.on_add_abstract_item) {
+    auto* action = *static_cast<ue3::UObject**>(params);
+    if (action == nullptr) return;
+    auto* item = ue3::field<ue3::UObject*>(action, ue3::kAddAbstractItemActionItem);
+    emit_event(std::format("additem {} {}", ue3::path_name(action), ue3::object_name(item)));
+  } else if (name == g_names.on_objective_action) {
+    auto* action = *static_cast<ue3::UObject**>(params);
+    if (action == nullptr) return;
+    const auto objectives =
+        ue3::field<ue3::TArray<ue3::UObject*>>(action, ue3::kObjectiveActionObjectives);
+    std::string names;
+    for (int32_t i = 0; i < objectives.count && objectives.data != nullptr; ++i) {
+      names += (names.empty() ? "" : ",") + ue3::object_name(objectives.data[i]);
+    }
+    emit_event(std::format("objective {} {} {}", ue3::path_name(action), ue3::class_name(action),
+                           names.empty() ? "-" : names));
+  }
+}
+
 // Finds the engine object and ConsoleCommand. Retried until they are loaded.
 void resolve_engine_objects() {
   const DWORD now = GetTickCount();
@@ -158,6 +221,13 @@ void resolve_engine_objects() {
     }
     return;
   }
+  g_names.destroyed = ue3::find_name_index("Destroyed");
+  g_names.client_prepare_map_change = ue3::find_name_index("ClientPrepareMapChange");
+  g_names.on_add_abstract_item = ue3::find_name_index("OnAddAbstractItem");
+  g_names.on_objective_action = ue3::find_name_index("OnObjectiveAction");
+  g_names.pickup_base = ue3::find_name_index("DisPickup_Base");
+  g_names.abstract_item_pickup = ue3::find_name_index("DisAbstractItemPickup");
+  g_names.whale_bone_charm = ue3::find_name_index("DisWhaleBoneCharm");
   g_enable_cheats = ue3::find_object("Function Engine.PlayerController.EnableCheats");
   if (g_enable_cheats == nullptr) log("WARNING: PlayerController.EnableCheats not found");
   g_console_command = console_command;
@@ -170,6 +240,7 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
     g_inside_hook_work = true;
     if (g_console_command == nullptr) resolve_engine_objects();
     if (g_config.call_log != CallLogMode::Off && g_call_logging) log_call(self, function);
+    if (g_console_command != nullptr) detect_events(self, function, params);
     // ProcessEvent runs thousands of times a frame; look at the player at most every 100ms.
     const DWORD now = GetTickCount();
     if (g_console_command != nullptr && now - g_last_check_tick >= 100) {
@@ -177,6 +248,10 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
       ue3::UObject* controller = local_player_controller();
       // A pawn means we're playing, not in the main menu or a loading screen.
       const bool in_gameplay = controller != nullptr && ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn);
+      if (in_gameplay && !g_in_gameplay) {
+        g_gameplay_started_tick = now;
+        emit_event("gameplay " + ue3::package_name(controller));  // the map we're playing in
+      }
       if (in_gameplay != g_in_gameplay) log("{}", in_gameplay ? "in gameplay" : "not in gameplay");
       if (!in_gameplay) g_cheats_tried_for = nullptr;  // a new controller may reuse the old address
       g_in_gameplay = in_gameplay;
@@ -226,6 +301,12 @@ bool commands_ready() { return g_console_command != nullptr && g_in_gameplay; }
 void toggle_call_logging() {
   g_call_logging = !g_call_logging;
   log("---- call logging {} ----", g_call_logging ? "resumed" : "paused");
+}
+
+std::optional<std::string> get_event(size_t index) {
+  std::lock_guard lock(g_events_mutex);
+  if (index >= g_events.size()) return std::nullopt;
+  return g_events[index];
 }
 
 }  // namespace ap

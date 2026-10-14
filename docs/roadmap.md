@@ -27,11 +27,13 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
 - [x] Client with `/check` and `/goal`, which plays the same as the Manual
 - [x] Tests and CI
 
-### 0.5 In-game DLL, first slice (written, untested in-game)
+### 0.5 In-game DLL, first slice
 - [x] `native/`: `dinput8.dll` proxy, `ProcessEvent` hook, named pipe to the client
 - [x] Client `--backend native` runs `AddPower` etc. for received items
 - [x] Call logging (`LogCalls=unique|filter`, F8 marker) for pickup research
-- [ ] First in-game test (see native/README.md, "First test")
+- [x] First in-game test: hook, engine tables, gameplay detection, console commands work
+- [x] Events for checks: pickups, map changes, scripted items, objectives
+- [ ] Fill `detect` for each location in locations.json (play and copy events)
 
 ### 1. Look inside the game
 - [ ] Pick and record the game build you'll support
