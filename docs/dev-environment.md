@@ -38,7 +38,12 @@ when you attach to the game, break inside a hook and inspect memory.
   it once you hunt for native functions such as `ProcessEvent`.
 - Optional: ReClass.NET (map out structs in memory), System Informer (inspect processes).
 
-**Native DLL (step 4 onward)**
+**Native DLL**
+
+You can skip installing anything at first: CI builds `dinput8.dll` with MinGW
+(download the `native-dll` artifact). Install Visual Studio when you want to
+change the C++ and debug it inside the game.
+
 - Visual Studio 2022 Community with the **Desktop development with C++** workload
 - CMake (bundled with Visual Studio)
 - vcpkg for libraries (MinHook for hooking, apclientpp if the DLL ever talks to the
