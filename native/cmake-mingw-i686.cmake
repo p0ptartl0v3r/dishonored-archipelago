@@ -1,5 +1,4 @@
-# Cross-compile from Linux (run from the repo root; the path must be absolute):
-#   cmake -S native -B native/build-mingw -DCMAKE_TOOLCHAIN_FILE="$PWD/native/cmake-mingw-i686.cmake"
+# Cross-compile from Linux. Used by the "mingw-x86" preset: cmake --preset mingw-x86
 set(CMAKE_SYSTEM_NAME Windows)
 set(CMAKE_SYSTEM_PROCESSOR x86)
 set(CMAKE_C_COMPILER i686-w64-mingw32-gcc)

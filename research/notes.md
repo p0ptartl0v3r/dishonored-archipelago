@@ -109,6 +109,13 @@ that level scripts use, which must exist in the release build:
 `OnGiveUpgrade` / `OnAddPower` / `OnGivePickup`. A native DLL can call those
 through `ProcessEvent`.
 
+## Native module findings
+
+- Steam build: `ProcessEvent` at exe+0x70640 (found by pattern); dismod's
+  GNames/GObjects offsets are valid for it.
+- `PlayerTick` doesn't exist as a script function in Dishonored (moved to native
+  code), so the DLL finds the player via `DishonoredEngine.GamePlayers[0].Actor`.
+
 ## Memory (Cheat Engine)
 
 | Value | Module + pointer path | Type | Notes |

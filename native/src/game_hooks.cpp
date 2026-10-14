@@ -45,10 +45,11 @@ std::atomic<bool> g_queue_pending = false;
 std::atomic<bool> g_engine_ready = false;
 // Looked up on the game thread (the object table can change under another thread).
 std::atomic<ue3::UFunction*> g_console_command = nullptr;
+ue3::UObject* g_engine = nullptr;  // lives as long as the process
 DWORD g_last_resolve_tick = 0;
 int g_resolve_attempts = 0;
-std::vector<int32_t> g_drain_names;  // FName indices of DrainOn functions
-std::atomic<DWORD> g_last_drain_tick = 0;
+DWORD g_last_check_tick = 0;
+std::atomic<bool> g_in_gameplay = false;
 thread_local bool g_inside_hook_work = false;
 
 std::atomic<bool> g_call_logging = true;
@@ -116,36 +117,32 @@ void drain_queue(ue3::UObject* player_controller) {
   for (const auto& command : commands) run_console_command(player_controller, command);
 }
 
-bool is_drain_point(ue3::UObject* self, ue3::UFunction* function) {
-  for (int32_t index : g_drain_names) {
-    if (function->name.index == index) {
-      return ue3::class_name(self).find("PlayerController") != std::string::npos;
-    }
-  }
-  return false;
+// The local player's controller, read fresh from the engine each time (it is
+// replaced on every map load, so it must never be cached).
+ue3::UObject* local_player_controller() {
+  if (g_engine == nullptr) return nullptr;
+  const auto players = ue3::field<ue3::TArray<ue3::UObject*>>(g_engine, ue3::kEngineGamePlayers);
+  if (players.count <= 0 || players.data == nullptr || players.data[0] == nullptr) return nullptr;
+  return ue3::field<ue3::UObject*>(players.data[0], ue3::kPlayerActor);
 }
 
-// Finds ConsoleCommand and the DrainOn names. Retried until the Engine package is loaded.
+// Finds the engine object and ConsoleCommand. Retried until they are loaded.
 void resolve_engine_objects() {
   const DWORD now = GetTickCount();
   if (now - g_last_resolve_tick < 1000) return;
   g_last_resolve_tick = now;
 
+  if (g_engine == nullptr) g_engine = ue3::find_instance("DishonoredEngine");
   ue3::UFunction* console_command = ue3::find_object("Function Engine.PlayerController.ConsoleCommand");
-  if (console_command == nullptr) {
-    if (++g_resolve_attempts == 30) log("WARNING: PlayerController.ConsoleCommand still not found after 30s");
+  if (g_engine == nullptr || console_command == nullptr) {
+    if (++g_resolve_attempts == 30) {
+      log("WARNING: after 30s still missing:{}{}", g_engine ? "" : " DishonoredEngine",
+          console_command ? "" : " PlayerController.ConsoleCommand");
+    }
     return;
   }
-  for (const auto& name : g_config.drain_on) {
-    const int32_t index = ue3::find_name_index(name);
-    if (index < 0) {
-      log("WARNING: DrainOn function name '{}' does not exist", name);
-    } else {
-      g_drain_names.push_back(index);
-    }
-  }
   g_console_command = console_command;
-  log("found PlayerController.ConsoleCommand; ready for console commands");
+  log("found DishonoredEngine ({}) and PlayerController.ConsoleCommand", ue3::object_name(g_engine));
 }
 
 void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction* function, void* params,
@@ -154,9 +151,16 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
     g_inside_hook_work = true;
     if (g_console_command == nullptr) resolve_engine_objects();
     if (g_config.call_log != CallLogMode::Off && g_call_logging) log_call(self, function);
-    if (g_console_command != nullptr && is_drain_point(self, function)) {
-      g_last_drain_tick = GetTickCount();
-      if (g_queue_pending) drain_queue(self);
+    // ProcessEvent runs thousands of times a frame; look at the player at most every 100ms.
+    const DWORD now = GetTickCount();
+    if (g_console_command != nullptr && now - g_last_check_tick >= 100) {
+      g_last_check_tick = now;
+      ue3::UObject* controller = local_player_controller();
+      // A pawn means we're playing, not in the main menu or a loading screen.
+      const bool in_gameplay = controller != nullptr && ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn);
+      if (in_gameplay != g_in_gameplay) log("{}", in_gameplay ? "in gameplay" : "not in gameplay");
+      g_in_gameplay = in_gameplay;
+      if (in_gameplay && g_queue_pending) drain_queue(controller);
     }
     g_inside_hook_work = false;
   }
@@ -197,9 +201,7 @@ void queue_console_command(const std::string& command) {
   g_queue_pending = true;
 }
 
-bool commands_ready() {
-  return g_console_command != nullptr && GetTickCount() - g_last_drain_tick.load() < 2000;
-}
+bool commands_ready() { return g_console_command != nullptr && g_in_gameplay; }
 
 void toggle_call_logging() {
   g_call_logging = !g_call_logging;

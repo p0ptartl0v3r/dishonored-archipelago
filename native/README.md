@@ -22,7 +22,9 @@ says where it stopped.
    or build it (below).
 2. Copy `dinput8.dll` and `archipelago_native.ini` into the game's
    `Binaries\Win32` folder (next to `Dishonored.exe`).
-3. Start the game. `archipelago_native.log` appears in the same folder.
+3. Start the game. `archipelago_native.log` appears in the same folder. If that
+   folder isn't writable (common under `Program Files`), it goes to
+   `%LOCALAPPDATA%\DishonoredArchipelago\archipelago_native.log` instead.
 
 To uninstall, delete `dinput8.dll`.
 
@@ -34,7 +36,8 @@ To uninstall, delete `dinput8.dll`.
    Archipelago native module loaded
    ProcessEvent at exe+0x...
    engine tables found
-   found PlayerController.ConsoleCommand; ready for console commands
+   found DishonoredEngine (...) and PlayerController.ConsoleCommand
+   in gameplay
    ```
 3. Run `python tools/native_console.py ping`. Expect `pong ready`
    (`pong waiting` means commands aren't running yet; see Troubleshooting).
@@ -61,32 +64,68 @@ In `archipelago_native.ini`, set `[Research] LogCalls=`:
 
 | Log says | Meaning / fix |
 |---|---|
-| nothing, no log file | The game didn't load the DLL. Check it's in `Binaries\Win32` and named `dinput8.dll` |
+| no log file in either place | The game didn't load the DLL. Check it's in `Binaries\Win32`, named exactly `dinput8.dll` (Windows may hide the extension, so watch for `dinput8.dll.dll`) |
 | `ProcessEvent not found` | Your exe differs from the one the byte pattern came from. Find the function (e.g. with dismod or x32dbg) and set `ProcessEventOffset` |
 | `engine tables not usable` | `GNamesOffset`/`GObjectsOffset` are wrong for your build |
-| `pong waiting` forever in gameplay | `DrainOn` function never fires. Run with `LogCalls=unique`, find a per-frame function on the PlayerController, add it to `DrainOn` |
+| `pong waiting` forever in gameplay, no `in gameplay` line | The DLL can't see the player's pawn. Send the log; the offsets in `src/ue3.hpp` may differ for your build |
 | a command runs but nothing happens | Same as typing it in the console: check the name, or it's one of the stripped cheats |
 
 ## Build
 
-### Visual Studio 2022 (Windows)
+You don't have to build it to try it: every push to GitHub builds `dinput8.dll`
+in CI. Open the repository's **Actions** tab, click the latest **CI** run, and
+download **native-dll** under *Artifacts* (you must be signed in to GitHub). It's a
+zip containing `dinput8.dll` and `archipelago_native.ini`.
 
+Build it yourself when you want to change the C++.
+
+### Windows, Visual Studio 2022
+
+One-time setup:
+
+1. Install [Visual Studio 2022 Community](https://visualstudio.microsoft.com/vs/community/).
+   In the installer, tick the **Desktop development with C++** workload. Its
+   defaults include the MSVC compiler, the Windows SDK and "C++ CMake tools for
+   Windows", which is everything this needs.
+2. Install [Git for Windows](https://git-scm.com/download/win) if you don't have it.
+   The build downloads MinHook with git.
+
+**From the command line** (simplest): open **Developer PowerShell for VS 2022**
+from the Start menu, go to the repo, and run:
+
+```powershell
+cd native
+cmake --preset windows-x86
+cmake --build --preset windows-x86-release
 ```
-cmake -S native -B native/build -A Win32
-cmake --build native/build --config Release
-```
 
-Output: `native/build/Release/dinput8.dll`. Or open the `native` folder in
-Visual Studio ("Open a local folder"); it picks up the CMake project. Pick an
-x86 configuration.
+The DLL is at `native\build\windows-x86\Release\dinput8.dll`.
 
-### MinGW (Linux, or what CI uses)
+**From the Visual Studio UI:** *File > Open > Folder...* and pick the `native`
+folder. When it asks, choose the **Windows 32-bit (Visual Studio 2022)** preset
+(it's also in the toolbar dropdown), then *Build > Build All*. Don't use the
+default x64 configuration: the build refuses 64-bit on purpose, because the
+game is 32-bit.
 
-```
+The first configure takes a minute because it downloads MinHook.
+
+### Linux (what CI does)
+
+```bash
 sudo apt install g++-mingw-w64-i686 cmake
-cmake -S native -B native/build-mingw -DCMAKE_TOOLCHAIN_FILE="$PWD/native/cmake-mingw-i686.cmake" -DCMAKE_BUILD_TYPE=Release
-cmake --build native/build-mingw
+cd native
+cmake --preset mingw-x86
+cmake --build --preset mingw-x86
 ```
+
+Output: `native/build/mingw-x86/dinput8.dll`. It runs on Windows like the
+Visual Studio build.
+
+### If the Visual Studio build fails
+
+The MinGW build is checked by CI; the Visual Studio build hasn't been tried
+yet. Paste the first error and it should be a small fix. Meanwhile, use the CI
+download.
 
 ## Debugging
 

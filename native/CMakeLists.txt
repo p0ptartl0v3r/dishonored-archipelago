@@ -8,6 +8,8 @@ endif()
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Static MSVC runtime for everything (MinHook included), so players need no redistributable.
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 include(FetchContent)
 FetchContent_Declare(
@@ -40,8 +42,8 @@ set_target_properties(dinput8 PROPERTIES OUTPUT_NAME "dinput8" PREFIX "")
 
 if(MSVC)
   target_sources(dinput8 PRIVATE src/dinput8.def)
-  target_compile_options(dinput8 PRIVATE /W4 /permissive-)
-  set_property(TARGET dinput8 PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  target_compile_options(dinput8 PRIVATE /W4 /permissive- /utf-8)
+  target_compile_definitions(dinput8 PRIVATE _CRT_SECURE_NO_WARNINGS)
 else()
   # Export undecorated stdcall names and avoid depending on MinGW runtime DLLs.
   target_link_options(dinput8 PRIVATE -Wl,--kill-at -static -static-libgcc -static-libstdc++ -s)

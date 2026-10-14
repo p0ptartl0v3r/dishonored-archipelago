@@ -12,10 +12,10 @@ bool install_hooks(const Config& config);
 // Call once the engine's name/object tables are valid. Lookups then happen on the game thread.
 void on_engine_ready();
 
-// Queue a console command; it runs on the game thread at the next drain point.
+// Queue a console command; it runs on the game thread within ~100ms while in gameplay.
 void queue_console_command(const std::string& command);
 
-// True when commands can run: ConsoleCommand was found and a drain point fired recently.
+// True when commands can run: the engine objects were found and the player has a pawn.
 bool commands_ready();
 
 void toggle_call_logging();

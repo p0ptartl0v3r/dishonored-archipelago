@@ -5,8 +5,9 @@
 
 namespace ap {
 
-// Opens archipelago_native.log next to the DLL. Safe to call from any thread.
-void log_init(const std::wstring& path);
+// Opens the log at `path`, or under %LOCALAPPDATA%\DishonoredArchipelago if that
+// folder isn't writable. Returns the path actually used (empty if none worked).
+std::wstring log_init(const std::wstring& path);
 void log_line(const std::string& line);
 
 template <typename... Args>
