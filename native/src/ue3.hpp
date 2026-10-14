@@ -18,6 +18,10 @@ struct TArray {
   int32_t max;
 };
 
+struct FVector {
+  float x, y, z;
+};
+
 struct FName {
   int32_t index;
   int32_t number;
@@ -56,6 +60,12 @@ inline constexpr size_t kEngineGamePlayers = 0x480;  // UEngine::GamePlayers (TA
 inline constexpr size_t kPlayerActor = 0x3C;         // UPlayer::Actor (APlayerController*)
 inline constexpr size_t kControllerPawn = 0x248;     // AController::Pawn
 inline constexpr size_t kPlayerControllerCheatManager = 0x45C;  // APlayerController::CheatManager
+inline constexpr size_t kActorLocation = 0xC4;                   // AActor::Location (FVector)
+inline constexpr size_t kStructSuperField = 0x44;                // UStruct::SuperField (parent class)
+inline constexpr size_t kPickupTweaks = 0x3B8;                   // ADisAbstractItemPickup / ADisWhaleBoneCharm::m_pTweaks
+inline constexpr size_t kAbstractPickupTweaksItem = 0xDC;        // UDisTweaks_AbstractItemPickup::m_pAbstractItem
+inline constexpr size_t kAddAbstractItemActionItem = 0xF8;       // UDisSeqAct_AddAbstractItem::m_pItemToAdd
+inline constexpr size_t kObjectiveActionObjectives = 0xFC;       // UDisSeqAct_ObjectiveAction::m_Objectives
 
 template <typename T>
 T field(const UObject* object, size_t offset) {
@@ -82,6 +92,12 @@ std::string object_name(const UObject* object);
 std::string class_name(const UObject* object);
 // "Function Engine.PlayerController.ConsoleCommand"
 std::string full_name(const UObject* object);
+// Same without the class: "L_Prison_P.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+std::string path_name(const UObject* object);
+// Outermost package, e.g. the map an actor belongs to ("L_Prison_P").
+std::string package_name(const UObject* object);
+// True if the object's class is `class_name_index` or inherits from it.
+bool is_a(const UObject* object, int32_t class_name_index);
 // Finds an object by full name. Linear scan: cache the result.
 UObject* find_object(const std::string& full);
 // First object of this class that isn't a class default object ("Default__...").

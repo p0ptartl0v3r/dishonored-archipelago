@@ -119,6 +119,44 @@ through `ProcessEvent`.
   Enabling the console in-game (F1 with the console unlocker) creates it. The DLL
   now calls `PlayerController.EnableCheats` itself when it's missing (unconfirmed).
 
+### From the first call log (unique mode)
+- F1 / console unlock = `Engine.PlayerController.EnableCheats`.
+- Loading a save: `OnLoadGameConfirm` -> `PreClientTravel` -> `GameEnding`, then the
+  new level. Pickups already collected are removed with `Destroyed` right after
+  load (`KActor.Destroyed on DisStatPickup`).
+- Rune-related: `DishonoredPawn.OnAddAbstractItem` (scripted item gift),
+  `KActor.SpawnedByKismet on DisAbstractItemPickup` (a pickup spawned by a level
+  script), `DishonoredPlayerController.OnObjectiveAction`, `DishonoredPlayerPawn.OnAddKey`.
+- Map changes: `PlayerController.ClientPrepareMapChange` / `ClientCommitMapChange`.
+- Death: player death shows up as the pause menu's `OnLoadLastSaveClicked` after
+  `NotifyTakeHit`; NPC deaths call `GameInfo.NotifyKilled` / `DishonoredPawn.PlayDying`.
+- Unique mode hides repeats (only the first rune pickup appears), so the DLL now
+  reports pickups, map changes, scripted items and objectives as events instead.
+
+### From the first event log (Distillery District -> Overseer's office)
+- Every level streams into one persistent map, `DishonoredGameFull_P`. The
+  map-to-zone table above is about **streaming** levels, which `mapchange` names
+  (`mapchange L_Ovrsr_P` on entering the office).
+- Placed pickups belong to the level's *script* package and have stable names:
+  `L_Streets1_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_19`.
+- Some runes are spawned at runtime (`DishonoredGameFull_P...DisAbstractItemPickup_64`);
+  match those by position (`near=`).
+- Item names: `Rune_AbsItm`, `Coins_AbsItm`, bone charms `WhaleBoneCharm_01_twk`
+  (the tweak name is shared, so it doesn't identify the charm; the path does).
+- Objectives: `DisSeqAct_AddObjective` / `DisSeqAct_CompleteObjective` with names like
+  `Optional_HelpGrannyRags`, `Optional_GrannyRagsHook`, `Ovrsr_KillOverseerCambell`,
+  `Ovrsr_GetBlackBook`. Good candidates for bonus and mission checks.
+- Loading a save (from the menu or after death) rebuilds the world without a
+  `mapchange`, so after a load the current zone isn't reported. Only walking
+  through a transition (Distillery -> office) produces `mapchange`. Zone keys will
+  need the list of loaded streaming levels after a load (WorldInfo.StreamingLevels).
+- Reading a note (Griff's shop bone charm note) produced no event: notes aren't
+  destroyed when read. Needs its own hook if notes become checks.
+- Scripted items: `TheStill`, `GriffShop`, `ChapterNotes_Overseer`,
+  `OvrsrChptrNote_Poisoning` (journal notes/keys, not runes).
+- `DishonoredInventoryPickup` / `DisStatPickup` events are ammo, elixirs and
+  dropped items: noise for our checks.
+
 ## Memory (Cheat Engine)
 
 | Value | Module + pointer path | Type | Notes |

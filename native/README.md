@@ -46,6 +46,34 @@ To uninstall, delete `dinput8.dll`.
 5. Finally, the real thing: launch the Dishonored Client with `--backend native`.
    Received powers are applied automatically.
 
+## Game events (for location checks)
+
+The DLL reports these as they happen. They're written to the log as
+`event: ...`, the client shows unmatched ones as `Game event (no location): ...`,
+and `python tools/native_console.py "event 0"` (1, 2, ...) reads them directly.
+
+| Event | When |
+|---|---|
+| `gameplay` | Gameplay starts (after loading a save or a level transition). Every level streams into one persistent map, `DishonoredGameFull_P`, so this carries no map name |
+| `mapchange <level>` | The game starts loading another level |
+| `pickup <object path> <class> <item> at=x,y,z` | A pickup actor was taken (destroyed). `<item>` is e.g. `Rune_AbsItm`, `Coins_AbsItm` or `WhaleBoneCharm_01_twk`. Ends in `(load)` when it happened while a level was loading, which is how already-collected pickups are removed from a save. Placed pickups have stable paths in their level's script package (`L_Streets1_Script....DisAbstractItemPickup_19`); pickups spawned at runtime sit in `DishonoredGameFull_P` with spawn-order numbers, so match those by position |
+| `additem <kismet action path> <item>` | A level script gave the player an item (scripted rewards) |
+| `objective <kismet action path> <class> <objectives>` | A level script changed objectives |
+
+To turn an event into a check, add a pattern to the location's `detect` list
+in `worlds/dishonored/data/locations.json`. A pattern matches when **every word
+in it appears in the event** (words compare exactly). `near=x,y,z` matches an
+event's `at=` within about 1.5 m.
+
+```json
+"detect": ["pickup L_Streets1_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_19"]
+"detect": ["pickup Rune_AbsItm near=1200,-340,95"]
+"detect": ["objective DisSeqAct_CompleteObjective Optional_GrannyRagsHook"]
+"detect": ["mapchange L_Ovrsr_P"]
+```
+
+Put a `detect` on the victory location to make finishing the game send the goal.
+
 ## Researching pickups (call logging)
 
 In `archipelago_native.ini`, set `[Research] LogCalls=`:

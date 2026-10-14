@@ -45,6 +45,9 @@ class LocationData:
     requires: requirements.Node
     victory: bool
     place_item: str | None
+    # Game events (from the native module) that mean this location is done.
+    # An event matches if its text starts with one of these. See native/README.md.
+    detect: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -119,6 +122,7 @@ def load() -> GameData:
             requires=requirements.parse(raw.get("requires")),
             victory=victory,
             place_item=place,
+            detect=tuple(raw.get("detect", [])),
         )
         data.locations[name] = loc
         for cat in loc.categories:

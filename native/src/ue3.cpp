@@ -88,13 +88,33 @@ std::string object_name(const UObject* object) { return object ? name_string(obj
 
 std::string class_name(const UObject* object) { return object ? object_name(object->klass) : "None"; }
 
-std::string full_name(const UObject* object) {
-  if (object == nullptr || object->klass == nullptr) return "None";
+std::string path_name(const UObject* object) {
+  if (object == nullptr) return "None";
   std::string path = object_name(object);
   for (const UObject* outer = object->outer; outer != nullptr; outer = outer->outer) {
     path = object_name(outer) + "." + path;
   }
-  return class_name(object) + " " + path;
+  return path;
+}
+
+std::string full_name(const UObject* object) {
+  if (object == nullptr || object->klass == nullptr) return "None";
+  return class_name(object) + " " + path_name(object);
+}
+
+std::string package_name(const UObject* object) {
+  if (object == nullptr) return "None";
+  while (object->outer != nullptr) object = object->outer;
+  return object_name(object);
+}
+
+bool is_a(const UObject* object, int32_t class_name_index) {
+  if (object == nullptr || class_name_index < 0) return false;
+  for (const UObject* klass = object->klass; klass != nullptr;
+       klass = field<const UObject*>(klass, kStructSuperField)) {
+    if (klass->name.index == class_name_index) return true;
+  }
+  return false;
 }
 
 UObject* find_object(const std::string& full) {
