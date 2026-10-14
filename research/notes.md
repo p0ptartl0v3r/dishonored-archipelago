@@ -94,8 +94,20 @@ Other notes:
 | `AddUpgrade <Name>` | ? |
 | `GiveBoneCharm` | ? |
 | `RemovePower <Name>` | ? (needed to undo powers bought early) |
-| `MaxUpgrades` / `MinUpgrades` | ? |
+| `MaxUpgrades` | "Command not recognized", although autocomplete offers it. Same function flags in the SDK as the working `GiveRunes`, so the difference is inside the exe (probably compiled out of the release build) |
+| `MinUpgrades`, `AddUpgrade <Name>`, `RemoveUpgrade <Name>` | ? Do these also say "not recognized"? |
 | `GivePlayerItem <TweakString>` | ? |
+
+Autocomplete lists every `exec` function declared in script, including ones
+whose native code was removed, so "suggested" doesn't mean "works".
+
+Fallback when a cheat is missing: the game gives things through Kismet actions
+that level scripts use, which must exist in the release build:
+`UDisSeqAct_GiveUpgrade` (`m_pUpgrade`: a `UDisTweaks_Upgrade`),
+`UDisSeqAct_AddPower` (`m_PowerName`, `m_PowerLevel`),
+`UDisSeqAct_GivePickup` (`m_pPickup`), handled by the player pawn's
+`OnGiveUpgrade` / `OnAddPower` / `OnGivePickup`. A native DLL can call those
+through `ProcessEvent`.
 
 ## Memory (Cheat Engine)
 
