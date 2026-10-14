@@ -118,8 +118,13 @@ through `ProcessEvent`.
 - Cheat commands only work once `PlayerController.CheatManager` (+0x45C) exists.
   Enabling the console in-game (F1 with the console unlocker) creates it.
   Calling `PlayerController.EnableCheats` directly through ProcessEvent right
-  after loading did **not** create it. The DLL now runs `EnableCheats` as a
-  console command (what F1 does) and retries every 5s (unconfirmed).
+  after loading did **not** create it, nor did running it as a console command:
+  `PlayerController.CheatClass` (+0x460) is **None** in the shipped game, so
+  `EnableCheats` has nothing to instantiate. The F1 console unlocker evidently
+  sets it. The DLL now sets CheatClass to `Class DishonoredGame.DishonoredCheatManager`
+  before running EnableCheats (unconfirmed).
+- `CheatClass`/`CheatManager` are per controller: a new one after every load, so
+  cheats have to be re-enabled after each load (the DLL does this).
 - The client must not mark an item delivered unless the command can work:
   items now wait for `pong ready` (cheats on), and unverified power names are
   shown to the player instead of being sent.

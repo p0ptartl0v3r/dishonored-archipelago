@@ -47,6 +47,7 @@ std::atomic<bool> g_engine_ready = false;
 std::atomic<ue3::UFunction*> g_console_command = nullptr;
 ue3::UObject* g_engine = nullptr;  // lives as long as the process
 ue3::UObject* g_cheats_tried_for = nullptr;  // controller we last tried EnableCheats on
+ue3::UObject* g_cheat_manager_class = nullptr;  // Class DishonoredGame.DishonoredCheatManager
 DWORD g_last_cheats_try = 0;
 bool g_cheats_reported = false;
 std::atomic<bool> g_cheats_ready = false;
@@ -145,6 +146,21 @@ bool ensure_cheat_manager(ue3::UObject* player_controller) {
   g_cheats_tried_for = player_controller;
   g_cheats_reported = false;
   g_last_cheats_try = now;
+  // EnableCheats creates a CheatManager of type CheatClass, which the shipped game
+  // leaves empty (None) - so set it first, as console-unlock tools do.
+  auto** cheat_class = reinterpret_cast<ue3::UObject**>(reinterpret_cast<uint8_t*>(player_controller) +
+                                                        ue3::kPlayerControllerCheatClass);
+  if (*cheat_class == nullptr) {
+    if (g_cheat_manager_class == nullptr) {
+      g_cheat_manager_class = ue3::find_object("Class DishonoredGame.DishonoredCheatManager");
+    }
+    if (g_cheat_manager_class != nullptr) {
+      *cheat_class = g_cheat_manager_class;
+      if (first_try) log("set CheatClass to DishonoredCheatManager");
+    } else if (first_try) {
+      log("WARNING: Class DishonoredGame.DishonoredCheatManager not found");
+    }
+  }
   run_console_command(player_controller, "EnableCheats");
   const bool created = ue3::field<ue3::UObject*>(player_controller, ue3::kPlayerControllerCheatManager) != nullptr;
   if (created) {

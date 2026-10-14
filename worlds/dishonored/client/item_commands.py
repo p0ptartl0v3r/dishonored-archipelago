@@ -19,8 +19,12 @@ from collections.abc import Callable
 CommandBuilder = Callable[[int], list[str]]
 
 
+MAX_POWER_LEVEL = 2  # every power in the base game has two levels
+
+
 def _power(internal_name: str) -> CommandBuilder:
-    return lambda level: [f"AddPower {internal_name} {level}"]
+    # Extra copies (e.g. from !getitem) would ask for level 3+; stay at the maximum.
+    return lambda level: [f"AddPower {internal_name} {min(level, MAX_POWER_LEVEL)}"]
 
 
 ITEM_COMMANDS: dict[str, CommandBuilder] = {
