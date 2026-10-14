@@ -139,6 +139,38 @@ class MemoryInterface(GameInterface):
         return True
 
 
+NEAR_DISTANCE = 150.0  # Unreal units (~1.5 m)
+
+
+def _position(token: str) -> tuple[float, float, float] | None:
+    try:
+        x, y, z = (float(v) for v in token.split("=", 1)[1].split(","))
+    except ValueError:
+        return None
+    return x, y, z
+
+
+def event_matches(pattern: str, event: str) -> bool:
+    """True if every word of the pattern is in the event.
+
+    Words compare exactly, so "DisAbstractItemPickup_12" never matches "..._120".
+    A "near=x,y,z" word matches an event's "at=x,y,z" within NEAR_DISTANCE, for
+    pickups spawned at runtime whose names aren't stable.
+    """
+    words = event.split()
+    position = next((_position(w) for w in words if w.startswith("at=")), None)
+    for token in pattern.split():
+        if token.startswith("near="):
+            target = _position(token)
+            if position is None or target is None:
+                return False
+            if sum((a - b) ** 2 for a, b in zip(position, target)) > NEAR_DISTANCE**2:
+                return False
+        elif token not in words:
+            return False
+    return True
+
+
 class NativeInterface(GameInterface):
     """Talks to the in-game DLL (native/) over a named pipe.
 
@@ -206,8 +238,7 @@ class NativeInterface(GameInterface):
 
     def match_event(self, text: str) -> list[int | None]:
         """Location IDs (None = goal) that a game event completes."""
-        text = text.removesuffix(" (load)")
-        return [location for pattern, location in self._detectors if text.startswith(pattern)]
+        return [location for pattern, location in self._detectors if event_matches(pattern, text)]
 
     def poll_checked_locations(self) -> set[int]:
         found: set[int] = set()

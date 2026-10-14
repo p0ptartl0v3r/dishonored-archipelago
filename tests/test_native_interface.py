@@ -1,6 +1,6 @@
 """NativeInterface protocol logic, against a fake pipe (the real one is Windows-only)."""
 
-from dishonored.client.game_interface import NativeInterface
+from dishonored.client.game_interface import NativeInterface, event_matches
 
 
 class FakePipe:
@@ -69,18 +69,45 @@ def test_lost_pipe_detaches_and_retries():
 def test_events_become_locations_and_goal():
     pipe = FakePipe(
         events=[
-            "gameplay L_Prison_P",
-            "pickup L_Prison_P.TheWorld.PersistentLevel.DisAbstractItemPickup_3 DisAbstractItemPickup Rune (load)",
+            "gameplay",
+            "pickup L_Prison_P.TheWorld.PersistentLevel.DisAbstractItemPickup_3 DisAbstractItemPickup Rune_AbsItm "
+            "at=10,20,30 (load)",
             "mapchange L_Out_P",
         ]
     )
     game = attached(pipe)
     game._detectors = [
-        ("pickup L_Prison_P.TheWorld.PersistentLevel.DisAbstractItemPickup_3 ", 111),
-        ("mapchange L_Out_", None),
+        ("pickup L_Prison_P.TheWorld.PersistentLevel.DisAbstractItemPickup_3", 111),
+        ("mapchange L_Out_P", None),
     ]
     assert game.poll_checked_locations() == {111}
     assert game.poll_goal_reached()
     # Already-read events are not fetched again.
     assert game.poll_checked_locations() == set()
     assert pipe.sent.count("event 0") == 1
+
+
+EVENT = (
+    "pickup DishonoredGameFull_P.TheWorld.PersistentLevel.DisAbstractItemPickup_64 "
+    "DisAbstractItemPickup Rune_AbsItm at=1200,-340,95"
+)
+
+
+def test_words_match_exactly():
+    assert event_matches("pickup DishonoredGameFull_P.TheWorld.PersistentLevel.DisAbstractItemPickup_64", EVENT)
+    assert not event_matches("pickup DishonoredGameFull_P.TheWorld.PersistentLevel.DisAbstractItemPickup_6", EVENT)
+
+
+def test_near_matches_position():
+    assert event_matches("pickup Rune_AbsItm near=1250,-300,100", EVENT)
+    assert not event_matches("pickup Rune_AbsItm near=1600,-340,95", EVENT)
+    assert not event_matches("pickup Coins_AbsItm near=1200,-340,95", EVENT)
+
+
+def test_objective_by_class_and_name():
+    event = (
+        "objective L_Streets1_P.TheWorld.PersistentLevel.Main_Sequence.Objectives_Manager.DisSeqAct_CompleteObjective_2 "
+        "DisSeqAct_CompleteObjective Optional_GrannyRagsHook"
+    )
+    assert event_matches("objective DisSeqAct_CompleteObjective Optional_GrannyRagsHook", event)
+    assert not event_matches("objective DisSeqAct_AddObjective Optional_GrannyRagsHook", event)

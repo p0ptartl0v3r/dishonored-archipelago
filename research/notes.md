@@ -133,6 +133,24 @@ through `ProcessEvent`.
 - Unique mode hides repeats (only the first rune pickup appears), so the DLL now
   reports pickups, map changes, scripted items and objectives as events instead.
 
+### From the first event log (Distillery District -> Overseer's office)
+- Every level streams into one persistent map, `DishonoredGameFull_P`. The
+  map-to-zone table above is about **streaming** levels, which `mapchange` names
+  (`mapchange L_Ovrsr_P` on entering the office).
+- Placed pickups belong to the level's *script* package and have stable names:
+  `L_Streets1_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_19`.
+- Some runes are spawned at runtime (`DishonoredGameFull_P...DisAbstractItemPickup_64`);
+  match those by position (`near=`).
+- Item names: `Rune_AbsItm`, `Coins_AbsItm`, bone charms `WhaleBoneCharm_01_twk`
+  (the tweak name is shared, so it doesn't identify the charm; the path does).
+- Objectives: `DisSeqAct_AddObjective` / `DisSeqAct_CompleteObjective` with names like
+  `Optional_HelpGrannyRags`, `Optional_GrannyRagsHook`, `Ovrsr_KillOverseerCambell`,
+  `Ovrsr_GetBlackBook`. Good candidates for bonus and mission checks.
+- Scripted items: `TheStill`, `GriffShop`, `ChapterNotes_Overseer`,
+  `OvrsrChptrNote_Poisoning` (journal notes/keys, not runes).
+- `DishonoredInventoryPickup` / `DisStatPickup` events are ammo, elixirs and
+  dropped items: noise for our checks.
+
 ## Memory (Cheat Engine)
 
 | Value | Module + pointer path | Type | Notes |

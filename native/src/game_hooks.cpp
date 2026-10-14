@@ -183,8 +183,11 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
     if (!ue3::is_a(self, g_names.pickup_base)) return;
     // Pickups already collected in a save are destroyed while the level loads.
     const bool during_load = !g_in_gameplay || GetTickCount() - g_gameplay_started_tick < 3000;
-    emit_event(std::format("pickup {} {} {}{}", ue3::path_name(self), ue3::class_name(self), pickup_item_name(self),
-                           during_load ? " (load)" : ""));
+    // Pickups spawned at runtime (rewards, drops) live in the persistent level and get
+    // numbered in spawn order, so their names aren't stable; the position is.
+    const auto at = ue3::field<ue3::FVector>(self, ue3::kActorLocation);
+    emit_event(std::format("pickup {} {} {} at={:.0f},{:.0f},{:.0f}{}", ue3::path_name(self), ue3::class_name(self),
+                           pickup_item_name(self), at.x, at.y, at.z, during_load ? " (load)" : ""));
   } else if (name == g_names.client_prepare_map_change) {
     emit_event("mapchange " + ue3::name_string(*static_cast<ue3::FName*>(params)));
   } else if (name == g_names.on_add_abstract_item) {
@@ -250,7 +253,9 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
       const bool in_gameplay = controller != nullptr && ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn);
       if (in_gameplay && !g_in_gameplay) {
         g_gameplay_started_tick = now;
-        emit_event("gameplay " + ue3::package_name(controller));  // the map we're playing in
+        // Every level streams into one persistent map (DishonoredGameFull_P), so the map name
+        // says nothing; the zone comes from pickup paths and mapchange events instead.
+        emit_event("gameplay");
       }
       if (in_gameplay != g_in_gameplay) log("{}", in_gameplay ? "in gameplay" : "not in gameplay");
       if (!in_gameplay) g_cheats_tried_for = nullptr;  // a new controller may reuse the old address
