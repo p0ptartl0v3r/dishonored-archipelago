@@ -22,7 +22,9 @@ says where it stopped.
    or build it (below).
 2. Copy `dinput8.dll` and `archipelago_native.ini` into the game's
    `Binaries\Win32` folder (next to `Dishonored.exe`).
-3. Start the game. `archipelago_native.log` appears in the same folder.
+3. Start the game. `archipelago_native.log` appears in the same folder. If that
+   folder isn't writable (common under `Program Files`), it goes to
+   `%LOCALAPPDATA%\DishonoredArchipelago\archipelago_native.log` instead.
 
 To uninstall, delete `dinput8.dll`.
 
@@ -61,7 +63,7 @@ In `archipelago_native.ini`, set `[Research] LogCalls=`:
 
 | Log says | Meaning / fix |
 |---|---|
-| nothing, no log file | The game didn't load the DLL. Check it's in `Binaries\Win32` and named `dinput8.dll` |
+| no log file in either place | The game didn't load the DLL. Check it's in `Binaries\Win32`, named exactly `dinput8.dll` (Windows may hide the extension, so watch for `dinput8.dll.dll`) |
 | `ProcessEvent not found` | Your exe differs from the one the byte pattern came from. Find the function (e.g. with dismod or x32dbg) and set `ProcessEventOffset` |
 | `engine tables not usable` | `GNamesOffset`/`GObjectsOffset` are wrong for your build |
 | `pong waiting` forever in gameplay | `DrainOn` function never fires. Run with `LogCalls=unique`, find a per-frame function on the PlayerController, add it to `DrainOn` |
