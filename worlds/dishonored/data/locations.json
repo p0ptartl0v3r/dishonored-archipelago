@@ -45,7 +45,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Streets1_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_19"
+    ]
   },
   {
     "region": "Distillery District (HOC)",
@@ -69,7 +72,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Streets1_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_26"
+    ]
   },
   {
     "region": "High Overseer's Office",
@@ -594,7 +600,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Streets1_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Distillery District (HOC)",
@@ -602,7 +611,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Streets1_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_1"
+    ]
   },
   {
     "region": "Old Dunwall Distillery (HOC)",

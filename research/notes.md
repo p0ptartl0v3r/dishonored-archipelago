@@ -146,6 +146,12 @@ through `ProcessEvent`.
 - Objectives: `DisSeqAct_AddObjective` / `DisSeqAct_CompleteObjective` with names like
   `Optional_HelpGrannyRags`, `Optional_GrannyRagsHook`, `Ovrsr_KillOverseerCambell`,
   `Ovrsr_GetBlackBook`. Good candidates for bonus and mission checks.
+- Loading a save (from the menu or after death) rebuilds the world without a
+  `mapchange`, so after a load the current zone isn't reported. Only walking
+  through a transition (Distillery -> office) produces `mapchange`. Zone keys will
+  need the list of loaded streaming levels after a load (WorldInfo.StreamingLevels).
+- Reading a note (Griff's shop bone charm note) produced no event: notes aren't
+  destroyed when read. Needs its own hook if notes become checks.
 - Scripted items: `TheStill`, `GriffShop`, `ChapterNotes_Overseer`,
   `OvrsrChptrNote_Poisoning` (journal notes/keys, not runes).
 - `DishonoredInventoryPickup` / `DisStatPickup` events are ammo, elixirs and

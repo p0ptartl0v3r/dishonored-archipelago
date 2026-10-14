@@ -111,3 +111,26 @@ def test_objective_by_class_and_name():
     )
     assert event_matches("objective DisSeqAct_CompleteObjective Optional_GrannyRagsHook", event)
     assert not event_matches("objective DisSeqAct_AddObjective Optional_GrannyRagsHook", event)
+
+
+def test_real_events_from_the_distillery_district():
+    """Event lines from an actual play session, matched against locations.json."""
+    from dishonored import game_data
+
+    ids = game_data.load().location_name_to_id
+    game = NativeInterface()
+    prefix = "pickup L_Streets1_Script.TheWorld.PersistentLevel."
+    cases = {
+        prefix + "DisAbstractItemPickup_19 DisAbstractItemPickup Rune_AbsItm at=0,0,0":
+            "Distillery District: Granny Rags Shrine Rune",
+        prefix + "DisAbstractItemPickup_26 DisAbstractItemPickup Rune_AbsItm at=0,0,0":
+            "Distillery District: Boulevard Confiscated Rune",
+        prefix + "DisWhaleBoneCharm_1 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=0,0,0":
+            "Distillery District: Griff's Building Bone Charm",
+        prefix + "DisWhaleBoneCharm_0 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=0,0,0 (load)":
+            "Distillery District: Bridge End Bone Charm",
+    }
+    for event, location in cases.items():
+        assert game.match_event(event) == [ids[location]], event
+    # Coins and similar must not match anything.
+    assert game.match_event(prefix + "DisAbstractItemPickup_29 DisAbstractItemPickup Coins_AbsItm at=0,0,0") == []
