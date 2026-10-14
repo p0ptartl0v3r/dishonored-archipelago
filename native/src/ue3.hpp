@@ -60,6 +60,7 @@ inline constexpr size_t kEngineGamePlayers = 0x480;  // UEngine::GamePlayers (TA
 inline constexpr size_t kPlayerActor = 0x3C;         // UPlayer::Actor (APlayerController*)
 inline constexpr size_t kControllerPawn = 0x248;     // AController::Pawn
 inline constexpr size_t kPlayerControllerCheatManager = 0x45C;  // APlayerController::CheatManager
+inline constexpr size_t kPlayerControllerCheatClass = 0x460;    // APlayerController::CheatClass
 inline constexpr size_t kActorLocation = 0xC4;                   // AActor::Location (FVector)
 inline constexpr size_t kStructSuperField = 0x44;                // UStruct::SuperField (parent class)
 inline constexpr size_t kPickupTweaks = 0x3B8;                   // ADisAbstractItemPickup / ADisWhaleBoneCharm::m_pTweaks

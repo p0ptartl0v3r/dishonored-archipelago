@@ -186,6 +186,7 @@ class NativeInterface(GameInterface):
         self._pipe = None
         self._next_event = 0
         self._goal_reached = False
+        self._warned_no_cheats = False
         data = load_game_data()
         # (event prefix, location id or None for the goal)
         self._detectors: list[tuple[str, int | None]] = [
@@ -234,7 +235,16 @@ class NativeInterface(GameInterface):
         return reply.decode("utf-8").strip()
 
     def _ready(self) -> bool:
-        return self._request("ping") == "pong ready"
+        reply = self._request("ping")
+        if reply == "pong nocheats" and not self._warned_no_cheats:
+            logger.warning(
+                "Items are waiting: the game hasn't enabled cheats yet, which granting items needs. "
+                "The mod retries every few seconds; pressing your console-enable key (F1) also works."
+            )
+            self._warned_no_cheats = True
+        if reply == "pong ready":
+            self._warned_no_cheats = False
+        return reply == "pong ready"
 
     def match_event(self, text: str) -> list[int | None]:
         """Location IDs (None = goal) that a game event completes."""
@@ -264,7 +274,8 @@ class NativeInterface(GameInterface):
 
     def give_item(self, item_id: int, item_name: str, level: int) -> bool:
         commands = commands_for(item_name, level)
-        if not commands:
+        # Unverified command names would silently do nothing, so show those to the player instead.
+        if not commands or item_name in UNVERIFIED:
             log_unlock_for_player(item_name, level)
             return True
         try:

@@ -45,9 +45,11 @@ std::atomic<bool> g_queue_pending = false;
 std::atomic<bool> g_engine_ready = false;
 // Looked up on the game thread (the object table can change under another thread).
 std::atomic<ue3::UFunction*> g_console_command = nullptr;
-ue3::UFunction* g_enable_cheats = nullptr;
 ue3::UObject* g_engine = nullptr;  // lives as long as the process
 ue3::UObject* g_cheats_tried_for = nullptr;  // controller we last tried EnableCheats on
+DWORD g_last_cheats_try = 0;
+bool g_cheats_reported = false;
+std::atomic<bool> g_cheats_ready = false;
 DWORD g_last_resolve_tick = 0;
 int g_resolve_attempts = 0;
 DWORD g_last_check_tick = 0;
@@ -127,20 +129,36 @@ void run_console_command(ue3::UObject* player_controller, const std::string& com
 
 // Cheat commands (GiveRunes, AddPower, ...) live on the CheatManager, which the
 // game only creates once cheats are enabled. Each map load brings a new controller.
-void ensure_cheat_manager(ue3::UObject* player_controller) {
-  if (ue3::field<ue3::UObject*>(player_controller, ue3::kPlayerControllerCheatManager) != nullptr) return;
-  if (g_enable_cheats == nullptr || g_cheats_tried_for == player_controller) return;
+// Runs "EnableCheats" as a console command, the same thing the console-unlock key
+// (F1) does, retrying every few seconds. Returns true once the CheatManager exists.
+bool ensure_cheat_manager(ue3::UObject* player_controller) {
+  if (ue3::field<ue3::UObject*>(player_controller, ue3::kPlayerControllerCheatManager) != nullptr) {
+    if (g_cheats_tried_for == player_controller && !g_cheats_reported) {
+      log("cheats enabled (CheatManager created)");
+      g_cheats_reported = true;
+    }
+    return true;
+  }
+  const DWORD now = GetTickCount();
+  if (g_cheats_tried_for == player_controller && now - g_last_cheats_try < 5000) return false;
+  const bool first_try = g_cheats_tried_for != player_controller;
   g_cheats_tried_for = player_controller;
-  uint32_t no_params = 0;
-  g_original(player_controller, nullptr, g_enable_cheats, &no_params, nullptr);
+  g_cheats_reported = false;
+  g_last_cheats_try = now;
+  run_console_command(player_controller, "EnableCheats");
   const bool created = ue3::field<ue3::UObject*>(player_controller, ue3::kPlayerControllerCheatManager) != nullptr;
-  log("{}", created ? "enabled cheats (created CheatManager)"
-                    : "WARNING: EnableCheats did not create a CheatManager; cheat commands may be "
-                      "'not recognized' until the console is enabled in-game");
+  if (created) {
+    log("cheats enabled (CheatManager created)");
+    g_cheats_reported = true;
+  } else if (first_try) {
+    log("WARNING: EnableCheats did not create a CheatManager (CheatClass = {}). Retrying every 5s; "
+        "items wait until cheats are on. Enabling the console in-game (F1) also works.",
+        ue3::object_name(ue3::field<ue3::UObject*>(player_controller, ue3::kPlayerControllerCheatClass)));
+  }
+  return created;
 }
 
 void drain_queue(ue3::UObject* player_controller) {
-  ensure_cheat_manager(player_controller);
   std::deque<std::string> commands;
   {
     std::lock_guard lock(g_queue_mutex);
@@ -231,8 +249,6 @@ void resolve_engine_objects() {
   g_names.pickup_base = ue3::find_name_index("DisPickup_Base");
   g_names.abstract_item_pickup = ue3::find_name_index("DisAbstractItemPickup");
   g_names.whale_bone_charm = ue3::find_name_index("DisWhaleBoneCharm");
-  g_enable_cheats = ue3::find_object("Function Engine.PlayerController.EnableCheats");
-  if (g_enable_cheats == nullptr) log("WARNING: PlayerController.EnableCheats not found");
   g_console_command = console_command;
   log("found DishonoredEngine ({}) and PlayerController.ConsoleCommand", ue3::object_name(g_engine));
 }
@@ -260,7 +276,8 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
       if (in_gameplay != g_in_gameplay) log("{}", in_gameplay ? "in gameplay" : "not in gameplay");
       if (!in_gameplay) g_cheats_tried_for = nullptr;  // a new controller may reuse the old address
       g_in_gameplay = in_gameplay;
-      if (in_gameplay && g_queue_pending) drain_queue(controller);
+      g_cheats_ready = in_gameplay && ensure_cheat_manager(controller);
+      if (g_cheats_ready && g_queue_pending) drain_queue(controller);
     }
     g_inside_hook_work = false;
   }
@@ -301,7 +318,10 @@ void queue_console_command(const std::string& command) {
   g_queue_pending = true;
 }
 
-bool commands_ready() { return g_console_command != nullptr && g_in_gameplay; }
+CommandState command_state() {
+  if (g_console_command == nullptr || !g_in_gameplay) return CommandState::Waiting;
+  return g_cheats_ready ? CommandState::Ready : CommandState::NoCheats;
+}
 
 void toggle_call_logging() {
   g_call_logging = !g_call_logging;
