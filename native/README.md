@@ -68,6 +68,7 @@ In `archipelago_native.ini`, set `[Research] LogCalls=`:
 | `ProcessEvent not found` | Your exe differs from the one the byte pattern came from. Find the function (e.g. with dismod or x32dbg) and set `ProcessEventOffset` |
 | `engine tables not usable` | `GNamesOffset`/`GObjectsOffset` are wrong for your build |
 | `pong waiting` forever in gameplay, no `in gameplay` line | The DLL can't see the player's pawn. Send the log; the offsets in `src/ue3.hpp` may differ for your build |
+| `EnableCheats did not create a CheatManager`, commands "not recognized" | Cheats couldn't be switched on from the DLL. Enable the console in-game the usual way (your console unlocker's key), then retry |
 | a command runs but nothing happens | Same as typing it in the console: check the name, or it's one of the stripped cheats |
 
 ## Build

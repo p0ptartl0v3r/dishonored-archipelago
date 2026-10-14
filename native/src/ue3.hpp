@@ -55,6 +55,7 @@ using UFunction = UObject;
 inline constexpr size_t kEngineGamePlayers = 0x480;  // UEngine::GamePlayers (TArray<ULocalPlayer*>)
 inline constexpr size_t kPlayerActor = 0x3C;         // UPlayer::Actor (APlayerController*)
 inline constexpr size_t kControllerPawn = 0x248;     // AController::Pawn
+inline constexpr size_t kPlayerControllerCheatManager = 0x45C;  // APlayerController::CheatManager
 
 template <typename T>
 T field(const UObject* object, size_t offset) {
