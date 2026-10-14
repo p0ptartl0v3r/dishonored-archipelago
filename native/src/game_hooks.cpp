@@ -55,6 +55,10 @@ DWORD g_last_resolve_tick = 0;
 int g_resolve_attempts = 0;
 DWORD g_last_check_tick = 0;
 std::atomic<bool> g_in_gameplay = false;
+// Set when the game starts quitting: from then on the hook only passes calls
+// through, so nothing reads objects the engine is tearing down (a crash on exit
+// stops Steam syncing saves to the cloud).
+std::atomic<bool> g_shutting_down = false;
 // The main menu's background scene has a player pawn too, so "has a pawn" isn't
 // enough. The game starts in the menu; mapchange Dishonored_MainMenu returns to it;
 // gameplay that resumes after a loading screen (pawn lost, then regained) is a real level.
@@ -71,6 +75,7 @@ struct EventNames {
   int32_t client_prepare_map_change = -1;  // PlayerController.ClientPrepareMapChange(LevelName, ...)
   int32_t on_add_abstract_item = -1;       // DishonoredPawn.OnAddAbstractItem: scripted item reward
   int32_t on_objective_action = -1;        // DishonoredPlayerController.OnObjectiveAction
+  int32_t pre_exit = -1;                   // GameInfo.PreExit: the game is quitting
   int32_t pickup_base = -1;                // class DisPickup_Base
   int32_t abstract_item_pickup = -1;       // class DisAbstractItemPickup
   int32_t whale_bone_charm = -1;           // class DisWhaleBoneCharm
@@ -275,6 +280,7 @@ void resolve_engine_objects() {
   g_names.client_prepare_map_change = ue3::find_name_index("ClientPrepareMapChange");
   g_names.on_add_abstract_item = ue3::find_name_index("OnAddAbstractItem");
   g_names.on_objective_action = ue3::find_name_index("OnObjectiveAction");
+  g_names.pre_exit = ue3::find_name_index("PreExit");
   g_names.pickup_base = ue3::find_name_index("DisPickup_Base");
   g_names.abstract_item_pickup = ue3::find_name_index("DisAbstractItemPickup");
   g_names.whale_bone_charm = ue3::find_name_index("DisWhaleBoneCharm");
@@ -284,7 +290,12 @@ void resolve_engine_objects() {
 
 void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction* function, void* params,
                                    void* result) {
-  if (self != nullptr && function != nullptr && g_engine_ready && !g_inside_hook_work) {
+  if (g_names.pre_exit >= 0 && function != nullptr && function->name.index == g_names.pre_exit &&
+      !g_shutting_down) {
+    g_shutting_down = true;
+    log("game is exiting; going idle");
+  }
+  if (self != nullptr && function != nullptr && g_engine_ready && !g_inside_hook_work && !g_shutting_down) {
     g_inside_hook_work = true;
     if (g_console_command == nullptr) resolve_engine_objects();
     if (g_config.call_log != CallLogMode::Off && g_call_logging) log_call(self, function);
@@ -371,5 +382,7 @@ std::optional<std::string> get_event(size_t index) {
   if (index >= g_events.size()) return std::nullopt;
   return g_events[index];
 }
+
+void shut_down() { g_shutting_down = true; }
 
 }  // namespace ap

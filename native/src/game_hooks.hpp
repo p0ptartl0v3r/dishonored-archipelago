@@ -25,6 +25,9 @@ CommandState command_state();
 
 void toggle_call_logging();
 
+// Stop doing any work in the hook (the process is exiting).
+void shut_down();
+
 // Game events seen since the game started (pickups, map changes, ...), in order.
 // Index-based so a reconnecting client can replay from 0.
 std::optional<std::string> get_event(size_t index);
