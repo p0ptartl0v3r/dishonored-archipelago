@@ -115,6 +115,9 @@ through `ProcessEvent`.
   GNames/GObjects offsets are valid for it.
 - `PlayerTick` doesn't exist as a script function in Dishonored (moved to native
   code), so the DLL finds the player via `DishonoredEngine.GamePlayers[0].Actor`.
+- Cheat commands only work once `PlayerController.CheatManager` (+0x45C) exists.
+  Enabling the console in-game (F1 with the console unlocker) creates it. The DLL
+  now calls `PlayerController.EnableCheats` itself when it's missing (unconfirmed).
 
 ## Memory (Cheat Engine)
 

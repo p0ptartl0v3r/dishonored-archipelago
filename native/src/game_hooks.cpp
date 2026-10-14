@@ -45,7 +45,9 @@ std::atomic<bool> g_queue_pending = false;
 std::atomic<bool> g_engine_ready = false;
 // Looked up on the game thread (the object table can change under another thread).
 std::atomic<ue3::UFunction*> g_console_command = nullptr;
+ue3::UFunction* g_enable_cheats = nullptr;
 ue3::UObject* g_engine = nullptr;  // lives as long as the process
+ue3::UObject* g_cheats_tried_for = nullptr;  // controller we last tried EnableCheats on
 DWORD g_last_resolve_tick = 0;
 int g_resolve_attempts = 0;
 DWORD g_last_check_tick = 0;
@@ -107,7 +109,22 @@ void run_console_command(ue3::UObject* player_controller, const std::string& com
   log("console: {}{}", command, result.empty() ? "" : " -> " + result);
 }
 
+// Cheat commands (GiveRunes, AddPower, ...) live on the CheatManager, which the
+// game only creates once cheats are enabled. Each map load brings a new controller.
+void ensure_cheat_manager(ue3::UObject* player_controller) {
+  if (ue3::field<ue3::UObject*>(player_controller, ue3::kPlayerControllerCheatManager) != nullptr) return;
+  if (g_enable_cheats == nullptr || g_cheats_tried_for == player_controller) return;
+  g_cheats_tried_for = player_controller;
+  uint32_t no_params = 0;
+  g_original(player_controller, nullptr, g_enable_cheats, &no_params, nullptr);
+  const bool created = ue3::field<ue3::UObject*>(player_controller, ue3::kPlayerControllerCheatManager) != nullptr;
+  log("{}", created ? "enabled cheats (created CheatManager)"
+                    : "WARNING: EnableCheats did not create a CheatManager; cheat commands may be "
+                      "'not recognized' until the console is enabled in-game");
+}
+
 void drain_queue(ue3::UObject* player_controller) {
+  ensure_cheat_manager(player_controller);
   std::deque<std::string> commands;
   {
     std::lock_guard lock(g_queue_mutex);
@@ -141,6 +158,8 @@ void resolve_engine_objects() {
     }
     return;
   }
+  g_enable_cheats = ue3::find_object("Function Engine.PlayerController.EnableCheats");
+  if (g_enable_cheats == nullptr) log("WARNING: PlayerController.EnableCheats not found");
   g_console_command = console_command;
   log("found DishonoredEngine ({}) and PlayerController.ConsoleCommand", ue3::object_name(g_engine));
 }
@@ -159,6 +178,7 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
       // A pawn means we're playing, not in the main menu or a loading screen.
       const bool in_gameplay = controller != nullptr && ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn);
       if (in_gameplay != g_in_gameplay) log("{}", in_gameplay ? "in gameplay" : "not in gameplay");
+      if (!in_gameplay) g_cheats_tried_for = nullptr;  // a new controller may reuse the old address
       g_in_gameplay = in_gameplay;
       if (in_gameplay && g_queue_pending) drain_queue(controller);
     }
