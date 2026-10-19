@@ -8,9 +8,9 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480071,Distillery District: Granny Rags Gentlemen Callers Reward Rune,Rune,High Overseer Campbell,Distillery District (HOC),pickup (spawned),"DishonoredGameFull_P...DisAbstractItemPickup_N at -6138,-5804,3261",spawns on Granny's top floor after the gentlemen callers
 219480072,Distillery District: Granny Rags Poison Bootleg Elixer Reward Rune,Rune,High Overseer Campbell,Old Dunwall Distillery (HOC),,,
 219480073,Distillery District: Boulevard Confiscated Rune,Rune,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisAbstractItemPickup_26,guard station before the Overseer's office
-219480074,High Overseer's Office: Meeting Room Rune,Rune,High Overseer Campbell,High Overseer's Office,,,
+219480074,High Overseer's Office: Meeting Room Rune,Rune,High Overseer Campbell,High Overseer's Office,pickup,L_Ovrsr_Script...DisAbstractItemPickup_2,meeting room
 219480075,High Overseer Campbell: Victory,Mission,High Overseer Campbell,Backyard,,,
-219480076,High Overseer's Office: Campbell's Secret Room Rune,Rune,High Overseer Campbell,High Overseer's Office,,,
+219480076,High Overseer's Office: Campbell's Secret Room Rune,Rune,High Overseer Campbell,High Overseer's Office,pickup,L_Ovrsr_Script...DisAbstractItemPickup_74,Campbell's secret room in the basement
 219480077,Backyard: Workshop Rune,Rune,High Overseer Campbell,Backyard,,,
 219480078,The Pub: Weeper Chest Rune,Rune,High Overseer Campbell,Backyard,,,
 219480079,The Pub: Weeper Underwater Rune,Rune,High Overseer Campbell,Backyard,,,

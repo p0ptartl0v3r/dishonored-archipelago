@@ -75,6 +75,8 @@ BOOL WINAPI DllMain(HMODULE module, DWORD reason, LPVOID) {
     g_module = module;
     DisableThreadLibraryCalls(module);
     CloseHandle(CreateThread(nullptr, 0, init_thread, nullptr, 0, nullptr));
+  } else if (reason == DLL_PROCESS_DETACH) {
+    ap::shut_down();  // nothing else: other threads are already gone, and the loader lock is held
   }
   return TRUE;
 }

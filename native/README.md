@@ -97,6 +97,7 @@ In `archipelago_native.ini`, set `[Research] LogCalls=`:
 | `engine tables not usable` | `GNamesOffset`/`GObjectsOffset` are wrong for your build |
 | `pong waiting` forever in gameplay, no `in gameplay` line | The DLL can't see the player's pawn. Send the log; the offsets in `src/ue3.hpp` may differ for your build |
 | `EnableCheats did not create a CheatManager` | The DLL couldn't switch cheats on (it retries every 5s). Items wait meanwhile, and `ping` answers `pong nocheats`. Enable the console in-game the usual way (F1) and they'll go through. Please send the log line, including the `CheatClass` it names |
+| Steam: "cloud status out of sync" at every launch | Steam Cloud doesn't sync our files (only saves), but it can't sync after an unclean exit. Quit through the menu, not Alt+F4/Task Manager. The log should end with `game is exiting; going idle`. If the prompt stays even after clean exits, rename `dinput8.dll` for two launches to see whether the mod is involved, and report it |
 | a command runs but nothing happens | Same as typing it in the console: check the name, or it's one of the stripped cheats |
 
 ## Build

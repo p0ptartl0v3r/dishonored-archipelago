@@ -47,6 +47,7 @@ std::atomic<bool> g_engine_ready = false;
 std::atomic<ue3::UFunction*> g_console_command = nullptr;
 ue3::UObject* g_engine = nullptr;  // lives as long as the process
 ue3::UObject* g_cheats_tried_for = nullptr;  // controller we last tried EnableCheats on
+ue3::UObject* g_cheat_manager_class = nullptr;  // Class DishonoredGame.DishonoredCheatManager
 DWORD g_last_cheats_try = 0;
 bool g_cheats_reported = false;
 std::atomic<bool> g_cheats_ready = false;
@@ -54,6 +55,18 @@ DWORD g_last_resolve_tick = 0;
 int g_resolve_attempts = 0;
 DWORD g_last_check_tick = 0;
 std::atomic<bool> g_in_gameplay = false;
+// Set when the game starts quitting: from then on the hook only passes calls
+// through, so nothing reads objects the engine is tearing down (a crash on exit
+// stops Steam syncing saves to the cloud).
+std::atomic<bool> g_shutting_down = false;
+// The main menu's background scene has a player pawn too, so "has a pawn" isn't
+// enough. The game starts in the menu; mapchange Dishonored_MainMenu returns to it;
+// gameplay that resumes after a loading screen (pawn lost, then regained) is a real level.
+std::atomic<bool> g_in_menu = true;
+bool g_ever_lost_gameplay = false;
+// A loaded save restores its own state for a moment after the pawn appears and would
+// overwrite anything granted earlier, so commands wait this long after gameplay starts.
+constexpr DWORD kSettleMs = 3000;
 thread_local bool g_inside_hook_work = false;
 
 // Names (FName indices) of the functions that signal check-relevant events.
@@ -62,6 +75,7 @@ struct EventNames {
   int32_t client_prepare_map_change = -1;  // PlayerController.ClientPrepareMapChange(LevelName, ...)
   int32_t on_add_abstract_item = -1;       // DishonoredPawn.OnAddAbstractItem: scripted item reward
   int32_t on_objective_action = -1;        // DishonoredPlayerController.OnObjectiveAction
+  int32_t pre_exit = -1;                   // GameInfo.PreExit: the game is quitting
   int32_t pickup_base = -1;                // class DisPickup_Base
   int32_t abstract_item_pickup = -1;       // class DisAbstractItemPickup
   int32_t whale_bone_charm = -1;           // class DisWhaleBoneCharm
@@ -145,6 +159,21 @@ bool ensure_cheat_manager(ue3::UObject* player_controller) {
   g_cheats_tried_for = player_controller;
   g_cheats_reported = false;
   g_last_cheats_try = now;
+  // EnableCheats creates a CheatManager of type CheatClass, which the shipped game
+  // leaves empty (None) - so set it first, as console-unlock tools do.
+  auto** cheat_class = reinterpret_cast<ue3::UObject**>(reinterpret_cast<uint8_t*>(player_controller) +
+                                                        ue3::kPlayerControllerCheatClass);
+  if (*cheat_class == nullptr) {
+    if (g_cheat_manager_class == nullptr) {
+      g_cheat_manager_class = ue3::find_object("Class DishonoredGame.DishonoredCheatManager");
+    }
+    if (g_cheat_manager_class != nullptr) {
+      *cheat_class = g_cheat_manager_class;
+      if (first_try) log("set CheatClass to DishonoredCheatManager");
+    } else if (first_try) {
+      log("WARNING: Class DishonoredGame.DishonoredCheatManager not found");
+    }
+  }
   run_console_command(player_controller, "EnableCheats");
   const bool created = ue3::field<ue3::UObject*>(player_controller, ue3::kPlayerControllerCheatManager) != nullptr;
   if (created) {
@@ -200,14 +229,19 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
   if (name == g_names.destroyed) {
     if (!ue3::is_a(self, g_names.pickup_base)) return;
     // Pickups already collected in a save are destroyed while the level loads.
-    const bool during_load = !g_in_gameplay || GetTickCount() - g_gameplay_started_tick < 3000;
+    const bool during_load = !g_in_gameplay || GetTickCount() - g_gameplay_started_tick < kSettleMs;
     // Pickups spawned at runtime (rewards, drops) live in the persistent level and get
     // numbered in spawn order, so their names aren't stable; the position is.
     const auto at = ue3::field<ue3::FVector>(self, ue3::kActorLocation);
     emit_event(std::format("pickup {} {} {} at={:.0f},{:.0f},{:.0f}{}", ue3::path_name(self), ue3::class_name(self),
                            pickup_item_name(self), at.x, at.y, at.z, during_load ? " (load)" : ""));
   } else if (name == g_names.client_prepare_map_change) {
-    emit_event("mapchange " + ue3::name_string(*static_cast<ue3::FName*>(params)));
+    const std::string level = ue3::name_string(*static_cast<ue3::FName*>(params));
+    emit_event("mapchange " + level);
+    if (level.find("MainMenu") != std::string::npos && !g_in_menu) {
+      g_in_menu = true;
+      log("in main menu");
+    }
   } else if (name == g_names.on_add_abstract_item) {
     auto* action = *static_cast<ue3::UObject**>(params);
     if (action == nullptr) return;
@@ -246,6 +280,7 @@ void resolve_engine_objects() {
   g_names.client_prepare_map_change = ue3::find_name_index("ClientPrepareMapChange");
   g_names.on_add_abstract_item = ue3::find_name_index("OnAddAbstractItem");
   g_names.on_objective_action = ue3::find_name_index("OnObjectiveAction");
+  g_names.pre_exit = ue3::find_name_index("PreExit");
   g_names.pickup_base = ue3::find_name_index("DisPickup_Base");
   g_names.abstract_item_pickup = ue3::find_name_index("DisAbstractItemPickup");
   g_names.whale_bone_charm = ue3::find_name_index("DisWhaleBoneCharm");
@@ -255,7 +290,12 @@ void resolve_engine_objects() {
 
 void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction* function, void* params,
                                    void* result) {
-  if (self != nullptr && function != nullptr && g_engine_ready && !g_inside_hook_work) {
+  if (g_names.pre_exit >= 0 && function != nullptr && function->name.index == g_names.pre_exit &&
+      !g_shutting_down) {
+    g_shutting_down = true;
+    log("game is exiting; going idle");
+  }
+  if (self != nullptr && function != nullptr && g_engine_ready && !g_inside_hook_work && !g_shutting_down) {
     g_inside_hook_work = true;
     if (g_console_command == nullptr) resolve_engine_objects();
     if (g_config.call_log != CallLogMode::Off && g_call_logging) log_call(self, function);
@@ -267,8 +307,13 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
       ue3::UObject* controller = local_player_controller();
       // A pawn means we're playing, not in the main menu or a loading screen.
       const bool in_gameplay = controller != nullptr && ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn);
+      if (!in_gameplay && g_in_gameplay) g_ever_lost_gameplay = true;
       if (in_gameplay && !g_in_gameplay) {
         g_gameplay_started_tick = now;
+        if (g_ever_lost_gameplay && g_in_menu) {
+          g_in_menu = false;  // came back from a loading screen: a real level
+          log("left main menu");
+        }
         // Every level streams into one persistent map (DishonoredGameFull_P), so the map name
         // says nothing; the zone comes from pickup paths and mapchange events instead.
         emit_event("gameplay");
@@ -276,7 +321,8 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
       if (in_gameplay != g_in_gameplay) log("{}", in_gameplay ? "in gameplay" : "not in gameplay");
       if (!in_gameplay) g_cheats_tried_for = nullptr;  // a new controller may reuse the old address
       g_in_gameplay = in_gameplay;
-      g_cheats_ready = in_gameplay && ensure_cheat_manager(controller);
+      const bool settled = in_gameplay && !g_in_menu && now - g_gameplay_started_tick >= kSettleMs;
+      g_cheats_ready = settled && ensure_cheat_manager(controller);
       if (g_cheats_ready && g_queue_pending) drain_queue(controller);
     }
     g_inside_hook_work = false;
@@ -319,7 +365,10 @@ void queue_console_command(const std::string& command) {
 }
 
 CommandState command_state() {
-  if (g_console_command == nullptr || !g_in_gameplay) return CommandState::Waiting;
+  if (g_console_command == nullptr || !g_in_gameplay || g_in_menu ||
+      GetTickCount() - g_gameplay_started_tick < kSettleMs) {
+    return CommandState::Waiting;
+  }
   return g_cheats_ready ? CommandState::Ready : CommandState::NoCheats;
 }
 
@@ -333,5 +382,7 @@ std::optional<std::string> get_event(size_t index) {
   if (index >= g_events.size()) return std::nullopt;
   return g_events[index];
 }
+
+void shut_down() { g_shutting_down = true; }
 
 }  // namespace ap

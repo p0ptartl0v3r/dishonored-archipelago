@@ -137,6 +137,13 @@ def test_real_events_from_the_distillery_district():
         "Rune_AbsItm at=-6138,-5804,3261"
     )
     assert game.match_event(spawned) == [ids["Distillery District: Granny Rags Gentlemen Callers Reward Rune"]]
+    office = "pickup L_Ovrsr_Script.TheWorld.PersistentLevel."
+    assert game.match_event(office + "DisAbstractItemPickup_74 DisAbstractItemPickup Rune_AbsItm at=-1712,-27217,-255") == [
+        ids["High Overseer's Office: Campbell's Secret Room Rune"]
+    ]
+    assert game.match_event(office + "DisAbstractItemPickup_2 DisAbstractItemPickup Rune_AbsItm at=-2681,-27365,1542") == [
+        ids["High Overseer's Office: Meeting Room Rune"]
+    ]
     # Coins and similar must not match anything.
     assert game.match_event(prefix + "DisAbstractItemPickup_29 DisAbstractItemPickup Coins_AbsItm at=0,0,0") == []
 
@@ -147,7 +154,10 @@ def test_waits_while_cheats_are_off():
     assert pipe.sent == ["ping"]
 
 
-def test_unverified_commands_are_shown_not_sent():
+def test_unverified_commands_are_shown_not_sent(monkeypatch):
+    from dishonored.client import game_interface
+
+    monkeypatch.setattr(game_interface, "UNVERIFIED", {"Progressive Blood Thirsty"})
     pipe = FakePipe()
     assert attached(pipe).give_item(0, "Progressive Blood Thirsty", 1)
     assert pipe.sent == []
@@ -164,6 +174,6 @@ def test_loading_a_save_requests_a_resync():
 def test_replayed_manual_unlocks_are_not_repeated(caplog):
     game = attached(FakePipe())
     with caplog.at_level("INFO"):
-        game.give_item(0, "Progressive Blood Thirsty", 1)
-        game.give_item(0, "Progressive Blood Thirsty", 1)
-    assert sum("Unlocked: Progressive Blood Thirsty" in r.message for r in caplog.records) == 1
+        game.give_item(0, "Bone Charm Slot", 1)
+        game.give_item(0, "Bone Charm Slot", 1)
+    assert sum("Unlocked: Bone Charm Slot" in r.message for r in caplog.records) == 1

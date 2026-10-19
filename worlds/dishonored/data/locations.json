@@ -86,7 +86,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Ovrsr_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_2"
+    ]
   },
   {
     "region": "Backyard",
@@ -103,7 +106,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Ovrsr_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_74"
+    ]
   },
   {
     "name": "Backyard: Workshop Rune",
