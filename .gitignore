@@ -82,4 +82,5 @@ dist/
 
 # Editors
 .vs/
+.vscode/
 .idea/
