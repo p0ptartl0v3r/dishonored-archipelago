@@ -28,6 +28,9 @@ CommandState command_state();
 
 void toggle_call_logging();
 
+// Write a marker with the player's position to the log (on the game thread, soon).
+void request_mark();
+
 // Stop doing any work in the hook (the process is exiting).
 void shut_down();
 

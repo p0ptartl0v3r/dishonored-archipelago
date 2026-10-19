@@ -58,6 +58,9 @@ and `python tools/native_console.py "event 0"` (1, 2, ...) reads them directly.
 | `pickup <object path> <class> <item> at=x,y,z` | A pickup actor was taken (destroyed). `<item>` is e.g. `Rune_AbsItm`, `Coins_AbsItm` or `WhaleBoneCharm_01_twk`. Ends in `(load)` when it happened while a level was loading, which is how already-collected pickups are removed from a save. Placed pickups have stable paths in their level's script package (`L_Streets1_Script....DisAbstractItemPickup_19`); pickups spawned at runtime sit in `DishonoredGameFull_P` with spawn-order numbers, so match those by position |
 | `additem <kismet action path> <item>` | A level script gave the player an item (scripted rewards) |
 | `objective <kismet action path> <class> <objectives>` | A level script changed objectives |
+| `gain item <name> <old>-><new> at=x,y,z` | The player's count of an abstract item went up, whatever the cause: `Rune_AbsItm`, `Coins_AbsItm`, `BoneCharms`, blueprints (`BP_*_AbsItm`), notes, `RewireTool`. Checked every 0.5 s during gameplay; the position is the player's |
+| `lose item <name> <old>-><new>` | ...went down (e.g. runes spent on a power) |
+| `gain upgrade <name> 0->1 at=x,y,z` / `lose upgrade ...` | An upgrade was added (Piero, a script, or our own `upgrade` request) or removed |
 
 To turn an event into a check, add a pattern to the location's `detect` list
 in `worlds/dishonored/data/locations.json`. A pattern matches when **every word
@@ -102,7 +105,8 @@ In `archipelago_native.ini`, set `[Research] LogCalls=`:
   of the pickup. That object name is what `research/locations.csv` needs.
   This is slow; expect low frame rates while it's on.
 
-**F9** pauses/resumes call logging.
+**F8** also works during normal play: it writes `==== MARK (F8) at=x,y,z ====` with
+the player's position, to flag a check that produced no event. **F9** pauses/resumes call logging.
 
 ## Troubleshooting
 

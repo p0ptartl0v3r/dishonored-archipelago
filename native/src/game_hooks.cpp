@@ -7,6 +7,7 @@
 #include <atomic>
 #include <deque>
 #include <mutex>
+#include <map>
 #include <unordered_set>
 #include <vector>
 
@@ -242,6 +243,65 @@ bool grant_upgrade(ue3::UObject* player_controller, const std::string& name) {
   return true;
 }
 
+void emit_event(std::string text);
+
+std::string location_of(ue3::UObject* actor) {
+  if (actor == nullptr) return "at=?";
+  const auto at = ue3::field<ue3::FVector>(actor, ue3::kActorLocation);
+  return std::format("at={:.0f},{:.0f},{:.0f}", at.x, at.y, at.z);
+}
+
+// What the player has, compared every half second to report changes from any
+// source (pickups, scripted rewards, shops, our own grants) as gain/lose events.
+struct Holdings {
+  std::map<std::string, int32_t> items;  // abstract items: runes, coins, blueprints, notes...
+  std::map<std::string, int32_t> upgrades;
+};
+std::optional<Holdings> g_holdings;  // reset on every load; the first read is the baseline
+DWORD g_last_holdings_tick = 0;
+std::atomic<bool> g_mark_requested = false;
+
+Holdings read_holdings(ue3::UObject* pawn) {
+  Holdings out;
+  if (auto* inventory = ue3::field<ue3::UObject*>(pawn, ue3::kPawnInventory)) {
+    const auto abstract = ue3::field<ue3::TArray<uint8_t>>(inventory, ue3::kInventoryAbstractItems);
+    for (int32_t i = 0; i < abstract.count && abstract.data != nullptr; ++i) {
+      auto* item = *reinterpret_cast<ue3::UObject**>(abstract.data + i * 0xC);
+      out.items[ue3::object_name(item)] += *reinterpret_cast<int32_t*>(abstract.data + i * 0xC + 4);
+    }
+  }
+  const auto owned = ue3::field<ue3::TArray<ue3::UObject*>>(pawn, ue3::kPlayerPawnUpgrades);
+  for (int32_t i = 0; i < owned.count && owned.data != nullptr; ++i) out.upgrades[ue3::object_name(owned.data[i])] = 1;
+  return out;
+}
+
+void report_changes(const std::map<std::string, int32_t>& before, const std::map<std::string, int32_t>& after,
+                    const char* kind, const std::string& where) {
+  for (const auto& [name, count] : after) {
+    const auto old = before.find(name);
+    const int32_t was = old == before.end() ? 0 : old->second;
+    if (count > was) emit_event(std::format("gain {} {} {}->{} {}", kind, name, was, count, where));
+    if (count < was) emit_event(std::format("lose {} {} {}->{}", kind, name, was, count));
+  }
+  for (const auto& [name, was] : before) {
+    if (!after.contains(name)) emit_event(std::format("lose {} {} {}->0", kind, name, was));
+  }
+}
+
+void track_holdings(ue3::UObject* player_controller, bool settled, DWORD now) {
+  ue3::UObject* pawn = settled ? player_pawn(player_controller) : nullptr;
+  if (!settled) g_holdings.reset();
+  if (pawn == nullptr || now - g_last_holdings_tick < 500) return;  // possessing: keep the baseline
+  g_last_holdings_tick = now;
+  Holdings current = read_holdings(pawn);
+  if (g_holdings) {
+    const std::string where = location_of(pawn);
+    report_changes(g_holdings->items, current.items, "item", where);
+    report_changes(g_holdings->upgrades, current.upgrades, "upgrade", where);
+  }
+  g_holdings = std::move(current);
+}
+
 constexpr const char* kAmmoTypes[] = {"Bullet",       "Bullet_Explosive", "Arrow",      "Arrow_Sleep",
                                       "Arrow_Flare",  "SpringRazor",      "Grenade",    "StickyGrenade",
                                       "Arrow_Explosive", "ArcMine",       "FlashSmoke", "ArcMineStun"};
@@ -447,6 +507,12 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
       if (!in_gameplay) g_cheats_tried_for = nullptr;  // a new controller may reuse the old address
       g_in_gameplay = in_gameplay;
       const bool settled = in_gameplay && !g_in_menu && now - g_gameplay_started_tick >= kSettleMs;
+      if (g_mark_requested.exchange(false)) {
+        log("==== MARK (F8) {} ====",
+            location_of(controller ? ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn) : nullptr));
+      }
+      if (in_gameplay) track_holdings(controller, settled, now);
+      else g_holdings.reset();
       g_cheats_ready = settled && ensure_cheat_manager(controller);
       if (g_cheats_ready && g_queue_pending) drain_queue(controller);
     }
@@ -496,6 +562,8 @@ CommandState command_state() {
   }
   return g_cheats_ready ? CommandState::Ready : CommandState::NoCheats;
 }
+
+void request_mark() { g_mark_requested = true; }
 
 void toggle_call_logging() {
   g_call_logging = !g_call_logging;

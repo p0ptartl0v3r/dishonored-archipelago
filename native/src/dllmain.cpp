@@ -25,7 +25,7 @@ std::wstring path_next_to_dll(const wchar_t* file_name) {
 
 DWORD WINAPI hotkey_thread(LPVOID) {
   for (;;) {
-    if (GetAsyncKeyState(VK_F8) & 1) ap::log("==== MARK (F8) ====");
+    if (GetAsyncKeyState(VK_F8) & 1) ap::request_mark();
     if (GetAsyncKeyState(VK_F9) & 1) ap::toggle_call_logging();
     Sleep(50);
   }
