@@ -8,6 +8,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include <vector>
 
 namespace ue3 {
 
@@ -67,6 +68,16 @@ inline constexpr size_t kPickupTweaks = 0x3B8;                   // ADisAbstract
 inline constexpr size_t kAbstractPickupTweaksItem = 0xDC;        // UDisTweaks_AbstractItemPickup::m_pAbstractItem
 inline constexpr size_t kAddAbstractItemActionItem = 0xF8;       // UDisSeqAct_AddAbstractItem::m_pItemToAdd
 inline constexpr size_t kObjectiveActionObjectives = 0xFC;       // UDisSeqAct_ObjectiveAction::m_Objectives
+inline constexpr size_t kGiveUpgradeActionUpgrade = 0xF8;        // UDisSeqAct_GiveUpgrade::m_pUpgrade
+inline constexpr size_t kPawnInventory = 0x59C;                  // ADishonoredPawn::m_pInventory
+inline constexpr size_t kPlayerPawnBoneCharmSlots = 0xB10;       // ADishonoredPlayerPawn::m_WhaleBoneCharmSlots[10]
+inline constexpr size_t kPlayerPawnUpgrades = 0xB50;             // ADishonoredPlayerPawn::m_Upgrades
+inline constexpr size_t kUpgradeHostItemType = 0x90;             // UDisTweaks_Upgrade::m_pHostItemType (UClass*)
+inline constexpr size_t kUpgradeDisplayName = 0xB8;              // UDisTweaks_Upgrade::m_Name (FString, localized)
+inline constexpr size_t kUpgradeParent = 0xE0;                   // UDisTweaks_Upgrade::m_pParentUpgrade
+inline constexpr size_t kInventorySlots = 0x38;                  // UDishonoredInventory::m_Slots (FPawnInventorySlot, 0xC each)
+inline constexpr size_t kInventoryAmmo = 0xBC;                   // UDishonoredInventory::m_AmmoInfo (count, capacity)
+inline constexpr size_t kInventoryAbstractItems = 0xC8;          // UDishonoredInventory::m_AbstractItem (item, quantity, flags)
 
 template <typename T>
 T field(const UObject* object, size_t offset) {
@@ -103,5 +114,8 @@ bool is_a(const UObject* object, int32_t class_name_index);
 UObject* find_object(const std::string& full);
 // First object of this class that isn't a class default object ("Default__...").
 UObject* find_instance(const std::string& class_name);
+// Every object of this exact class (by name index), class default objects excluded.
+std::vector<UObject*> find_instances(int32_t class_name_index);
+std::string to_string(const FString& text);
 
 }  // namespace ue3

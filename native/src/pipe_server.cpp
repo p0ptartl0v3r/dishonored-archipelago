@@ -22,8 +22,8 @@ std::string handle(const std::string& request) {
     }
     return "pong waiting";
   }
-  if (request.rfind("console ", 0) == 0) {
-    queue_console_command(request.substr(8));
+  if (request.rfind("console ", 0) == 0 || request.rfind("upgrade ", 0) == 0 || request == "dump") {
+    queue_game_request(request);
     return "queued";
   }
   if (request.rfind("event ", 0) == 0) {
@@ -60,18 +60,33 @@ void serve_client(HANDLE pipe) {
   }
 }
 
+DWORD WINAPI client_thread(LPVOID param) {
+  HANDLE pipe = param;
+  log("client connected");
+  serve_client(pipe);
+  log("client disconnected");
+  DisconnectNamedPipe(pipe);
+  CloseHandle(pipe);
+  return 0;
+}
+
+// Each client gets its own pipe instance and thread, so tools/native_console.py
+// works while the Archipelago client is connected.
 DWORD WINAPI pipe_thread(LPVOID) {
   for (;;) {
     HANDLE pipe = CreateNamedPipeW(kPipeName, PIPE_ACCESS_DUPLEX, PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,
-                                   1, 4096, 4096, 0, nullptr);
+                                   PIPE_UNLIMITED_INSTANCES, 4096, 4096, 0, nullptr);
     if (pipe == INVALID_HANDLE_VALUE) {
       log("ERROR: could not create pipe (error {})", GetLastError());
       return 1;
     }
     if (ConnectNamedPipe(pipe, nullptr) || GetLastError() == ERROR_PIPE_CONNECTED) {
-      log("client connected");
-      serve_client(pipe);
-      log("client disconnected");
+      HANDLE thread = CreateThread(nullptr, 0, client_thread, pipe, 0, nullptr);
+      if (thread != nullptr) {
+        CloseHandle(thread);
+        continue;
+      }
+      log("ERROR: could not start a client thread (error {})", GetLastError());
     }
     DisconnectNamedPipe(pipe);
     CloseHandle(pipe);

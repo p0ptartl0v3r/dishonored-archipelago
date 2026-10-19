@@ -71,6 +71,8 @@ thread_local bool g_inside_hook_work = false;
 
 // Names (FName indices) of the functions that signal check-relevant events.
 struct EventNames {
+  int32_t player_pawn = -1;                // class DishonoredPlayerPawn
+  int32_t upgrade_tweaks = -1;             // class DisTweaks_Upgrade
   int32_t destroyed = -1;                  // Actor.Destroyed: a pickup was taken (or removed on load)
   int32_t client_prepare_map_change = -1;  // PlayerController.ClientPrepareMapChange(LevelName, ...)
   int32_t on_add_abstract_item = -1;       // DishonoredPawn.OnAddAbstractItem: scripted item reward
@@ -122,14 +124,6 @@ std::wstring widen(const std::string& text) {
   return out;
 }
 
-std::string narrow(const ue3::FString& text) {
-  std::string out;
-  for (int32_t i = 0; text.data != nullptr && i < text.count && text.data[i]; ++i) {
-    out.push_back(static_cast<char>(text.data[i]));
-  }
-  return out;
-}
-
 void run_console_command(ue3::UObject* player_controller, const std::string& command) {
   const std::wstring wide = widen(command);
   ConsoleCommandParams params{};
@@ -137,7 +131,7 @@ void run_console_command(ue3::UObject* player_controller, const std::string& com
   params.write_to_log = 1;
   g_original(player_controller, nullptr, g_console_command.load(), &params, nullptr);
   // The engine allocated return_value; we leave it rather than free it with the wrong allocator.
-  const std::string result = narrow(params.return_value);
+  const std::string result = ue3::to_string(params.return_value);
   log("console: {}{}", command, result.empty() ? "" : " -> " + result);
 }
 
@@ -187,14 +181,143 @@ bool ensure_cheat_manager(ue3::UObject* player_controller) {
   return created;
 }
 
+// The controller's pawn if it is Corvo himself (not a possessed creature), else null.
+ue3::UObject* player_pawn(ue3::UObject* player_controller) {
+  auto* pawn = ue3::field<ue3::UObject*>(player_controller, ue3::kControllerPawn);
+  return ue3::is_a(pawn, g_names.player_pawn) ? pawn : nullptr;
+}
+
+bool has_upgrade(ue3::UObject* pawn, ue3::UObject* upgrade) {
+  const auto owned = ue3::field<ue3::TArray<ue3::UObject*>>(pawn, ue3::kPlayerPawnUpgrades);
+  for (int32_t i = 0; i < owned.count && owned.data != nullptr; ++i) {
+    if (owned.data[i] == upgrade) return true;
+  }
+  return false;
+}
+
+// Gives an upgrade (DisTweaks_Upgrade object name) the way level scripts do: the pawn's
+// native OnGiveUpgrade handler with a GiveUpgrade Kismet action. Instead of constructing
+// an action, it borrows the class default object, sets m_pUpgrade for the call and
+// restores it. Skips upgrades already owned, so replaying after a load is harmless.
+// Returns false to retry later (Corvo is possessing something).
+bool grant_upgrade(ue3::UObject* player_controller, const std::string& name) {
+  ue3::UObject* pawn = player_pawn(player_controller);
+  if (pawn == nullptr) return false;
+  static ue3::UFunction* on_give_upgrade = nullptr;
+  static ue3::UObject* action = nullptr;
+  if (on_give_upgrade == nullptr) {
+    on_give_upgrade = ue3::find_object("Function DishonoredGame.DishonoredPlayerPawn.OnGiveUpgrade");
+  }
+  if (action == nullptr) {
+    action = ue3::find_object("DisSeqAct_GiveUpgrade DishonoredGame.Default__DisSeqAct_GiveUpgrade");
+  }
+  if (on_give_upgrade == nullptr || action == nullptr) {
+    log("WARNING: upgrade {}: OnGiveUpgrade or Default__DisSeqAct_GiveUpgrade not found", name);
+    return true;
+  }
+  const int32_t wanted = ue3::find_name_index(name);
+  ue3::UObject* upgrade = nullptr;
+  for (auto* candidate : ue3::find_instances(g_names.upgrade_tweaks)) {
+    if (candidate->name.index == wanted) {
+      upgrade = candidate;
+      break;
+    }
+  }
+  if (upgrade == nullptr) {
+    log("WARNING: upgrade {}: no DisTweaks_Upgrade with that name is loaded (see 'dump')", name);
+    return true;
+  }
+  if (has_upgrade(pawn, upgrade)) {
+    log("upgrade {}: already owned", name);
+    return true;
+  }
+  auto** slot = reinterpret_cast<ue3::UObject**>(reinterpret_cast<uint8_t*>(action) + ue3::kGiveUpgradeActionUpgrade);
+  ue3::UObject* saved = *slot;
+  *slot = upgrade;
+  ue3::UObject* params = action;  // OnGiveUpgrade(DisSeqAct_GiveUpgrade _pAction)
+  g_original(pawn, nullptr, on_give_upgrade, &params, nullptr);
+  *slot = saved;
+  log("upgrade {}: {}", name,
+      has_upgrade(pawn, upgrade) ? "granted" : "WARNING: called OnGiveUpgrade but the pawn doesn't list it");
+  return true;
+}
+
+constexpr const char* kAmmoTypes[] = {"Bullet",       "Bullet_Explosive", "Arrow",      "Arrow_Sleep",
+                                      "Arrow_Flare",  "SpringRazor",      "Grenade",    "StickyGrenade",
+                                      "Arrow_Explosive", "ArcMine",       "FlashSmoke", "ArcMineStun"};
+
+// Research: writes what the player has, and every upgrade the game knows, to the log.
+void dump_player_state(ue3::UObject* player_controller) {
+  ue3::UObject* pawn = player_pawn(player_controller);
+  log("==== dump ====");
+  for (auto* upgrade : ue3::find_instances(g_names.upgrade_tweaks)) {
+    log("upgrade {} \"{}\" item={} parent={}{}", ue3::object_name(upgrade),
+        ue3::to_string(ue3::field<ue3::FString>(upgrade, ue3::kUpgradeDisplayName)),
+        ue3::object_name(ue3::field<ue3::UObject*>(upgrade, ue3::kUpgradeHostItemType)),
+        ue3::object_name(ue3::field<ue3::UObject*>(upgrade, ue3::kUpgradeParent)),
+        pawn != nullptr && has_upgrade(pawn, upgrade) ? " OWNED" : "");
+  }
+  if (pawn == nullptr) {
+    log("(not playing as Corvo: no player state)");
+    return;
+  }
+  std::string slots;
+  for (int i = 0; i < 10; ++i) {
+    slots += std::format(" {}", ue3::field<int32_t>(pawn, ue3::kPlayerPawnBoneCharmSlots + 4 * i));
+  }
+  log("bone charm slots:{}", slots);
+  auto* inventory = ue3::field<ue3::UObject*>(pawn, ue3::kPawnInventory);
+  if (inventory == nullptr) return;
+  const auto items = ue3::field<ue3::TArray<uint8_t>>(inventory, ue3::kInventorySlots);
+  for (int32_t i = 0; i < items.count && items.data != nullptr; ++i) {
+    auto* item = *reinterpret_cast<ue3::UObject**>(items.data + i * 0xC);
+    auto* required = *reinterpret_cast<ue3::UObject**>(items.data + i * 0xC + 4);
+    log("inventory slot {}: {} (requires {})", i, ue3::full_name(item), ue3::object_name(required));
+  }
+  // One (count, capacity) pair per EeDisAmmoType.
+  const auto ammo = ue3::field<ue3::TArray<int32_t>>(inventory, ue3::kInventoryAmmo);
+  for (int32_t i = 0; i < ammo.count && ammo.data != nullptr; ++i) {
+    log("ammo {}: {} / {}", i < 12 ? kAmmoTypes[i] : std::to_string(i), ammo.data[2 * i], ammo.data[2 * i + 1]);
+  }
+  const auto abstract = ue3::field<ue3::TArray<uint8_t>>(inventory, ue3::kInventoryAbstractItems);
+  for (int32_t i = 0; i < abstract.count && abstract.data != nullptr; ++i) {
+    auto* item = *reinterpret_cast<ue3::UObject**>(abstract.data + i * 0xC);
+    log("abstract item {} x{}", ue3::object_name(item), *reinterpret_cast<int32_t*>(abstract.data + i * 0xC + 4));
+  }
+  log("==== end of dump ====");
+}
+
+// Runs one queued request on the game thread. Returns false to keep it for later.
+bool run_request(ue3::UObject* player_controller, const std::string& request) {
+  if (request.rfind("console ", 0) == 0) {
+    run_console_command(player_controller, request.substr(8));
+    return true;
+  }
+  if (request.rfind("upgrade ", 0) == 0) return grant_upgrade(player_controller, request.substr(8));
+  if (request == "dump") {
+    dump_player_state(player_controller);
+    return true;
+  }
+  log("WARNING: unknown game request: {}", request);
+  return true;
+}
+
 void drain_queue(ue3::UObject* player_controller) {
-  std::deque<std::string> commands;
+  std::deque<std::string> requests;
   {
     std::lock_guard lock(g_queue_mutex);
-    commands.swap(g_queue);
+    requests.swap(g_queue);
     g_queue_pending = false;
   }
-  for (const auto& command : commands) run_console_command(player_controller, command);
+  std::deque<std::string> later;
+  for (const auto& request : requests) {
+    if (!run_request(player_controller, request)) later.push_back(request);
+  }
+  if (!later.empty()) {
+    std::lock_guard lock(g_queue_mutex);
+    g_queue.insert(g_queue.begin(), later.begin(), later.end());
+    g_queue_pending = true;
+  }
 }
 
 // The local player's controller, read fresh from the engine each time (it is
@@ -284,6 +407,8 @@ void resolve_engine_objects() {
   g_names.pickup_base = ue3::find_name_index("DisPickup_Base");
   g_names.abstract_item_pickup = ue3::find_name_index("DisAbstractItemPickup");
   g_names.whale_bone_charm = ue3::find_name_index("DisWhaleBoneCharm");
+  g_names.player_pawn = ue3::find_name_index("DishonoredPlayerPawn");
+  g_names.upgrade_tweaks = ue3::find_name_index("DisTweaks_Upgrade");
   g_console_command = console_command;
   log("found DishonoredEngine ({}) and PlayerController.ConsoleCommand", ue3::object_name(g_engine));
 }
@@ -358,9 +483,9 @@ bool install_hooks(const Config& config) {
 
 void on_engine_ready() { g_engine_ready = true; }
 
-void queue_console_command(const std::string& command) {
+void queue_game_request(const std::string& request) {
   std::lock_guard lock(g_queue_mutex);
-  g_queue.push_back(command);
+  g_queue.push_back(request);
   g_queue_pending = true;
 }
 

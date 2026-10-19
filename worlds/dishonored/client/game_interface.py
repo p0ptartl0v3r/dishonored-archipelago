@@ -14,7 +14,7 @@ import logging
 from abc import ABC, abstractmethod
 
 from ..game_data import load as load_game_data
-from .item_commands import UNVERIFIED, commands_for
+from .item_commands import UNVERIFIED, commands_for, console_commands
 
 logger = logging.getLogger("DishonoredClient")
 
@@ -55,7 +55,7 @@ class GameInterface(ABC):
 def log_unlock_for_player(item_name: str, level: int) -> None:
     """Tell the player what they got and, if known, what to type in the console."""
     logger.info(f"Unlocked: {item_name}" + (f" ({level})" if level > 1 else ""))
-    for command in commands_for(item_name, level):
+    for command in console_commands(commands_for(item_name, level)):
         note = " (unverified)" if item_name in UNVERIFIED else ""
         logger.info(f"    console: {command}{note}")
 
@@ -301,7 +301,7 @@ class NativeInterface(GameInterface):
             if not self._ready():
                 return False
             for command in commands:
-                if self._request(f"console {command}") != "queued":
+                if self._request(command) != "queued":
                     return False
         except OSError:
             return False

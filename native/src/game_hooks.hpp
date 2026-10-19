@@ -13,8 +13,11 @@ bool install_hooks(const Config& config);
 // Call once the engine's name/object tables are valid. Lookups then happen on the game thread.
 void on_engine_ready();
 
-// Queue a console command; it runs on the game thread within ~100ms while in gameplay.
-void queue_console_command(const std::string& command);
+// Queue a request for the game thread; it runs within ~100ms once in gameplay with cheats on:
+//   "console <command>"  run a console command
+//   "upgrade <name>"     give the DisTweaks_Upgrade with that object name (skipped if owned)
+//   "dump"               log upgrades, bone charm slots, inventory and ammo (research)
+void queue_game_request(const std::string& request);
 
 enum class CommandState {
   Waiting,   // not in gameplay (menu, loading) or engine objects not found yet

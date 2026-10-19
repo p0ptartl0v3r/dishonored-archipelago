@@ -15,7 +15,7 @@ class FakePipe:
         self.sent.append(request)
         if request == "ping":
             reply = self.ready if isinstance(self.ready, str) else ("pong ready" if self.ready else "pong waiting")
-        elif request.startswith("console "):
+        elif request.startswith(("console ", "upgrade ")):
             reply = "queued"
         elif request.startswith("event "):
             index = int(request.split()[1])
@@ -148,6 +148,15 @@ def test_real_events_from_the_distillery_district():
     assert game.match_event(prefix + "DisAbstractItemPickup_29 DisAbstractItemPickup Coins_AbsItm at=0,0,0") == []
 
 
+def test_upgrade_requests_are_sent_as_is(monkeypatch):
+    from dishonored.client import item_commands
+
+    monkeypatch.setitem(item_commands.ITEM_COMMANDS, "Progressive Boot Stealth", item_commands._upgrades("Boots1", "Boots2"))
+    pipe = FakePipe()
+    assert attached(pipe).give_item(0, "Progressive Boot Stealth", 2)
+    assert pipe.sent == ["ping", "upgrade Boots1", "upgrade Boots2"]
+
+
 def test_waits_while_cheats_are_off():
     pipe = FakePipe(ready="pong nocheats")
     assert not attached(pipe).give_item(0, "Progressive Blink", 1)
@@ -174,6 +183,6 @@ def test_loading_a_save_requests_a_resync():
 def test_replayed_manual_unlocks_are_not_repeated(caplog):
     game = attached(FakePipe())
     with caplog.at_level("INFO"):
-        game.give_item(0, "Bone Charm Slot", 1)
-        game.give_item(0, "Bone Charm Slot", 1)
-    assert sum("Unlocked: Bone Charm Slot" in r.message for r in caplog.records) == 1
+        game.give_item(0, "Kennels Zone Key", 1)
+        game.give_item(0, "Kennels Zone Key", 1)
+    assert sum("Unlocked: Kennels Zone Key" in r.message for r in caplog.records) == 1

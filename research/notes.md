@@ -175,6 +175,44 @@ through `ProcessEvent`.
 - `DishonoredInventoryPickup` / `DisStatPickup` events are ammo, elixirs and
   dropped items: noise for our checks.
 
+### Player state (from the SDK, read by the DLL's `dump`)
+- `DishonoredPlayerPawn.m_Upgrades` (+0xB50): owned `DisTweaks_Upgrade`s.
+  `OnGiveUpgrade(DisSeqAct_GiveUpgrade)` is native and reads the action's `m_pUpgrade` (+0xF8).
+- `DishonoredPlayerPawn.m_WhaleBoneCharmSlots[10]` (+0xB10). The number of usable slots
+  looks like an upgrade attribute: `Twk_Upgrades_SF.upk` mentions
+  `Attribute_MaxActivatedBoneCharmCount`, and `DisTweaks_PlayerPawn` has
+  `m_MaxActivatedBoneCharmCount` and `m_BoneCharmSlotDLCUpgrades` (10 slots with DLC, 6 without).
+- `DishonoredPawn.m_pInventory` (+0x59C) -> `DishonoredInventory`: `m_Slots` (equipped items),
+  `m_AmmoInfo` (count, capacity per `EeDisAmmoType`: Bullet, Bullet_Explosive, Arrow,
+  Arrow_Sleep, Arrow_Flare, SpringRazor, Grenade, StickyGrenade, ...), `m_AbstractItem`
+  (item + quantity: runes, coins, blueprints?).
+- Controller.Pawn is the possessed creature while possessing, so the DLL checks the pawn
+  is a `DishonoredPlayerPawn` before touching player state.
+
+### First `dump` (2026-10-19, save at the start of The Flooded District)
+- Upgrade object names (`Twk_Upgrade_*`) are all loaded during gameplay; the mapping
+  to items is in `client/item_commands.py`. Not randomized: `Twk_Upgrade_Mask`
+  (Corvo's Mask).
+- Bone charm capacity (from the user): Corvo starts with 3 slots; `Twk_Upgrade_BoneCharms`
+  adds 1 and `Twk_Upgrade_BoneCharms2` adds 2 (Piero); each DLC statue upgrade
+  `Twk_Upgrade_Statue{Fish,Whale,Wolfhound,Rat}` ("Mystical ... Artifact", from the
+  Acrobatic Killer / Arcane Assassin / Backstreet Butcher / Shadow Rat packs in Void
+  Walker's Arsenal) adds 1: 10 in total, the Manual's 10 slot items. With both Piero
+  upgrades owned, six slots were filled. `m_WhaleBoneCharmSlots` holds the equipped charm's info index
+  per slot, -1 = empty.
+- Inventory slots are fixed per equipment type (0-1 empty hands, 2 sword, 3 powers,
+  4 crossbow, 5 pistol, 6 spring razor, 7 grenade, 8 heart). At the start of the
+  Flooded District (Daud takes Corvo's gear) slots 2 and 4-7 were None, so "no sword"
+  is representable as an empty slot.
+- Ammo capacities with upgrades: Bullet 30, Bullet_Explosive 10, Arrow 30,
+  Arrow_Sleep 10, Arrow_Flare 10, SpringRazor 9, Grenade 9, StickyGrenade 9.
+- Abstract items include notes/journal entries, `Rune_AbsItm` (unspent runes),
+  `Coins_AbsItm`, `BoneCharms`, `RewireTool` (the Rewire Tool is an abstract item, not
+  equipment), and blueprints as `BP_*_AbsItm` (`BP_SilentRunning_AbsItm`,
+  `BP_SpyglassZoom_AbsItm`, `BP_StickyGrenade_AbsItm`, `BP_HealthPotion_AbsItm`,
+  `BP_FlareBolt_AbsItm` = incendiary bolts). Blueprint checks should show up as
+  `pickup ... BP_..._AbsItm` events.
+
 ## Memory (Cheat Engine)
 
 | Value | Module + pointer path | Type | Notes |

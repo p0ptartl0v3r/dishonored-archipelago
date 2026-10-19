@@ -12,9 +12,8 @@ function to the real system `dinput8.dll` and, inside the game:
 The Python client talks to it over the named pipe `\\.\pipe\dishonored_archipelago`
 (protocol in `src/pipe_server.hpp`). That is the client's default mode.
 
-**Status:** compiles (MinGW cross-build, checked in CI) but **has not been run
-in the game yet**. Expect the first in-game test to need fixes; the log file
-says where it stopped.
+**Status:** works in-game on the Steam build (powers granted automatically, pickups
+reported as events). Newer features are marked below until they've been tried.
 
 ## Install
 
@@ -73,6 +72,23 @@ event's `at=` within about 1.5 m.
 ```
 
 Put a `detect` on the victory location to make finishing the game send the goal.
+
+## Upgrades and the state dump (confirmed in-game)
+
+- `upgrade <name>` gives one of Piero's upgrades by its `DisTweaks_Upgrade` object
+  name, through the pawn's `OnGiveUpgrade` handler (what level scripts use). It is
+  skipped if the player already has it, so replaying after a load is safe. The log
+  says `upgrade <name>: granted`, `already owned`, or why it failed.
+- `dump` writes to the log: every upgrade the game has loaded (object name, in-game
+  name, the item it belongs to, and `OWNED`), the bone charm slots, the inventory
+  slots, ammo count/capacity per type, and abstract items (runes, blueprints, ...).
+
+```
+python tools/native_console.py dump
+python tools/native_console.py "upgrade <name from the dump>"
+```
+
+Both run once you're in gameplay as Corvo (they wait while you're possessing something).
 
 ## Researching pickups (call logging)
 
