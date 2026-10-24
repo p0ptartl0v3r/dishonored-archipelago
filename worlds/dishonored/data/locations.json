@@ -527,7 +527,11 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_PrsnSewer_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_79",
+      "pickup L_PrsnSewer_Script.TheWorld.PersistentLevel.DisElixirHealth_1"
+    ]
   },
   {
     "name": "Boyle Mansion Interior: Bedroom Painting",

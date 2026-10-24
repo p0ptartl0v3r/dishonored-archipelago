@@ -211,6 +211,10 @@ def test_real_events_from_the_first_mission():
         full + "DisAbstractItemPickup_156 DisAbstractItemPickup Rune_AbsItm at=-1279,-2902,401": "The Pub: Shop Rune",
         "grant inventory Twk_Inv_CrossbowCorvo by L_PrsnSewer_Script.TheWorld.PersistentLevel.Main_Sequence."
         "Corvo_SpecialGear.DisSeqAct_AddInventoryItem_3": "Dishonored (Mission): Folding Blade and Crossbow",
+        "pickup L_PrsnSewer_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_79 DisAbstractItemPickup "
+        "Coins_AbsItm at=6578,4392,3424": "Dishonored (Mission): Open Jelly's Safe",
+        "pickup L_PrsnSewer_Script.TheWorld.PersistentLevel.DisElixirHealth_1 DisElixirHealth - at=6556,4379,3455":
+            "Dishonored (Mission): Open Jelly's Safe",
         "grant power Blink 1 by L_OutsiderDream_Script.TheWorld.PersistentLevel.Main_Sequence.Outsider_Intro_Blink."
         "DisSeqAct_AddPower_0": "The Void: Receive the Mark",
     }
