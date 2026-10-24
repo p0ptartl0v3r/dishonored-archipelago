@@ -439,6 +439,12 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
         g_in_menu = true;
         log("in main menu");
       }
+    } else if (!g_in_menu && g_in_gameplay) {
+      // A level transition. Some swap the player's inventory out and back (the Void keeps
+      // a backup and restores it on return), so treat it like a load: wait to settle, then
+      // the client re-applies every received item.
+      g_gameplay_started_tick = GetTickCount();
+      emit_event("gameplay");
     } else if (g_in_menu && !g_menu_exit_pending) {
       g_menu_exit_pending = true;
       g_menu_exit_tick = GetTickCount();

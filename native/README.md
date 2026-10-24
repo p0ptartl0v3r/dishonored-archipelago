@@ -53,7 +53,7 @@ and `python tools/native_console.py "event 0"` (1, 2, ...) reads them directly.
 
 | Event | When |
 |---|---|
-| `gameplay` | Gameplay starts (after loading a save or a level transition). Every level streams into one persistent map, `DishonoredGameFull_P`, so this carries no map name |
+| `gameplay` | Gameplay starts or the player's state may have been reset: after loading a save, starting a new game, or any level transition (`mapchange`; the Void swaps the inventory out and back). Commands wait 3 s after it. Every level streams into one persistent map, `DishonoredGameFull_P`, so this carries no map name |
 | `mapchange <level>` | The game starts loading another level |
 | `pickup <object path> <class> <item> at=x,y,z` | A pickup actor was taken (destroyed). `<item>` is e.g. `Rune_AbsItm`, `Coins_AbsItm` or `WhaleBoneCharm_01_twk`. Ends in `(load)` when it happened while a level was loading, which is how already-collected pickups are removed from a save. Placed pickups have stable paths in their level's script package (`L_Streets1_Script....DisAbstractItemPickup_19`); pickups spawned at runtime sit in `DishonoredGameFull_P` with spawn-order numbers, so match those by position |
 | `additem <kismet action path> <item>` | A level script gave the player an item (scripted rewards) |

@@ -516,7 +516,10 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "grant inventory Twk_Inv_CrossbowCorvo"
+    ]
   },
   {
     "name": "Dishonored (Mission): Open Jelly's Safe",

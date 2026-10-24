@@ -47,7 +47,7 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480110,Return to the Tower: Victory,Mission,Return to the Tower,Tower Interior,,,
 219480111,The Flooded District: Victory,Mission,The Flooded District,Old Dunwall Sewers,,,
 219480112,The Loyalists: Victory,Mission,The Loyalists,Hound Pits Pub (The Loyalists),,,
-219480113,The Void: Receive the Mark,Other,Intro,The Void,grant (untested),OnAddPower Blink,the Outsider gives Blink with the mark
+219480113,The Void: Receive the Mark,Other,Intro,The Void,grant,OnAddPower Blink 1,the Outsider gives Blink with the mark
 219480114,Dishonored (Mission): Clockwork Explosive,Other,Intro,Dunwall Prison,pickup,L_Prison_Script...DisAbstractItemPickup_0 ExplosiveDevice_AbsItm,
 219480115,High Overseer's Office: Campbell's Secret Room Painting,Painting,High Overseer Campbell,High Overseer's Office,,,
 219480116,Art Dealer's Apartment: Second Floor Painting,Painting,House of Pleasure,Art Dealer's Apartment,,,
@@ -56,7 +56,7 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480119,North End: Sokolov's Safehouse Painting,Painting,The Royal Physician,North End,,,
 219480120,Dishonored (Mission): Corvo's Cell Key,Other,Intro,Dunwall Prison,pickup,L_Prison_Script...DisKey_Base_1,key from the bread tray
 219480121,Prologue: Get Framed,Other,Intro,Prologue,mapchange,L_Prison_P,arriving in Coldridge after the assassination
-219480122,Dishonored (Mission): Folding Blade and Crossbow,Other,Intro,Dunwall Sewers,grant? (untested),,"cutscene returning Corvo's gear, after the note to the Lord Protector (player near 4597,4280,3428); no event before script grants were logged"
+219480122,Dishonored (Mission): Folding Blade and Crossbow,Other,Intro,Dunwall Sewers,grant,Twk_Inv_CrossbowCorvo (and Twk_Inv_SwordCorvo) by Corvo_SpecialGear,cutscene after the note to the Lord Protector
 219480123,Dishonored (Mission): Open Jelly's Safe,Other,Intro,Dunwall Sewers,gain (untested),"Coins_AbsItm gained near 18357,11352,2348",safe loot produces no pickup event; relies on the inventory diff
 219480124,Boyle Mansion Interior: Bedroom Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,,,
 219480125,Boyle Mansion Interior: Display Room Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,,,

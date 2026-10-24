@@ -227,6 +227,17 @@ through `ProcessEvent`.
   blocking like Piero's upgrades.
 - In the prison, equipment pickups (City Watch sword, pistol) are
   `DishonoredInventoryPickup`s with no item name in the event (`?`).
+- Second run: New Game left the menu only through the 20 s fallback (the menu's
+  controller and pawn carry over). Harmless.
+- **The Void swaps the inventory**: entering `L_OutsiderDream_P` removed every note and
+  `Twk_Upgrade_Mask`; returning to the pub restored them within 0.1 s of the mapchange.
+  Anything granted in between would be lost, so every mapchange now counts as a reset
+  (`gameplay` event, 3 s settle, client re-applies all items).
+- Script grants seen: prologue `Twk_Inv_PistolEliteGuard_Player`,
+  `Twk_Inv_SwordEliteGuard_Player_Intro`; sewer gear cutscene `Twk_Inv_SwordCorvo`,
+  `Twk_Inv_CrossbowCorvo` (Corvo_SpecialGear); Void `grant power Blink 1`,
+  `Twk_Inv_HeartCorvo`; pub `grant upgrade Twk_Upgrade_Mask`. Tutorials arrive as
+  `grant pickup *Tutorial_PickUp` (noise).
 - `TowerEmpress_HideNSeek` is completed when you win and *failed* twice later, so
   match only `DisSeqAct_CompleteObjective`.
 

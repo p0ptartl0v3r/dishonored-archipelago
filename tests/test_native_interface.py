@@ -209,11 +209,16 @@ def test_real_events_from_the_first_mission():
         "Rune_AbsItm at=8881,1236,-2484": "The Void: Outsider's Gift Rune",
         full + "DisAbstractItemPickup_155 DisAbstractItemPickup Rune_AbsItm at=-11585,-5794,-528": "The Pub: River Rune",
         full + "DisAbstractItemPickup_156 DisAbstractItemPickup Rune_AbsItm at=-1279,-2902,401": "The Pub: Shop Rune",
+        "grant inventory Twk_Inv_CrossbowCorvo by L_PrsnSewer_Script.TheWorld.PersistentLevel.Main_Sequence."
+        "Corvo_SpecialGear.DisSeqAct_AddInventoryItem_3": "Dishonored (Mission): Folding Blade and Crossbow",
+        "grant power Blink 1 by L_OutsiderDream_Script.TheWorld.PersistentLevel.Main_Sequence.Outsider_Intro_Blink."
+        "DisSeqAct_AddPower_0": "The Void: Receive the Mark",
     }
     for event, location in cases.items():
         assert game.match_event(event) == [ids[location]], event
     # Other prison keys, the objective failing after hide and seek, and coins elsewhere match nothing.
     assert game.match_event(prison + "DisKey_Base_2 DisKey_Base - at=2478,3354,1640") == []
+    assert game.match_event("grant inventory Twk_Inv_SwordCorvo by x") == []  # same cutscene, one check
     assert game.match_event(
         "objective L_Tower_Script.TheWorld.PersistentLevel.Main_Sequence.==Objectives==.DisSeqAct_FailObjective_0 "
         "DisSeqAct_FailObjective TowerEmpress_HideNSeek"
