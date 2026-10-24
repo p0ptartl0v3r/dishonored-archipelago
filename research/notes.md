@@ -218,8 +218,10 @@ through `ProcessEvent`.
   the old "lost the pawn, then regained it" menu detection never fired (no items, no
   inventory diff for the whole session). The DLL now treats a mapchange to a real
   level while in the menu as a new game and waits for the controller/pawn to change.
-- Safe loot (Jelly's safe) and containers produce no `pickup` event: the items never
-  existed as actors. The inventory diff (`gain item`) is the way to see them.
+- Safe loot is ordinary placed pickups: Jelly's safe holds `DisElixirHealth_1` and a
+  valuable (`DisAbstractItemPickup_79`, `Coins_AbsItm`, worth 50). Valuables turn into
+  coins when taken. (An earlier guess that safes give no event came from misreading
+  which F8 marks belonged to the safe.)
 - The pub's DLC gifts (6 + 6 bone charms, Mystical Fish/Rat artifacts) appear when
   you first sleep at the pub: spawned `DisWhaleBoneCharm` pickups in
   `DishonoredGameFull_P`. The statues produced no pickup event (probably `ADisUpgrade`
