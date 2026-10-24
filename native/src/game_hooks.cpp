@@ -91,7 +91,8 @@ struct EventNames {
   int32_t on_give_upgrade = -1;
   int32_t on_give_pickup = -1;
   int32_t on_add_inventory_item = -1;
-  int32_t power_buy = -1;  // DisGFxMoviePlayerHUD.PowerBuy(PowerId, Level): buying a power with runes
+  int32_t power_buy = -1;  // DisGFxMoviePlayerJournal.PowerBuy(PowerId, Level): buying a power with runes
+  int32_t active_power_component = -1;  // class DishonoredActivePowerComponent (one object per active power)
   int32_t pickup_base = -1;                // class DisPickup_Base
   int32_t abstract_item_pickup = -1;       // class DisAbstractItemPickup
   int32_t whale_bone_charm = -1;           // class DisWhaleBoneCharm
@@ -380,24 +381,54 @@ void add_coins(ue3::UObject* pawn, int32_t amount) {
   }
 }
 
-// Removes randomized powers above their limit and upgrades not received. Runs every
-// half second during settled gameplay, outside the Void.
-void enforce_limits(ue3::UObject* pawn, DWORD now) {
-  if (!g_limits_known || g_in_void) return;
+// Passive powers (Vitality, ...) are entries in the powers component; active powers
+// (Blink, ...) are each their own component object owned by the pawn. Those objects are
+// found by scanning the object table, so the list is cached per pawn.
+std::vector<ue3::UObject*> g_active_powers;
+ue3::UObject* g_active_powers_pawn = nullptr;
+DWORD g_active_powers_tick = 0;
+
+std::vector<std::pair<std::string, int32_t>> power_levels(ue3::UObject* pawn) {
+  std::vector<std::pair<std::string, int32_t>> out;
   if (auto* powers_component = ue3::field<ue3::UObject*>(pawn, ue3::kPlayerPawnPowers)) {
     const auto powers = ue3::field<ue3::TArray<uint8_t>>(powers_component, ue3::kPowersComponentPowers);
     for (int32_t i = 0; i < powers.count && powers.data != nullptr; ++i) {
       const uint8_t* power = powers.data + i * ue3::kPowerSize;
-      const std::string name = ue3::name_string(*reinterpret_cast<const ue3::FName*>(power));
-      const int32_t level = *reinterpret_cast<const int32_t*>(power + ue3::kPowerCurrentLevel);
-      const auto limit = power_limit(name);
-      if (!limit || level <= *limit) continue;
-      auto& last = g_last_power_removal[name];
-      if (now - last < 5000) continue;  // give the game time; don't spam if it doesn't work
-      last = now;
-      emit_event(std::format("remove power {} {}->{}", name, level, *limit));
+      out.emplace_back(ue3::name_string(*reinterpret_cast<const ue3::FName*>(power)),
+                       *reinterpret_cast<const int32_t*>(power + ue3::kPowerCurrentLevel));
+    }
+  }
+  const DWORD now = GetTickCount();
+  if (pawn != g_active_powers_pawn || now - g_active_powers_tick > 10000) {
+    g_active_powers.clear();
+    for (auto* component : ue3::find_instances_of_subclasses(g_names.active_power_component)) {
+      if (ue3::field<ue3::UObject*>(component, ue3::kActivePowerOwner) == pawn) g_active_powers.push_back(component);
+    }
+    g_active_powers_pawn = pawn;
+    g_active_powers_tick = now;
+  }
+  for (auto* component : g_active_powers) {
+    out.emplace_back(ue3::name_string(ue3::field<ue3::FName>(component, ue3::kActivePowerName)),
+                     ue3::field<int32_t>(component, ue3::kActivePowerLevel));
+  }
+  return out;
+}
+
+// Removes randomized powers above their limit and upgrades not received. Runs every
+// half second during settled gameplay, outside the Void.
+void enforce_limits(ue3::UObject* pawn, DWORD now) {
+  if (!g_limits_known || g_in_void) return;
+  for (const auto& [name, level] : power_levels(pawn)) {
+    const auto limit = power_limit(name);
+    if (!limit || level <= *limit) continue;
+    auto& last = g_last_power_removal[name];
+    if (now - last < 5000) continue;  // give the game time; don't spam if it doesn't work
+    last = now;
+    emit_event(std::format("remove power {} {}->{}", name, level, *limit));
+    if (*limit > 0) {
+      queue_game_request(std::format("console AddPower {} {}", name, *limit));  // AddPower sets the level
+    } else {
       remove_power(pawn, name);
-      if (*limit > 0) queue_game_request(std::format("console AddPower {} {}", name, *limit));
     }
   }
   auto& owned = *reinterpret_cast<ue3::TArray<ue3::UObject*>*>(reinterpret_cast<uint8_t*>(pawn) +
@@ -488,7 +519,10 @@ void report_purchases(ue3::UObject* pawn, const Holdings& before, const Holdings
 
 void track_holdings(ue3::UObject* player_controller, bool settled, DWORD now) {
   ue3::UObject* pawn = settled ? player_pawn(player_controller) : nullptr;
-  if (!settled) g_holdings.reset();
+  if (!settled) {
+    g_holdings.reset();
+    g_active_powers_pawn = nullptr;  // loads free the old components; rescan once settled
+  }
   if (pawn == nullptr || now - g_last_holdings_tick < 500) return;  // possessing: keep the baseline
   g_last_holdings_tick = now;
   Holdings current = read_holdings(pawn);
@@ -525,14 +559,7 @@ void dump_player_state(ue3::UObject* player_controller) {
     slots += std::format(" {}", ue3::field<int32_t>(pawn, ue3::kPlayerPawnBoneCharmSlots + 4 * i));
   }
   log("bone charm slots:{}", slots);
-  if (auto* powers_component = ue3::field<ue3::UObject*>(pawn, ue3::kPlayerPawnPowers)) {
-    const auto powers = ue3::field<ue3::TArray<uint8_t>>(powers_component, ue3::kPowersComponentPowers);
-    for (int32_t i = 0; i < powers.count && powers.data != nullptr; ++i) {
-      const uint8_t* power = powers.data + i * ue3::kPowerSize;
-      log("power {} level {}", ue3::name_string(*reinterpret_cast<const ue3::FName*>(power)),
-          *reinterpret_cast<const int32_t*>(power + ue3::kPowerCurrentLevel));
-    }
-  }
+  for (const auto& [name, level] : power_levels(pawn)) log("power {} level {}", name, level);
   auto* inventory = ue3::field<ue3::UObject*>(pawn, ue3::kPawnInventory);
   if (inventory == nullptr) return;
   const auto items = ue3::field<ue3::TArray<uint8_t>>(inventory, ue3::kInventorySlots);
@@ -710,6 +737,7 @@ void resolve_engine_objects() {
   g_names.on_give_pickup = ue3::find_name_index("OnGivePickup");
   g_names.on_add_inventory_item = ue3::find_name_index("OnAddInventoryItem");
   g_names.power_buy = ue3::find_name_index("PowerBuy");
+  g_names.active_power_component = ue3::find_name_index("DishonoredActivePowerComponent");
   g_names.pickup_base = ue3::find_name_index("DisPickup_Base");
   g_names.abstract_item_pickup = ue3::find_name_index("DisAbstractItemPickup");
   g_names.whale_bone_charm = ue3::find_name_index("DisWhaleBoneCharm");
@@ -775,7 +803,10 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
             location_of(controller ? ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn) : nullptr));
       }
       if (in_gameplay) track_holdings(controller, settled, now);
-      else g_holdings.reset();
+      else {
+        g_holdings.reset();
+        g_active_powers_pawn = nullptr;
+      }
       g_cheats_ready = settled && ensure_cheat_manager(controller);
       if (g_cheats_ready && g_queue_pending) drain_queue(controller);
     }

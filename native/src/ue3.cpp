@@ -157,6 +157,18 @@ std::vector<UObject*> find_instances(int32_t class_name_index) {
   return out;
 }
 
+std::vector<UObject*> find_instances_of_subclasses(int32_t class_name_index) {
+  std::vector<UObject*> out;
+  if (!ready() || class_name_index < 0) return out;
+  for (int32_t i = 0; i < g_objects->count; ++i) {
+    UObject* object = g_objects->data[i];
+    if (object != nullptr && is_a(object, class_name_index) && object_name(object).rfind("Default__", 0) != 0) {
+      out.push_back(object);
+    }
+  }
+  return out;
+}
+
 std::string to_string(const FString& text) {
   std::string out;
   for (int32_t i = 0; text.data != nullptr && i < text.count && text.data[i]; ++i) {

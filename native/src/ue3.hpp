@@ -74,6 +74,9 @@ inline constexpr size_t kPlayerPawnPowers = 0xA38;               // ADishonoredP
 inline constexpr size_t kPowersComponentPowers = 0x54;           // UDishonoredPowersComponent::m_Powers (FDishonoredPower)
 inline constexpr size_t kPowerSize = 0x1C;                       // FDishonoredPower: m_Name (FName) at 0
 inline constexpr size_t kPowerCurrentLevel = 0x18;               // FDishonoredPower::m_CurrentLevel
+inline constexpr size_t kActivePowerName = 0x6C;                 // UDishonoredActivePowerComponent::m_PowerName (FName)
+inline constexpr size_t kActivePowerOwner = 0x80;                // UDishonoredActivePowerComponent::m_pOwnerPlayerPawn
+inline constexpr size_t kActivePowerLevel = 0x88;                // UDishonoredActivePowerComponent::m_CurrentLevel
 inline constexpr size_t kGivePickupActionPickup = 0xF8;          // UDisSeqAct_GivePickup::m_pPickup
 inline constexpr size_t kAddInventoryActionItem = 0xF8;          // UDisSeqAct_AddInventoryItem::m_pItemToAdd
 inline constexpr size_t kAddPowerActionName = 0xF8;              // UDisSeqAct_AddPower::m_PowerName (FString)
@@ -126,6 +129,8 @@ UObject* find_object(const std::string& full);
 UObject* find_instance(const std::string& class_name);
 // Every object of this exact class (by name index), class default objects excluded.
 std::vector<UObject*> find_instances(int32_t class_name_index);
+// Same, but also objects of subclasses.
+std::vector<UObject*> find_instances_of_subclasses(int32_t class_name_index);
 std::string to_string(const FString& text);
 
 }  // namespace ue3

@@ -252,6 +252,21 @@ through `ProcessEvent`.
 - `TowerEmpress_HideNSeek` is completed when you win and *failed* twice later, so
   match only `DisSeqAct_CompleteObjective`.
 
+### Powers (2026-10-24)
+- Passive powers are entries in `DishonoredPowersComponent.m_Powers` (Vitality,
+  BloodThirsty, ShadowKill, Celerity; `m_CurrentLevel` -1 = not owned). Active powers
+  (Blink, ...) are each a `DishonoredActivePowerComponent` object with `m_PowerName`
+  (+0x6C), `m_pOwnerPlayerPawn` (+0x80) and `m_CurrentLevel` (+0x88); the DLL finds the
+  player's by scanning the object table.
+- `AddPower <Name> <Level>` sets the level absolutely: a save with Blink 2 bought came
+  back as Blink 1 after the client re-applied "AddPower Blink 1". So lowering a power is
+  just AddPower with the lower level; only "none" needs `OnRemovePower`.
+- `PowerBuy` is a native function of `DisGFxMoviePlayerJournal` (the journal's power
+  page). Whether its calls from the Flash menu pass through ProcessEvent is still
+  unverified.
+- A long-running Launcher keeps the client code it started with: restart it after
+  client changes.
+
 ## Memory (Cheat Engine)
 
 | Value | Module + pointer path | Type | Notes |
