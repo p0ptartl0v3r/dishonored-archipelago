@@ -257,6 +257,10 @@ bool grant_upgrade(ue3::UObject* player_controller, const std::string& name) {
 
 void emit_event(std::string text);
 
+constexpr const char* kAmmoTypes[] = {"Bullet",       "Bullet_Explosive", "Arrow",      "Arrow_Sleep",
+                                      "Arrow_Flare",  "SpringRazor",      "Grenade",    "StickyGrenade",
+                                      "Arrow_Explosive", "ArcMine",       "FlashSmoke", "ArcMineStun"};
+
 std::string location_of(ue3::UObject* actor) {
   if (actor == nullptr) return "at=?";
   const auto at = ue3::field<ue3::FVector>(actor, ue3::kActorLocation);
@@ -268,6 +272,7 @@ std::string location_of(ue3::UObject* actor) {
 struct Holdings {
   std::map<std::string, int32_t> items;  // abstract items: runes, coins, blueprints, notes...
   std::map<std::string, int32_t> upgrades;
+  std::map<std::string, int32_t> ammo;     // count per ammo type, and elixirs
 };
 std::optional<Holdings> g_holdings;  // reset on every load; the first read is the baseline
 DWORD g_last_holdings_tick = 0;
@@ -280,6 +285,14 @@ Holdings read_holdings(ue3::UObject* pawn) {
     for (int32_t i = 0; i < abstract.count && abstract.data != nullptr; ++i) {
       auto* item = *reinterpret_cast<ue3::UObject**>(abstract.data + i * 0xC);
       out.items[ue3::object_name(item)] += *reinterpret_cast<int32_t*>(abstract.data + i * 0xC + 4);
+    }
+    const auto ammo = ue3::field<ue3::TArray<int32_t>>(inventory, ue3::kInventoryAmmo);
+    for (int32_t i = 0; i < ammo.count && i < 12 && ammo.data != nullptr; ++i) {
+      if (ammo.data[2 * i] > 0) out.ammo[kAmmoTypes[i]] = ammo.data[2 * i];
+    }
+    for (int i = 0; i < 2; ++i) {
+      const int32_t count = ue3::field<int32_t>(inventory, ue3::kInventoryElixirs + 4 * i);
+      if (count > 0) out.ammo[i == 0 ? "HealthElixir" : "ManaElixir"] = count;
     }
   }
   const auto owned = ue3::field<ue3::TArray<ue3::UObject*>>(pawn, ue3::kPlayerPawnUpgrades);
@@ -310,13 +323,12 @@ void track_holdings(ue3::UObject* player_controller, bool settled, DWORD now) {
     const std::string where = location_of(pawn);
     report_changes(g_holdings->items, current.items, "item", where);
     report_changes(g_holdings->upgrades, current.upgrades, "upgrade", where);
+    report_changes(g_holdings->ammo, current.ammo, "ammo", where);
   }
   g_holdings = std::move(current);
 }
 
-constexpr const char* kAmmoTypes[] = {"Bullet",       "Bullet_Explosive", "Arrow",      "Arrow_Sleep",
-                                      "Arrow_Flare",  "SpringRazor",      "Grenade",    "StickyGrenade",
-                                      "Arrow_Explosive", "ArcMine",       "FlashSmoke", "ArcMineStun"};
+
 
 // Research: writes what the player has, and every upgrade the game knows, to the log.
 void dump_player_state(ue3::UObject* player_controller) {

@@ -81,6 +81,7 @@ inline constexpr size_t kUpgradeDisplayName = 0xB8;              // UDisTweaks_U
 inline constexpr size_t kUpgradeParent = 0xE0;                   // UDisTweaks_Upgrade::m_pParentUpgrade
 inline constexpr size_t kInventorySlots = 0x38;                  // UDishonoredInventory::m_Slots (FPawnInventorySlot, 0xC each)
 inline constexpr size_t kInventoryAmmo = 0xBC;                   // UDishonoredInventory::m_AmmoInfo (count, capacity)
+inline constexpr size_t kInventoryElixirs = 0xD4;                // UDishonoredInventory::m_ElixirCounts[2] (health, mana)
 inline constexpr size_t kInventoryAbstractItems = 0xC8;          // UDishonoredInventory::m_AbstractItem (item, quantity, flags)
 
 template <typename T>

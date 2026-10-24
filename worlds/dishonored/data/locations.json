@@ -527,10 +527,7 @@
     "category": [
       "Intro"
     ],
-    "requires": [],
-    "detect": [
-      "gain item Coins_AbsItm near=18357,11352,2348"
-    ]
+    "requires": []
   },
   {
     "name": "Boyle Mansion Interior: Bedroom Painting",
