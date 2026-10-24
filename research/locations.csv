@@ -57,7 +57,7 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480120,Dishonored (Mission): Corvo's Cell Key,Other,Intro,Dunwall Prison,pickup,L_Prison_Script...DisKey_Base_1,key from the bread tray
 219480121,Prologue: Get Framed,Other,Intro,Prologue,mapchange,L_Prison_P,arriving in Coldridge after the assassination
 219480122,Dishonored (Mission): Folding Blade and Crossbow,Other,Intro,Dunwall Sewers,grant,Twk_Inv_CrossbowCorvo (and Twk_Inv_SwordCorvo) by Corvo_SpecialGear,cutscene after the note to the Lord Protector
-219480123,Dishonored (Mission): Open Jelly's Safe,Other,Intro,Dunwall Sewers,gain (untested),"Coins_AbsItm gained near 18357,11352,2348",safe loot produces no pickup event; relies on the inventory diff
+219480123,Dishonored (Mission): Open Jelly's Safe,Other,Intro,Dunwall Sewers,?,,"opening/looting produced no event at all, not even coins in the inventory diff (2026-10-24). Next: ammo/elixir diff, or call logging (LogCalls=unique) while opening it; player near 18357,11352,2348"
 219480124,Boyle Mansion Interior: Bedroom Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,,,
 219480125,Boyle Mansion Interior: Display Room Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,,,
 219480126,Tower Interior: Piano Room Painting,Painting,Return to the Tower,Tower Interior,,,
