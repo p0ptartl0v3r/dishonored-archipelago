@@ -186,3 +186,36 @@ def test_replayed_manual_unlocks_are_not_repeated(caplog):
         game.give_item(0, "Kennels Zone Key", 1)
         game.give_item(0, "Kennels Zone Key", 1)
     assert sum("Unlocked: Kennels Zone Key" in r.message for r in caplog.records) == 1
+
+
+def test_real_events_from_the_first_mission():
+    """Event lines from a playthrough of the prologue, Coldridge, the sewers, the Void and the pub."""
+    from dishonored import game_data
+
+    ids = game_data.load().location_name_to_id
+    game = NativeInterface()
+    prison = "pickup L_Prison_Script.TheWorld.PersistentLevel."
+    full = "pickup DishonoredGameFull_P.TheWorld.PersistentLevel."
+    cases = {
+        "objective L_Tower_Script.TheWorld.PersistentLevel.Main_Sequence.==Objectives==.DisSeqAct_CompleteObjective_3 "
+        "DisSeqAct_CompleteObjective TowerEmpress_HideNSeek": "Prologue: Hide And Seek",
+        "mapchange L_Prison_P": "Prologue: Get Framed",
+        prison + "DisKey_Base_1 DisKey_Base - at=64,342,1075": "Dishonored (Mission): Corvo's Cell Key",
+        prison + "DisAbstractItemPickup_0 DisAbstractItemPickup ExplosiveDevice_AbsItm at=-843,9412,1149":
+            "Dishonored (Mission): Clockwork Explosive",
+        "objective L_PrsnSewer_Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_CompleteObjective_0 "
+        "DisSeqAct_CompleteObjective Prison_Escape": "Dishonored (Mission): Victory",
+        "pickup L_OutsiderDream_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_0 DisAbstractItemPickup "
+        "Rune_AbsItm at=8881,1236,-2484": "The Void: Outsider's Gift Rune",
+        full + "DisAbstractItemPickup_155 DisAbstractItemPickup Rune_AbsItm at=-11585,-5794,-528": "The Pub: River Rune",
+        full + "DisAbstractItemPickup_156 DisAbstractItemPickup Rune_AbsItm at=-1279,-2902,401": "The Pub: Shop Rune",
+    }
+    for event, location in cases.items():
+        assert game.match_event(event) == [ids[location]], event
+    # Other prison keys, the objective failing after hide and seek, and coins elsewhere match nothing.
+    assert game.match_event(prison + "DisKey_Base_2 DisKey_Base - at=2478,3354,1640") == []
+    assert game.match_event(
+        "objective L_Tower_Script.TheWorld.PersistentLevel.Main_Sequence.==Objectives==.DisSeqAct_FailObjective_0 "
+        "DisSeqAct_FailObjective TowerEmpress_HideNSeek"
+    ) == []
+    assert game.match_event(prison + "DisAbstractItemPickup_27 DisAbstractItemPickup Coins_AbsItm at=104,1144,1107") == []

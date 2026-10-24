@@ -213,6 +213,23 @@ through `ProcessEvent`.
   `BP_FlareBolt_AbsItm` = incendiary bolts). Blueprint checks should show up as
   `pickup ... BP_..._AbsItm` events.
 
+### First-mission playthrough (2026-10-24)
+- **New Game** from the menu loads `l_tower_p` without the pawn ever disappearing, so
+  the old "lost the pawn, then regained it" menu detection never fired (no items, no
+  inventory diff for the whole session). The DLL now treats a mapchange to a real
+  level while in the menu as a new game and waits for the controller/pawn to change.
+- Safe loot (Jelly's safe) and containers produce no `pickup` event: the items never
+  existed as actors. The inventory diff (`gain item`) is the way to see them.
+- The pub's DLC gifts (6 + 6 bone charms, Mystical Fish/Rat artifacts) appear when
+  you first sleep at the pub: spawned `DisWhaleBoneCharm` pickups in
+  `DishonoredGameFull_P`. The statues produced no pickup event (probably `ADisUpgrade`
+  actors, not `DisPickup_Base`); they give bone charm slots in vanilla, so they need
+  blocking like Piero's upgrades.
+- In the prison, equipment pickups (City Watch sword, pistol) are
+  `DishonoredInventoryPickup`s with no item name in the event (`?`).
+- `TowerEmpress_HideNSeek` is completed when you win and *failed* twice later, so
+  match only `DisSeqAct_CompleteObjective`.
+
 ## Memory (Cheat Engine)
 
 | Value | Module + pointer path | Type | Notes |

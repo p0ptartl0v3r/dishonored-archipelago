@@ -5,7 +5,10 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "objective DisSeqAct_CompleteObjective TowerEmpress_HideNSeek"
+    ]
   },
   {
     "region": "Dunwall Sewers",
@@ -13,7 +16,10 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "objective DisSeqAct_CompleteObjective Prison_Escape"
+    ]
   },
   {
     "region": "Hound Pits Pub",
@@ -21,7 +27,10 @@
     "category": [
       "Intro"
     ],
-    "requires": "|The Void Zone Key|"
+    "requires": "|The Void Zone Key|",
+    "detect": [
+      "pickup Rune_AbsItm near=-1279,-2902,401"
+    ]
   },
   {
     "name": "The Pub: River Rune",
@@ -29,7 +38,10 @@
     "category": [
       "Intro"
     ],
-    "requires": "|The Void Zone Key|"
+    "requires": "|The Void Zone Key|",
+    "detect": [
+      "pickup Rune_AbsItm near=-11585,-5794,-528"
+    ]
   },
   {
     "region": "The Void",
@@ -37,7 +49,10 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_OutsiderDream_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_0 Rune_AbsItm"
+    ]
   },
   {
     "region": "Distillery District (HOC)",
@@ -417,6 +432,9 @@
     "requires": [],
     "place_item": [
       "Progressive Blink"
+    ],
+    "detect": [
+      "grant power Blink"
     ]
   },
   {
@@ -425,7 +443,10 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Prison_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_0 ExplosiveDevice_AbsItm"
+    ]
   },
   {
     "name": "High Overseer's Office: Campbell's Secret Room Painting",
@@ -473,7 +494,10 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Prison_Script.TheWorld.PersistentLevel.DisKey_Base_1"
+    ]
   },
   {
     "name": "Prologue: Get Framed",
@@ -481,7 +505,10 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "mapchange L_Prison_P"
+    ]
   },
   {
     "name": "Dishonored (Mission): Folding Blade and Crossbow",
@@ -497,7 +524,10 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "gain item Coins_AbsItm near=18357,11352,2348"
+    ]
   },
   {
     "name": "Boyle Mansion Interior: Bedroom Painting",

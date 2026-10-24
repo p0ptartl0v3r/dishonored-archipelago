@@ -65,6 +65,13 @@ std::atomic<bool> g_shutting_down = false;
 // gameplay that resumes after a loading screen (pawn lost, then regained) is a real level.
 std::atomic<bool> g_in_menu = true;
 bool g_ever_lost_gameplay = false;
+// Starting a new game from the menu loads the level without the player ever disappearing,
+// so a mapchange to a real level while in the menu arms this; gameplay starts once the
+// menu's controller/pawn has been replaced (or after a timeout).
+bool g_menu_exit_pending = false;
+DWORD g_menu_exit_tick = 0;
+ue3::UObject* g_menu_controller = nullptr;
+ue3::UObject* g_menu_pawn = nullptr;
 // A loaded save restores its own state for a moment after the pawn appears and would
 // overwrite anything granted earlier, so commands wait this long after gameplay starts.
 constexpr DWORD kSettleMs = 3000;
@@ -79,6 +86,11 @@ struct EventNames {
   int32_t on_add_abstract_item = -1;       // DishonoredPawn.OnAddAbstractItem: scripted item reward
   int32_t on_objective_action = -1;        // DishonoredPlayerController.OnObjectiveAction
   int32_t pre_exit = -1;                   // GameInfo.PreExit: the game is quitting
+  // Player pawn handlers that level scripts (Kismet) use to give things.
+  int32_t on_add_power = -1;
+  int32_t on_give_upgrade = -1;
+  int32_t on_give_pickup = -1;
+  int32_t on_add_inventory_item = -1;
   int32_t pickup_base = -1;                // class DisPickup_Base
   int32_t abstract_item_pickup = -1;       // class DisAbstractItemPickup
   int32_t whale_bone_charm = -1;           // class DisWhaleBoneCharm
@@ -421,15 +433,42 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
   } else if (name == g_names.client_prepare_map_change) {
     const std::string level = ue3::name_string(*static_cast<ue3::FName*>(params));
     emit_event("mapchange " + level);
-    if (level.find("MainMenu") != std::string::npos && !g_in_menu) {
-      g_in_menu = true;
-      log("in main menu");
+    if (level.find("MainMenu") != std::string::npos) {
+      g_menu_exit_pending = false;
+      if (!g_in_menu) {
+        g_in_menu = true;
+        log("in main menu");
+      }
+    } else if (g_in_menu && !g_menu_exit_pending) {
+      g_menu_exit_pending = true;
+      g_menu_exit_tick = GetTickCount();
+      g_menu_controller = local_player_controller();
+      g_menu_pawn = g_menu_controller ? ue3::field<ue3::UObject*>(g_menu_controller, ue3::kControllerPawn) : nullptr;
     }
   } else if (name == g_names.on_add_abstract_item) {
     auto* action = *static_cast<ue3::UObject**>(params);
     if (action == nullptr) return;
     auto* item = ue3::field<ue3::UObject*>(action, ue3::kAddAbstractItemActionItem);
     emit_event(std::format("additem {} {}", ue3::path_name(action), ue3::object_name(item)));
+  } else if (name == g_names.on_add_power || name == g_names.on_give_upgrade || name == g_names.on_give_pickup ||
+             name == g_names.on_add_inventory_item) {
+    // A level script gives the player something. Our own grants call the original
+    // function directly and don't come through here.
+    if (!ue3::is_a(self, g_names.player_pawn)) return;  // NPCs get equipment this way too
+    auto* action = *static_cast<ue3::UObject**>(params);
+    if (action == nullptr) return;
+    std::string what;
+    if (name == g_names.on_add_power) {
+      what = std::format("power {} {}", ue3::to_string(ue3::field<ue3::FString>(action, ue3::kAddPowerActionName)),
+                         ue3::field<int32_t>(action, ue3::kAddPowerActionLevel));
+    } else if (name == g_names.on_give_upgrade) {
+      what = "upgrade " + ue3::object_name(ue3::field<ue3::UObject*>(action, ue3::kGiveUpgradeActionUpgrade));
+    } else if (name == g_names.on_give_pickup) {
+      what = "pickup " + ue3::object_name(ue3::field<ue3::UObject*>(action, ue3::kGivePickupActionPickup));
+    } else {
+      what = "inventory " + ue3::object_name(ue3::field<ue3::UObject*>(action, ue3::kAddInventoryActionItem));
+    }
+    emit_event(std::format("grant {} by {}", what, ue3::path_name(action)));
   } else if (name == g_names.on_objective_action) {
     auto* action = *static_cast<ue3::UObject**>(params);
     if (action == nullptr) return;
@@ -464,6 +503,10 @@ void resolve_engine_objects() {
   g_names.on_add_abstract_item = ue3::find_name_index("OnAddAbstractItem");
   g_names.on_objective_action = ue3::find_name_index("OnObjectiveAction");
   g_names.pre_exit = ue3::find_name_index("PreExit");
+  g_names.on_add_power = ue3::find_name_index("OnAddPower");
+  g_names.on_give_upgrade = ue3::find_name_index("OnGiveUpgrade");
+  g_names.on_give_pickup = ue3::find_name_index("OnGivePickup");
+  g_names.on_add_inventory_item = ue3::find_name_index("OnAddInventoryItem");
   g_names.pickup_base = ue3::find_name_index("DisPickup_Base");
   g_names.abstract_item_pickup = ue3::find_name_index("DisAbstractItemPickup");
   g_names.whale_bone_charm = ue3::find_name_index("DisWhaleBoneCharm");
@@ -493,6 +536,17 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
       // A pawn means we're playing, not in the main menu or a loading screen.
       const bool in_gameplay = controller != nullptr && ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn);
       if (!in_gameplay && g_in_gameplay) g_ever_lost_gameplay = true;
+      if (in_gameplay && g_in_gameplay && g_in_menu && g_menu_exit_pending) {
+        auto* pawn = ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn);
+        const bool replaced = controller != g_menu_controller || pawn != g_menu_pawn;
+        if (replaced || now - g_menu_exit_tick > 20000) {
+          g_menu_exit_pending = false;
+          g_in_menu = false;
+          g_gameplay_started_tick = now;
+          log("left main menu (new game{})", replaced ? "" : ", by timeout");
+          emit_event("gameplay");
+        }
+      }
       if (in_gameplay && !g_in_gameplay) {
         g_gameplay_started_tick = now;
         if (g_ever_lost_gameplay && g_in_menu) {

@@ -1,9 +1,9 @@
 location_id,name,kind,mission,region,detection,game_object,notes
-219480065,Prologue: Hide And Seek,Other,Intro,Prologue,,,
-219480066,Dishonored (Mission): Victory,Mission,Intro,Dunwall Sewers,,,
-219480067,The Pub: Shop Rune,Rune,Intro,Hound Pits Pub,,,
-219480068,The Pub: River Rune,Rune,Intro,Hound Pits Pub,,,
-219480069,The Void: Outsider's Gift Rune,Rune,Intro,The Void,,,
+219480065,Prologue: Hide And Seek,Other,Intro,Prologue,objective,TowerEmpress_HideNSeek completed,a FailObjective for it fires later; ignore
+219480066,Dishonored (Mission): Victory,Mission,Intro,Dunwall Sewers,objective,Prison_Escape completed,end of the sewers
+219480067,The Pub: Shop Rune,Rune,Intro,Hound Pits Pub,pickup (spawned),"Rune_AbsItm at -1279,-2902,401",appears after Piero's shop scene
+219480068,The Pub: River Rune,Rune,Intro,Hound Pits Pub,pickup (spawned),"Rune_AbsItm at -11585,-5794,-528",
+219480069,The Void: Outsider's Gift Rune,Rune,Intro,The Void,pickup,L_OutsiderDream_Script...DisAbstractItemPickup_0,
 219480070,Distillery District: Granny Rags Shrine Rune,Rune,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisAbstractItemPickup_19,Granny Rags' basement
 219480071,Distillery District: Granny Rags Gentlemen Callers Reward Rune,Rune,High Overseer Campbell,Distillery District (HOC),pickup (spawned),"DishonoredGameFull_P...DisAbstractItemPickup_N at -6138,-5804,3261",spawns on Granny's top floor after the gentlemen callers
 219480072,Distillery District: Granny Rags Poison Bootleg Elixer Reward Rune,Rune,High Overseer Campbell,Old Dunwall Distillery (HOC),,,
@@ -47,17 +47,17 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480110,Return to the Tower: Victory,Mission,Return to the Tower,Tower Interior,,,
 219480111,The Flooded District: Victory,Mission,The Flooded District,Old Dunwall Sewers,,,
 219480112,The Loyalists: Victory,Mission,The Loyalists,Hound Pits Pub (The Loyalists),,,
-219480113,The Void: Receive the Mark,Other,Intro,The Void,,,
-219480114,Dishonored (Mission): Clockwork Explosive,Other,Intro,Dunwall Prison,,,
+219480113,The Void: Receive the Mark,Other,Intro,The Void,grant (untested),OnAddPower Blink,the Outsider gives Blink with the mark
+219480114,Dishonored (Mission): Clockwork Explosive,Other,Intro,Dunwall Prison,pickup,L_Prison_Script...DisAbstractItemPickup_0 ExplosiveDevice_AbsItm,
 219480115,High Overseer's Office: Campbell's Secret Room Painting,Painting,High Overseer Campbell,High Overseer's Office,,,
 219480116,Art Dealer's Apartment: Second Floor Painting,Painting,House of Pleasure,Art Dealer's Apartment,,,
 219480117,Art Dealer's Apartment: Third Floor Painting,Painting,House of Pleasure,Art Dealer's Apartment,,,
 219480118,Art Dealer's Apartment: Inside Safe Painting,Painting,House of Pleasure,Art Dealer's Apartment,,,
 219480119,North End: Sokolov's Safehouse Painting,Painting,The Royal Physician,North End,,,
-219480120,Dishonored (Mission): Corvo's Cell Key,Other,Intro,Dunwall Prison,,,
-219480121,Prologue: Get Framed,Other,Intro,Prologue,,,
+219480120,Dishonored (Mission): Corvo's Cell Key,Other,Intro,Dunwall Prison,pickup,L_Prison_Script...DisKey_Base_1,key from the bread tray
+219480121,Prologue: Get Framed,Other,Intro,Prologue,mapchange,L_Prison_P,arriving in Coldridge after the assassination
 219480122,Dishonored (Mission): Folding Blade and Crossbow,Other,Intro,Dunwall Sewers,,,
-219480123,Dishonored (Mission): Open Jelly's Safe,Other,Intro,Dunwall Sewers,,,
+219480123,Dishonored (Mission): Open Jelly's Safe,Other,Intro,Dunwall Sewers,gain (untested),"Coins_AbsItm gained near 18357,11352,2348",safe loot produces no pickup event; relies on the inventory diff
 219480124,Boyle Mansion Interior: Bedroom Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,,,
 219480125,Boyle Mansion Interior: Display Room Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,,,
 219480126,Tower Interior: Piano Room Painting,Painting,Return to the Tower,Tower Interior,,,
