@@ -112,6 +112,9 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
 ### 6. Zone keys
 Today they're only shown as received, nothing in the game checks them.
 - [ ] Map each zone to its streaming levels (`mapchange L_...` events, research/notes.md)
+- [ ] Show received zone keys in the journal's Key Ring tab: give a key through the
+      pawn's native `OnAddKey` (`DisSeqAct_AddKey`: `m_Name`, `m_KeyTweaks`) like
+      upgrades. Open question: can the entry show a custom name?
 - [ ] Warn in-game when entering a zone without its key
 - [ ] Then block: undo the transition or move the player back. Loading a save
       emits no `mapchange`, so the DLL also needs the list of loaded streaming
@@ -124,6 +127,10 @@ Today they're only shown as received, nothing in the game checks them.
       from the DLL when the HUD renders (`HUD.PostRender` passes through
       `ProcessEvent`; the `Canvas` draw functions are callable the same way).
       Fallbacks: call into the Scaleform HUD, or hook Direct3D 9 and draw an overlay
+- [ ] Connect without the Launcher, in stages: (1) server/slot/password in an ini and
+      a client that auto-connects; (2) the DLL starts the client itself; (3) settings
+      in the game's main menu. The menus are Scaleform (Flash) movies, so adding
+      entries is the hard part (Crimsab's closed-source mod loader shows it's possible)
 - [ ] Later, possibly: let the DLL connect to the Archipelago server itself
       (websocket + JSON in C++) so the external client becomes optional. The
       Python client stays the reference until then
