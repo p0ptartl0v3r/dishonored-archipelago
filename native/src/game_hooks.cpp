@@ -91,6 +91,7 @@ struct EventNames {
   int32_t on_give_upgrade = -1;
   int32_t on_give_pickup = -1;
   int32_t on_add_inventory_item = -1;
+  int32_t power_buy = -1;  // DisGFxMoviePlayerHUD.PowerBuy(PowerId, Level): buying a power with runes
   int32_t pickup_base = -1;                // class DisPickup_Base
   int32_t abstract_item_pickup = -1;       // class DisAbstractItemPickup
   int32_t whale_bone_charm = -1;           // class DisWhaleBoneCharm
@@ -313,9 +314,152 @@ void report_changes(const std::map<std::string, int32_t>& before, const std::map
   }
 }
 
+// ---- Limits: what the player may have, sent by the client ----
+// Only randomized powers and upgrades have limits. Nothing is blocked or removed until
+// the client has sent them, so playing without Archipelago is unaffected.
+std::mutex g_limits_mutex;
+std::map<std::string, int32_t> g_power_limits;  // lower-case power name -> highest allowed level
+std::map<std::string, bool> g_upgrade_allowed;  // randomized upgrade -> received
+std::atomic<bool> g_limits_known = false;
+// The Void needs Blink to cross it, so script grants there go through; leaving the Void
+// (a mapchange) settles and removes them again unless received.
+std::atomic<bool> g_in_void = false;
+std::map<std::string, DWORD> g_last_power_removal;
+
+std::string lower(std::string text) {
+  for (auto& c : text) c = static_cast<char>(tolower(static_cast<unsigned char>(c)));
+  return text;
+}
+
+std::optional<int32_t> power_limit(const std::string& power) {
+  std::lock_guard lock(g_limits_mutex);
+  const auto it = g_power_limits.find(lower(power));
+  return it == g_power_limits.end() ? std::nullopt : std::optional(it->second);
+}
+
+std::optional<bool> upgrade_allowed(const std::string& upgrade) {
+  std::lock_guard lock(g_limits_mutex);
+  const auto it = g_upgrade_allowed.find(upgrade);
+  return it == g_upgrade_allowed.end() ? std::nullopt : std::optional(it->second);
+}
+
+// Takes a power away the way level scripts do: the pawn's OnRemovePower handler with the
+// borrowed default DisSeqAct_RemovePower (same trick as grant_upgrade).
+void remove_power(ue3::UObject* pawn, const std::string& power) {
+  static ue3::UFunction* on_remove_power = nullptr;
+  static ue3::UObject* action = nullptr;
+  if (on_remove_power == nullptr) {
+    on_remove_power = ue3::find_object("Function DishonoredGame.DishonoredPlayerPawn.OnRemovePower");
+  }
+  if (action == nullptr) {
+    action = ue3::find_object("DisSeqAct_RemovePower DishonoredGame.Default__DisSeqAct_RemovePower");
+  }
+  if (on_remove_power == nullptr || action == nullptr) {
+    log("WARNING: OnRemovePower or Default__DisSeqAct_RemovePower not found");
+    return;
+  }
+  const std::wstring wide = widen(power);
+  auto* slot = reinterpret_cast<ue3::FString*>(reinterpret_cast<uint8_t*>(action) + ue3::kRemovePowerActionName);
+  const ue3::FString saved = *slot;
+  *slot = {wide.c_str(), static_cast<int32_t>(wide.size() + 1), static_cast<int32_t>(wide.size() + 1)};
+  ue3::UObject* params = action;
+  g_original(pawn, nullptr, on_remove_power, &params, nullptr);
+  *slot = saved;
+}
+
+void add_coins(ue3::UObject* pawn, int32_t amount) {
+  auto* inventory = ue3::field<ue3::UObject*>(pawn, ue3::kPawnInventory);
+  if (inventory == nullptr) return;
+  const auto abstract = ue3::field<ue3::TArray<uint8_t>>(inventory, ue3::kInventoryAbstractItems);
+  for (int32_t i = 0; i < abstract.count && abstract.data != nullptr; ++i) {
+    auto* item = *reinterpret_cast<ue3::UObject**>(abstract.data + i * 0xC);
+    if (ue3::object_name(item) == "Coins_AbsItm") {
+      *reinterpret_cast<int32_t*>(abstract.data + i * 0xC + 4) += amount;
+      return;
+    }
+  }
+}
+
+// Removes randomized powers above their limit and upgrades not received. Runs every
+// half second during settled gameplay, outside the Void.
+void enforce_limits(ue3::UObject* pawn, DWORD now) {
+  if (!g_limits_known || g_in_void) return;
+  if (auto* powers_component = ue3::field<ue3::UObject*>(pawn, ue3::kPlayerPawnPowers)) {
+    const auto powers = ue3::field<ue3::TArray<uint8_t>>(powers_component, ue3::kPowersComponentPowers);
+    for (int32_t i = 0; i < powers.count && powers.data != nullptr; ++i) {
+      const uint8_t* power = powers.data + i * ue3::kPowerSize;
+      const std::string name = ue3::name_string(*reinterpret_cast<const ue3::FName*>(power));
+      const int32_t level = *reinterpret_cast<const int32_t*>(power + ue3::kPowerCurrentLevel);
+      const auto limit = power_limit(name);
+      if (!limit || level <= *limit) continue;
+      auto& last = g_last_power_removal[name];
+      if (now - last < 5000) continue;  // give the game time; don't spam if it doesn't work
+      last = now;
+      emit_event(std::format("remove power {} {}->{}", name, level, *limit));
+      remove_power(pawn, name);
+      if (*limit > 0) queue_game_request(std::format("console AddPower {} {}", name, *limit));
+    }
+  }
+  auto& owned = *reinterpret_cast<ue3::TArray<ue3::UObject*>*>(reinterpret_cast<uint8_t*>(pawn) +
+                                                                ue3::kPlayerPawnUpgrades);
+  for (int32_t i = 0; i < owned.count && owned.data != nullptr;) {
+    const std::string name = ue3::object_name(owned.data[i]);
+    if (upgrade_allowed(name) == false) {
+      emit_event("remove upgrade " + name);
+      for (int32_t j = i; j + 1 < owned.count; ++j) owned.data[j] = owned.data[j + 1];
+      --owned.count;
+    } else {
+      ++i;
+    }
+  }
+}
+
+// Called before a function runs; returning true skips it. Only for things the client
+// has limited: buying a power with runes, and level scripts granting powers/upgrades.
+bool should_block(ue3::UObject* self, int32_t name, void* params) {
+  if (!g_limits_known || params == nullptr) return false;
+  if (name == g_names.power_buy) {
+    struct PowerBuyParams {
+      ue3::FString power_id;
+      int32_t level;
+    };
+    const auto* buy = static_cast<PowerBuyParams*>(params);
+    const std::string power = ue3::to_string(buy->power_id);
+    const auto limit = power_limit(power);
+    if (limit && buy->level > *limit) {
+      emit_event(std::format("blocked buy power {} {}", power, buy->level));
+      return true;
+    }
+    if (!limit) log("PowerBuy {} {} (no limit for that name)", power, buy->level);
+    return false;
+  }
+  if (name != g_names.on_add_power && name != g_names.on_give_upgrade) return false;
+  if (!ue3::is_a(self, g_names.player_pawn)) return false;
+  auto* action = *static_cast<ue3::UObject**>(params);
+  if (action == nullptr) return false;
+  if (name == g_names.on_add_power && !g_in_void) {
+    const std::string power = ue3::to_string(ue3::field<ue3::FString>(action, ue3::kAddPowerActionName));
+    const int32_t level = ue3::field<int32_t>(action, ue3::kAddPowerActionLevel);
+    const auto limit = power_limit(power);
+    if (limit && level > *limit) {
+      emit_event(std::format("blocked grant power {} {}", power, level));
+      return true;
+    }
+  } else if (name == g_names.on_give_upgrade) {
+    const std::string upgrade =
+        ue3::object_name(ue3::field<ue3::UObject*>(action, ue3::kGiveUpgradeActionUpgrade));
+    if (upgrade_allowed(upgrade) == false) {
+      emit_event("blocked grant upgrade " + upgrade);
+      return true;
+    }
+  }
+  return false;
+}
+
 // Coins going down while something else goes up in the same reading is a purchase
 // (Piero's shop, black markets): report what was bought and the price.
-void report_purchases(const Holdings& before, const Holdings& after, const std::string& where) {
+void report_purchases(ue3::UObject* pawn, const Holdings& before, const Holdings& after,
+                      const std::string& where) {
   auto coins = [](const Holdings& h) {
     const auto it = h.items.find("Coins_AbsItm");
     return it == h.items.end() ? 0 : it->second;
@@ -328,6 +472,12 @@ void report_purchases(const Holdings& before, const Holdings& after, const std::
       const auto old = was.find(name);
       if (name != "Coins_AbsItm" && count > (old == was.end() ? 0 : old->second)) {
         emit_event(std::format("buy {} {} for {} {}", kind, name, spent, where));
+        // A randomized upgrade bought before it was received: enforce_limits takes it
+        // away, so give the coins back.
+        if (g_limits_known && std::string(kind) == "upgrade" && upgrade_allowed(name) == false) {
+          add_coins(pawn, spent);
+          emit_event(std::format("refund {} for {}", spent, name));
+        }
       }
     }
   };
@@ -347,9 +497,10 @@ void track_holdings(ue3::UObject* player_controller, bool settled, DWORD now) {
     report_changes(g_holdings->items, current.items, "item", where);
     report_changes(g_holdings->upgrades, current.upgrades, "upgrade", where);
     report_changes(g_holdings->ammo, current.ammo, "ammo", where);
-    report_purchases(*g_holdings, current, where);
+    report_purchases(pawn, *g_holdings, current, where);
   }
-  g_holdings = std::move(current);
+  enforce_limits(pawn, now);
+  g_holdings = read_holdings(pawn);  // after enforcement, so its removals aren't reported as changes
 }
 
 
@@ -374,6 +525,14 @@ void dump_player_state(ue3::UObject* player_controller) {
     slots += std::format(" {}", ue3::field<int32_t>(pawn, ue3::kPlayerPawnBoneCharmSlots + 4 * i));
   }
   log("bone charm slots:{}", slots);
+  if (auto* powers_component = ue3::field<ue3::UObject*>(pawn, ue3::kPlayerPawnPowers)) {
+    const auto powers = ue3::field<ue3::TArray<uint8_t>>(powers_component, ue3::kPowersComponentPowers);
+    for (int32_t i = 0; i < powers.count && powers.data != nullptr; ++i) {
+      const uint8_t* power = powers.data + i * ue3::kPowerSize;
+      log("power {} level {}", ue3::name_string(*reinterpret_cast<const ue3::FName*>(power)),
+          *reinterpret_cast<const int32_t*>(power + ue3::kPowerCurrentLevel));
+    }
+  }
   auto* inventory = ue3::field<ue3::UObject*>(pawn, ue3::kPawnInventory);
   if (inventory == nullptr) return;
   const auto items = ue3::field<ue3::TArray<uint8_t>>(inventory, ue3::kInventorySlots);
@@ -469,6 +628,7 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
   } else if (name == g_names.client_prepare_map_change) {
     const std::string level = ue3::name_string(*static_cast<ue3::FName*>(params));
     emit_event("mapchange " + level);
+    g_in_void = lower(level).find("outsiderdream") != std::string::npos;
     if (level.find("MainMenu") != std::string::npos) {
       g_menu_exit_pending = false;
       if (!g_in_menu) {
@@ -549,6 +709,7 @@ void resolve_engine_objects() {
   g_names.on_give_upgrade = ue3::find_name_index("OnGiveUpgrade");
   g_names.on_give_pickup = ue3::find_name_index("OnGivePickup");
   g_names.on_add_inventory_item = ue3::find_name_index("OnAddInventoryItem");
+  g_names.power_buy = ue3::find_name_index("PowerBuy");
   g_names.pickup_base = ue3::find_name_index("DisPickup_Base");
   g_names.abstract_item_pickup = ue3::find_name_index("DisAbstractItemPickup");
   g_names.whale_bone_charm = ue3::find_name_index("DisWhaleBoneCharm");
@@ -569,7 +730,13 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
     g_inside_hook_work = true;
     if (g_console_command == nullptr) resolve_engine_objects();
     if (g_config.call_log != CallLogMode::Off && g_call_logging) log_call(self, function);
-    if (g_console_command != nullptr) detect_events(self, function, params);
+    if (g_console_command != nullptr) {
+      detect_events(self, function, params);
+      if (should_block(self, function->name.index, params)) {
+        g_inside_hook_work = false;
+        return;  // skip the original: the purchase or grant doesn't happen
+      }
+    }
     // ProcessEvent runs thousands of times a frame; look at the player at most every 100ms.
     const DWORD now = GetTickCount();
     if (g_console_command != nullptr && now - g_last_check_tick >= 100) {
@@ -660,6 +827,19 @@ CommandState command_state() {
 }
 
 void request_mark() { g_mark_requested = true; }
+
+bool set_limit(const std::string& kind, const std::string& name, int32_t value) {
+  std::lock_guard lock(g_limits_mutex);
+  if (kind == "power") {
+    g_power_limits[lower(name)] = value;
+  } else if (kind == "upgrade") {
+    g_upgrade_allowed[name] = value > 0;
+  } else {
+    return false;
+  }
+  g_limits_known = true;
+  return true;
+}
 
 void toggle_call_logging() {
   g_call_logging = !g_call_logging;

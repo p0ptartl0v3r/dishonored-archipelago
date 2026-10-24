@@ -79,6 +79,23 @@ event's `at=` within about 1.5 m.
 
 Put a `detect` on the victory location to make finishing the game send the goal.
 
+## Blocking and removing what wasn't received (new, untested in-game)
+
+The client sends `limit power <Name> <max level>` and `limit upgrade <name> <0|1>` for
+every randomized power and upgrade (after each load or transition, and when an item
+arrives). From then on the DLL:
+
+- refuses buying a power with runes beyond its limit (`PowerBuy`): `blocked buy power ...`
+- refuses level-script grants beyond the limits (`OnAddPower`, `OnGiveUpgrade`):
+  `blocked grant ...`. Except in the Void, which needs Blink to cross; it's removed
+  after leaving unless received
+- every half second removes powers above their limit (the pawn's `OnRemovePower`,
+  then `AddPower` back to the limit) and upgrades not received (taken out of the
+  player's upgrade list): `remove power ...` / `remove upgrade ...`
+- refunds the coins when a not-yet-received upgrade is bought at a shop: `refund ...`
+
+Without limits (no client connected) nothing is blocked or removed.
+
 ## Upgrades and the state dump (confirmed in-game)
 
 - `upgrade <name>` gives one of Piero's upgrades by its `DisTweaks_Upgrade` object

@@ -28,6 +28,10 @@ CommandState command_state();
 
 void toggle_call_logging();
 
+// What the player may have: kind "power" (name, highest level) or "upgrade" (name, 0/1).
+// Once any limit is set, the DLL blocks and removes randomized powers/upgrades beyond them.
+bool set_limit(const std::string& kind, const std::string& name, int32_t value);
+
 // Write a marker with the player's position to the log (on the game thread, soon).
 void request_mark();
 

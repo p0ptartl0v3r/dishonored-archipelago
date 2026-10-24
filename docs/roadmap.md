@@ -55,7 +55,8 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
 
 ### 4. Items
 - [x] Powers: granted automatically with confirmed names, re-applied after loads
-- [ ] Powers: stop buying them with runes before they're received
+- [ ] Powers: stop buying them with runes before they're received (written: `limit`
+      requests + `PowerBuy` blocking; untested in-game)
 - [ ] Upgrades (Piero's shop). The console cheats are stripped from the release build,
       so the DLL calls the player pawn's `OnGiveUpgrade` with a `UDisSeqAct_GiveUpgrade`
       (`upgrade <name>` request). Names found with `dump` and mapped in
@@ -88,14 +89,18 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
       until the Outsider gives the mark). Level scripts toggle it with
       `DisSeqAct_ToggleHUDElement` (`m_HudElement` = `DHE_Mana`); find how that action
       takes effect and do the same from the DLL
-- [ ] Block the DLC statues (`Twk_Upgrade_Statue*`): the game hands all four out at the
+- [ ] Option for players without the DLC: 6 Bone Charm Slot items instead of 10 (the
+      game caps them at 6 slots; the statue upgrades do nothing)
+- [ ] Block the DLC statues (`Twk_Upgrade_Statue*`; removed by the limits, untested): the game hands all four out at the
       pub on the first night, and each adds a bone charm slot
 
 ### 5. Saves always match what was received
 - [x] Items received after a save come back when that save is loaded: the client
       re-applies everything after each load (confirmed for powers; upgrades are
       re-granted unless already owned)
-- [ ] Items *not* received are taken away when a save has them (an older seed's
+- [ ] Items *not* received are taken away when a save has them (written for powers and
+      upgrades, untested: does removing an upgrade from `m_Upgrades` undo its effect?
+      Known gap: loading a save *inside* the Void removes Blink there) (an older seed's
       save, or something bought/scripted before blocking existed). The client sends
       the full received set after each load and the DLL removes the rest: powers
       through the pawn's native `OnRemovePower` handler (the counterpart of

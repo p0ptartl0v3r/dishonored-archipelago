@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from dishonored.client.item_commands import ITEM_COMMANDS, UNVERIFIED, _upgrades, commands_for, console_commands
+from dishonored.client.item_commands import ITEM_COMMANDS, UNVERIFIED, _upgrades, commands_for, console_commands, limits
 
 ITEMS = Path(__file__).resolve().parent.parent / "worlds" / "dishonored" / "data" / "items.json"
 
@@ -61,3 +61,19 @@ def test_bone_charm_slots_follow_the_games_capacity_steps():
     assert commands_for("Bone Charm Slot", 5) == ["upgrade Twk_Upgrade_BoneCharms"]  # Piero's 2nd adds two
     assert commands_for("Bone Charm Slot", 6)[-1] == "upgrade Twk_Upgrade_BoneCharms2"
     assert len(commands_for("Bone Charm Slot", 10)) == 6
+
+
+def test_limits_follow_what_was_received():
+    lines = limits({"Progressive Blink": 1, "Progressive Pistol Accuracy": 1, "Bone Charm Slot": 4})
+    assert "limit power Blink 1" in lines
+    assert "limit power WindBlast 0" in lines  # nothing received: none allowed
+    assert "limit upgrade Twk_Upgrade_Pistol_Accuracy1 1" in lines
+    assert "limit upgrade Twk_Upgrade_Pistol_Accuracy2 0" in lines
+    assert "limit upgrade Twk_Upgrade_BoneCharms 1" in lines
+    assert "limit upgrade Twk_Upgrade_StatueFish 0" in lines
+    assert "limit upgrade Twk_Upgrade_Sword 0" in lines  # the second Progressive Sword
+    assert not any("Twk_Upgrade_Mask" in line for line in lines)  # not randomized: never limited
+
+
+def test_extra_copies_never_exceed_the_maximum():
+    assert "limit power Blink 2" in limits({"Progressive Blink": 5})

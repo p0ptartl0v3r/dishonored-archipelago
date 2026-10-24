@@ -17,7 +17,7 @@ No Archipelago imports here, so tests can load it standalone.
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 
 CommandBuilder = Callable[[int], list[str]]
 
@@ -35,18 +35,22 @@ def _upgrades(*tiers: str) -> CommandBuilder:
     return lambda level: [f"upgrade {name}" for name in tiers[:level]]
 
 
+# Item -> power name as listed by the in-game AddPower command (confirmed in-game).
+POWERS: dict[str, str] = {
+    "Progressive Blink": "Blink",
+    "Progressive Dark Vision": "DarkVision",
+    "Progressive Devouring Swarm": "DevouringSwarm",
+    "Progressive Possession": "Possess",
+    "Progressive Bend Time": "BendTime",
+    "Progressive Windblast": "WindBlast",
+    "Progressive Vitality": "Vitality",
+    "Progressive Agility": "Celerity",  # Agility's internal name
+    "Progressive Blood Thirsty": "BloodThirsty",
+    "Progressive Shadow Kill": "ShadowKill",
+}
+
 ITEM_COMMANDS: dict[str, CommandBuilder] = {
-    # Names as listed by the in-game AddPower command (confirmed in-game).
-    "Progressive Blink": _power("Blink"),
-    "Progressive Dark Vision": _power("DarkVision"),
-    "Progressive Devouring Swarm": _power("DevouringSwarm"),
-    "Progressive Possession": _power("Possess"),
-    "Progressive Bend Time": _power("BendTime"),
-    "Progressive Windblast": _power("WindBlast"),
-    "Progressive Vitality": _power("Vitality"),
-    "Progressive Agility": _power("Celerity"),  # Agility's internal name
-    "Progressive Blood Thirsty": _power("BloodThirsty"),
-    "Progressive Shadow Kill": _power("ShadowKill"),
+    **{item: _power(power) for item, power in POWERS.items()},
     # Piero's upgrades: DisTweaks_Upgrade object names from the DLL's "dump" (confirmed
     # in-game), with the shop's display name in the comment.
     "Corvo's Pistol": _upgrades("Twk_Upgrade_Pistol"),
@@ -110,6 +114,22 @@ def commands_for(item_name: str, level: int) -> list[str]:
     """DLL requests for receiving copy number ``level`` of an item ([] if unknown)."""
     builder = ITEM_COMMANDS.get(item_name)
     return builder(level) if builder else []
+
+
+def limits(received: Mapping[str, int]) -> list[str]:
+    """DLL "limit" requests: how far each randomized power and upgrade may go, given how
+    many copies of each item have been received. The DLL blocks and removes anything beyond."""
+    lines = [
+        f"limit power {power} {min(received.get(item, 0), MAX_POWER_LEVEL)}" for item, power in POWERS.items()
+    ]
+    for item, builder in ITEM_COMMANDS.items():
+        if item in POWERS:
+            continue
+        # Every upgrade the item can ever give is randomized; those for copies so far are allowed.
+        every = [r.removeprefix("upgrade ") for r in builder(99) if r.startswith("upgrade ")]
+        allowed = {r.removeprefix("upgrade ") for r in builder(received.get(item, 0))}
+        lines += [f"limit upgrade {name} {int(name in allowed)}" for name in every]
+    return lines
 
 
 def console_commands(requests: list[str]) -> list[str]:

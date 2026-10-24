@@ -51,6 +51,10 @@ class GameInterface(ABC):
         so every received item must be applied again."""
         return False
 
+    def set_limits(self, lines: list[str]) -> bool:
+        """Tell the game what may be kept (item_commands.limits). Return False to retry later."""
+        return True
+
 
 def log_unlock_for_player(item_name: str, level: int) -> None:
     """Tell the player what they got and, if known, what to type in the console."""
@@ -287,6 +291,12 @@ class NativeInterface(GameInterface):
     def take_resync_request(self) -> bool:
         resync, self._resync = self._resync, False
         return resync
+
+    def set_limits(self, lines: list[str]) -> bool:
+        try:
+            return all(self._request(line) == "ok" for line in lines)
+        except OSError:
+            return False
 
     def give_item(self, item_id: int, item_name: str, level: int) -> bool:
         commands = commands_for(item_name, level)

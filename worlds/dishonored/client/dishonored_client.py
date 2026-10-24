@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from collections import Counter
 from typing import Any
 
 from CommonClient import ClientCommandProcessor, CommonContext, gui_enabled, logger, server_loop
@@ -9,6 +10,7 @@ from NetUtils import ClientStatus
 
 from ..game_data import GAME_NAME
 from .game_interface import BACKENDS, GameInterface
+from .item_commands import limits
 
 POLL_SECONDS = 0.5
 
@@ -66,6 +68,7 @@ class DishonoredContext(CommonContext):
         # Index into items_received of the next item to apply. Reset to 0 (replay
         # everything) whenever the game reports that a save was loaded.
         self.items_applied = 0
+        self.limits_sent: list[str] | None = None  # last limits the game accepted
         self.slot_data: dict[str, Any] = {}
 
     async def server_auth(self, password_requested: bool = False) -> None:
@@ -78,6 +81,7 @@ class DishonoredContext(CommonContext):
         if cmd == "Connected":
             self.slot_data = args.get("slot_data", {})
             self.items_applied = 0
+            self.limits_sent = None
             self.goal_sent = False
 
     async def disconnect(self, allow_autoreconnect: bool = False) -> None:
@@ -142,6 +146,16 @@ async def sync_with_game(ctx: DishonoredContext, game: GameInterface) -> None:
     # replaying is safe.
     if game.take_resync_request():
         ctx.items_applied = 0
+        ctx.limits_sent = None
+
+    # What the game may keep: sent before the items themselves, and again whenever an
+    # item arrives or the game was reset, so the DLL never removes something just received.
+    received = Counter(ctx.item_names.lookup_in_game(i.item) for i in ctx.items_received)
+    lines = limits(received)
+    if lines != ctx.limits_sent:
+        if not game.set_limits(lines):
+            return
+        ctx.limits_sent = lines
 
     # Received items wait here until the game can take them (give_item returns False).
     while ctx.items_applied < len(ctx.items_received):

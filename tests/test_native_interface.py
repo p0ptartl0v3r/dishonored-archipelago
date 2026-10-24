@@ -17,6 +17,8 @@ class FakePipe:
             reply = self.ready if isinstance(self.ready, str) else ("pong ready" if self.ready else "pong waiting")
         elif request.startswith(("console ", "upgrade ")):
             reply = "queued"
+        elif request.startswith("limit "):
+            reply = "ok"
         elif request.startswith("event "):
             index = int(request.split()[1])
             reply = f"event {index} {self.events[index]}" if index < len(self.events) else "none"
@@ -228,3 +230,9 @@ def test_real_events_from_the_first_mission():
         "DisSeqAct_FailObjective TowerEmpress_HideNSeek"
     ) == []
     assert game.match_event(prison + "DisAbstractItemPickup_27 DisAbstractItemPickup Coins_AbsItm at=104,1144,1107") == []
+
+
+def test_limits_are_sent_as_is():
+    pipe = FakePipe()
+    assert attached(pipe).set_limits(["limit power Blink 1", "limit upgrade Twk_Upgrade_Armor 0"])
+    assert pipe.sent == ["limit power Blink 1", "limit upgrade Twk_Upgrade_Armor 0"]

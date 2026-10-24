@@ -3,6 +3,7 @@
 #include <windows.h>
 
 #include <format>
+#include <sstream>
 #include <string>
 
 #include "game_hooks.hpp"
@@ -25,6 +26,14 @@ std::string handle(const std::string& request) {
   if (request.rfind("console ", 0) == 0 || request.rfind("upgrade ", 0) == 0 || request == "dump") {
     queue_game_request(request);
     return "queued";
+  }
+  if (request.rfind("limit ", 0) == 0) {
+    // limit <power|upgrade> <name> <value>
+    std::istringstream words(request.substr(6));
+    std::string kind, name;
+    int value = 0;
+    if (words >> kind >> name >> value && set_limit(kind, name, value)) return "ok";
+    return "error bad limit";
   }
   if (request.rfind("event ", 0) == 0) {
     size_t index = 0;
