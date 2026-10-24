@@ -92,7 +92,16 @@ arrives). From then on the DLL:
 - every half second removes powers above their limit (the pawn's `OnRemovePower`,
   then `AddPower` back to the limit) and upgrades not received (taken out of the
   player's upgrade list): `remove power ...` / `remove upgrade ...`
-- refunds the coins when a not-yet-received upgrade is bought at a shop: `refund ...`
+- refuses buying a not-yet-received upgrade at a shop (`Req_BuyItem`; the entry is
+  looked up in the shop's displayed list): `blocked buy upgrade ...`. The log line
+  `shop: buying entry <n> = <item>` shows what each purchase was (untested)
+- if a purchase still goes through, refunds the coins: `refund ...`
+
+Confirmed in-game: removal from the upgrade list, refunds, and lowering a power.
+**But removing an upgrade doesn't undo its effect** (bone charm capacity stayed, even
+after a reload): the effect is an attribute modifier on the pawn, stored separately.
+`removemod <attribute> <modifier>` calls the pawn's `OnRemoveAttributeModifier` to find
+the modifier name upgrades use; `dump` lists each upgrade's `attributes=`.
 
 Without limits (no client connected) nothing is blocked or removed.
 

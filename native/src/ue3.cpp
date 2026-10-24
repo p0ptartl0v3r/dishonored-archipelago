@@ -69,6 +69,8 @@ bool init(uintptr_t gnames_address, uintptr_t gobjects_address, std::string& err
 
 bool ready() { return g_names != nullptr && g_objects != nullptr; }
 
+bool is_readable(const void* address, size_t size) { return readable(address, size); }
+
 std::string name_string(FName name) {
   if (!ready() || name.index < 0 || name.index >= g_names->count) return {};
   std::string out = entry_string(g_names->data[name.index]);

@@ -84,6 +84,11 @@ inline constexpr size_t kAddPowerActionLevel = 0x104;            // UDisSeqAct_A
 inline constexpr size_t kPawnInventory = 0x59C;                  // ADishonoredPawn::m_pInventory
 inline constexpr size_t kPlayerPawnBoneCharmSlots = 0xB10;       // ADishonoredPlayerPawn::m_WhaleBoneCharmSlots[10]
 inline constexpr size_t kPlayerPawnUpgrades = 0xB50;             // ADishonoredPlayerPawn::m_Upgrades
+inline constexpr size_t kStoreDisplayedItems = 0x1C4;            // UDisGFxMoviePlayerStore::m_DisplayedItems (FDisStoreItem*?)
+inline constexpr size_t kStoreItemItem = 0x5C;                   // FDisStoreItem::m_Item (UDisTweaksBase*)
+inline constexpr size_t kUpgradeAttributes = 0x9C;               // UDisTweaks_Upgrade::m_Attributes (FName, float: 0xC each)
+inline constexpr size_t kRemoveModifierActionAttribute = 0xF8;   // UDisSeqAct_RemoveAttributeModifier::m_AttributeName
+inline constexpr size_t kRemoveModifierActionModifier = 0x100;   // UDisSeqAct_RemoveAttributeModifier::m_ModifierName
 inline constexpr size_t kUpgradeHostItemType = 0x90;             // UDisTweaks_Upgrade::m_pHostItemType (UClass*)
 inline constexpr size_t kUpgradeDisplayName = 0xB8;              // UDisTweaks_Upgrade::m_Name (FString, localized)
 inline constexpr size_t kUpgradeParent = 0xE0;                   // UDisTweaks_Upgrade::m_pParentUpgrade
@@ -109,6 +114,8 @@ static_assert(sizeof(FString) == 12);
 // don't look right for this build of the game.
 bool init(uintptr_t gnames_address, uintptr_t gobjects_address, std::string& error);
 bool ready();
+// True if [address, address + size) is committed, readable memory (slow: a system call).
+bool is_readable(const void* address, size_t size);
 
 std::string name_string(FName name);
 int32_t find_name_index(const std::string& name);  // -1 if absent

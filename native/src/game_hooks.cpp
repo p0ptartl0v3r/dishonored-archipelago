@@ -8,6 +8,7 @@
 #include <deque>
 #include <mutex>
 #include <map>
+#include <sstream>
 #include <unordered_set>
 #include <vector>
 
@@ -93,6 +94,7 @@ struct EventNames {
   int32_t on_add_inventory_item = -1;
   int32_t power_buy = -1;  // DisGFxMoviePlayerJournal.PowerBuy(PowerId, Level): buying a power with runes
   int32_t active_power_component = -1;  // class DishonoredActivePowerComponent (one object per active power)
+  int32_t req_buy_item = -1;            // DisGFxMoviePlayerStore.Req_BuyItem(ItemIdx): buying at a shop
   int32_t pickup_base = -1;                // class DisPickup_Base
   int32_t abstract_item_pickup = -1;       // class DisAbstractItemPickup
   int32_t whale_bone_charm = -1;           // class DisWhaleBoneCharm
@@ -464,6 +466,24 @@ bool should_block(ue3::UObject* self, int32_t name, void* params) {
     if (!limit) log("PowerBuy {} {} (no limit for that name)", power, buy->level);
     return false;
   }
+  if (name == g_names.req_buy_item) {
+    // The shop's displayed list holds pointers to its store entries; each names the
+    // item it sells. Every pointer is checked before use, since this layout is inferred.
+    const int32_t index = *static_cast<int32_t*>(params);
+    const auto items = ue3::field<ue3::TArray<uint8_t*>>(self, ue3::kStoreDisplayedItems);
+    if (index < 0 || index >= items.count || !ue3::is_readable(items.data + index, sizeof(void*))) return false;
+    uint8_t* entry = items.data[index];
+    if (!ue3::is_readable(entry + ue3::kStoreItemItem, sizeof(void*))) return false;
+    auto* item = *reinterpret_cast<ue3::UObject**>(entry + ue3::kStoreItemItem);
+    if (!ue3::is_readable(item, sizeof(ue3::UObject))) return false;
+    const std::string item_name = ue3::object_name(item);
+    log("shop: buying entry {} = {}", index, item_name);
+    if (upgrade_allowed(item_name) == false) {
+      emit_event("blocked buy upgrade " + item_name);
+      return true;
+    }
+    return false;
+  }
   if (name != g_names.on_add_power && name != g_names.on_give_upgrade) return false;
   if (!ue3::is_a(self, g_names.player_pawn)) return false;
   auto* action = *static_cast<ue3::UObject**>(params);
@@ -539,15 +559,58 @@ void track_holdings(ue3::UObject* player_controller, bool settled, DWORD now) {
 
 
 
+std::string upgrade_attributes(ue3::UObject* upgrade) {
+  std::string out;
+  const auto attributes = ue3::field<ue3::TArray<uint8_t>>(upgrade, ue3::kUpgradeAttributes);
+  for (int32_t i = 0; i < attributes.count && attributes.data != nullptr; ++i) {
+    out += std::format("{}{}={:g}", out.empty() ? "" : ",",
+                       ue3::name_string(*reinterpret_cast<const ue3::FName*>(attributes.data + i * 0xC)),
+                       *reinterpret_cast<const float*>(attributes.data + i * 0xC + 8));
+  }
+  return out.empty() ? "-" : out;
+}
+
+// Research: the pawn's OnRemoveAttributeModifier(attribute, modifier) with the borrowed
+// default DisSeqAct_RemoveAttributeModifier, to find how an upgrade's effect is undone.
+bool remove_attribute_modifier(ue3::UObject* player_controller, const std::string& args) {
+  ue3::UObject* pawn = player_pawn(player_controller);
+  if (pawn == nullptr) return false;
+  std::istringstream words(args);
+  std::string attribute, modifier;
+  words >> attribute >> modifier;
+  const int32_t attribute_index = ue3::find_name_index(attribute);
+  const int32_t modifier_index = ue3::find_name_index(modifier);
+  auto* function = ue3::find_object("Function DishonoredGame.DishonoredPlayerPawn.OnRemoveAttributeModifier");
+  auto* action = ue3::find_object(
+      "DisSeqAct_RemoveAttributeModifier DishonoredGame.Default__DisSeqAct_RemoveAttributeModifier");
+  if (attribute_index < 0 || modifier_index < 0 || function == nullptr || action == nullptr) {
+    log("removemod {}: not found (attribute name {}, modifier name {}, handler {})", args, attribute_index >= 0,
+        modifier_index >= 0, function != nullptr && action != nullptr);
+    return true;
+  }
+  auto* fields = reinterpret_cast<uint8_t*>(action);
+  auto& attribute_slot = *reinterpret_cast<ue3::FName*>(fields + ue3::kRemoveModifierActionAttribute);
+  auto& modifier_slot = *reinterpret_cast<ue3::FName*>(fields + ue3::kRemoveModifierActionModifier);
+  const ue3::FName saved_attribute = attribute_slot, saved_modifier = modifier_slot;
+  attribute_slot = {attribute_index, 0};
+  modifier_slot = {modifier_index, 0};
+  ue3::UObject* params = action;
+  g_original(pawn, nullptr, function, &params, nullptr);
+  attribute_slot = saved_attribute;
+  modifier_slot = saved_modifier;
+  log("removemod {}: called OnRemoveAttributeModifier", args);
+  return true;
+}
+
 // Research: writes what the player has, and every upgrade the game knows, to the log.
 void dump_player_state(ue3::UObject* player_controller) {
   ue3::UObject* pawn = player_pawn(player_controller);
   log("==== dump ====");
   for (auto* upgrade : ue3::find_instances(g_names.upgrade_tweaks)) {
-    log("upgrade {} \"{}\" item={} parent={}{}", ue3::object_name(upgrade),
+    log("upgrade {} \"{}\" item={} parent={} attributes={}{}", ue3::object_name(upgrade),
         ue3::to_string(ue3::field<ue3::FString>(upgrade, ue3::kUpgradeDisplayName)),
         ue3::object_name(ue3::field<ue3::UObject*>(upgrade, ue3::kUpgradeHostItemType)),
-        ue3::object_name(ue3::field<ue3::UObject*>(upgrade, ue3::kUpgradeParent)),
+        ue3::object_name(ue3::field<ue3::UObject*>(upgrade, ue3::kUpgradeParent)), upgrade_attributes(upgrade),
         pawn != nullptr && has_upgrade(pawn, upgrade) ? " OWNED" : "");
   }
   if (pawn == nullptr) {
@@ -588,6 +651,7 @@ bool run_request(ue3::UObject* player_controller, const std::string& request) {
     return true;
   }
   if (request.rfind("upgrade ", 0) == 0) return grant_upgrade(player_controller, request.substr(8));
+  if (request.rfind("removemod ", 0) == 0) return remove_attribute_modifier(player_controller, request.substr(10));
   if (request == "dump") {
     dump_player_state(player_controller);
     return true;
@@ -738,6 +802,7 @@ void resolve_engine_objects() {
   g_names.on_add_inventory_item = ue3::find_name_index("OnAddInventoryItem");
   g_names.power_buy = ue3::find_name_index("PowerBuy");
   g_names.active_power_component = ue3::find_name_index("DishonoredActivePowerComponent");
+  g_names.req_buy_item = ue3::find_name_index("Req_BuyItem");
   g_names.pickup_base = ue3::find_name_index("DisPickup_Base");
   g_names.abstract_item_pickup = ue3::find_name_index("DisAbstractItemPickup");
   g_names.whale_bone_charm = ue3::find_name_index("DisWhaleBoneCharm");

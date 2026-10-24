@@ -264,6 +264,13 @@ through `ProcessEvent`.
 - `PowerBuy` is a native function of `DisGFxMoviePlayerJournal` (the journal's power
   page). Whether its calls from the Flash menu pass through ProcessEvent is still
   unverified.
+- Removing an upgrade from `m_Upgrades` hides it from the journal but keeps its effect:
+  bone charm capacity stayed at 8 after the statues and Piero's capacity upgrade were
+  removed, also after a reload. Upgrades carry `m_Attributes` (name, value); the pawn's
+  `DisAttributes` keeps named modifiers in a native map. The exe has the string
+  "Upgrade" (candidate modifier name) and "TRANSITION-LOAD : Upgrade %d of %d".
+- The shop: `DisGFxMoviePlayerStore.Req_BuyItem(ItemIdx)`; `m_DisplayedItems` (+0x1C4)
+  is presumably pointers to `FDisStoreItem` (`m_Item` +0x5C).
 - A long-running Launcher keeps the client code it started with: restart it after
   client changes.
 
