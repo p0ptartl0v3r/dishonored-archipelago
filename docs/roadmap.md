@@ -135,6 +135,15 @@ Today they're only shown as received, nothing in the game checks them.
       (websocket + JSON in C++) so the external client becomes optional. The
       Python client stays the reference until then
 
+### 8. Shopsanity (option): Piero's upgrades as checks
+- [ ] apworld: one location per shop upgrade, behind an option
+- [ ] DLL: refuse the real purchase (`Req_BuyItem`, already intercepted), take the coins,
+      report a `shop check <upgrade>` event; nothing to undo because the effect is never
+      applied. Refuse repeat purchases of checked locations (the client knows them)
+- [ ] Rewrite the entry's name/description (`FDisStoreItem.m_Name`, `m_Description`)
+      with the scouted item (LocationScouts); point `m_StoreIconName` at an existing
+      icon. A custom Archipelago icon would need a new image in the Scaleform UI files
+
 ### Later
 - Knife of Dunwall / Brigmore Witches, Dunwall City Trials, "smooth intro"
   (these are mostly data plus options in the apworld)
