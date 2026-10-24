@@ -837,6 +837,7 @@ bool set_limit(const std::string& kind, const std::string& name, int32_t value) 
   } else {
     return false;
   }
+  if (!g_limits_known) log("limits received from the client: blocking and removal are on");
   g_limits_known = true;
   return true;
 }
