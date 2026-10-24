@@ -84,6 +84,13 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
 - Decisions: upgrades are granted outright (no shop changes for now); zone keys
   warn first, block later
 
+- [ ] Show the mana bar when a power is received before the Void (the HUD hides it
+      until the Outsider gives the mark). Level scripts toggle it with
+      `DisSeqAct_ToggleHUDElement` (`m_HudElement` = `DHE_Mana`); find how that action
+      takes effect and do the same from the DLL
+- [ ] Block the DLC statues (`Twk_Upgrade_Statue*`): the game hands all four out at the
+      pub on the first night, and each adds a bone charm slot
+
 ### 5. Saves always match what was received
 - [x] Items received after a save come back when that save is loaded: the client
       re-applies everything after each load (confirmed for powers; upgrades are
@@ -106,7 +113,9 @@ Today they're only shown as received, nothing in the game checks them.
       levels (`WorldInfo.StreamingLevels`)
 
 ### 7. In-game messages (towards an in-game client)
-- [ ] Show "Received X from Y" / "Sent X to Y" on screen. Most promising: draw text
+- [ ] Show "Received X from Y" / "Sent X to Y" on screen. First try the game's own
+      `DisSeqAct_ShowHUDMessage` (`m_Message` FString), used by level scripts for HUD
+      messages, with the same borrowed-default-object trick as upgrades. Otherwise draw text
       from the DLL when the HUD renders (`HUD.PostRender` passes through
       `ProcessEvent`; the `Canvas` draw functions are callable the same way).
       Fallbacks: call into the Scaleform HUD, or hook Direct3D 9 and draw an overlay

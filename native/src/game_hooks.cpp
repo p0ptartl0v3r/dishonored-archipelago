@@ -313,6 +313,29 @@ void report_changes(const std::map<std::string, int32_t>& before, const std::map
   }
 }
 
+// Coins going down while something else goes up in the same reading is a purchase
+// (Piero's shop, black markets): report what was bought and the price.
+void report_purchases(const Holdings& before, const Holdings& after, const std::string& where) {
+  auto coins = [](const Holdings& h) {
+    const auto it = h.items.find("Coins_AbsItm");
+    return it == h.items.end() ? 0 : it->second;
+  };
+  const int32_t spent = coins(before) - coins(after);
+  if (spent <= 0) return;
+  auto bought = [&](const std::map<std::string, int32_t>& was, const std::map<std::string, int32_t>& now,
+                    const char* kind) {
+    for (const auto& [name, count] : now) {
+      const auto old = was.find(name);
+      if (name != "Coins_AbsItm" && count > (old == was.end() ? 0 : old->second)) {
+        emit_event(std::format("buy {} {} for {} {}", kind, name, spent, where));
+      }
+    }
+  };
+  bought(before.items, after.items, "item");
+  bought(before.upgrades, after.upgrades, "upgrade");
+  bought(before.ammo, after.ammo, "ammo");
+}
+
 void track_holdings(ue3::UObject* player_controller, bool settled, DWORD now) {
   ue3::UObject* pawn = settled ? player_pawn(player_controller) : nullptr;
   if (!settled) g_holdings.reset();
@@ -324,6 +347,7 @@ void track_holdings(ue3::UObject* player_controller, bool settled, DWORD now) {
     report_changes(g_holdings->items, current.items, "item", where);
     report_changes(g_holdings->upgrades, current.upgrades, "upgrade", where);
     report_changes(g_holdings->ammo, current.ammo, "ammo", where);
+    report_purchases(*g_holdings, current, where);
   }
   g_holdings = std::move(current);
 }

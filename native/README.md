@@ -61,6 +61,7 @@ and `python tools/native_console.py "event 0"` (1, 2, ...) reads them directly.
 | `grant power <name> <level> by <action>` / `grant upgrade <name> by ...` / `grant pickup <tweak> by ...` / `grant inventory <tweak> by ...` | A level script gave the player a power, upgrade, pickup or equipment (`OnAddPower`, `OnGiveUpgrade`, `OnGivePickup`, `OnAddInventoryItem` on the player pawn). E.g. `grant power Blink 1` when the Outsider gives the mark. Our own grants don't produce these |
 | `gain item <name> <old>-><new> at=x,y,z` | The player's count of an abstract item went up, whatever the cause: `Rune_AbsItm`, `Coins_AbsItm`, `BoneCharms`, blueprints (`BP_*_AbsItm`), notes, `RewireTool`. Checked every 0.5 s during gameplay; the position is the player's |
 | `lose item <name> <old>-><new>` | ...went down (e.g. runes spent on a power) |
+| `buy <item\|upgrade\|ammo> <name> for <coins> at=x,y,z` | Coins went down and this went up in the same reading: a shop purchase. E.g. `buy item Rune_AbsItm for 500` (Piero's rune) |
 | `gain ammo <type> <old>-><new> at=x,y,z` / `lose ammo ...` | Ammo (`Bullet`, `Arrow`, `Arrow_Sleep`, ...) or elixirs (`HealthElixir`, `ManaElixir`) changed. Firing, drinking and picking up all show up |
 | `gain upgrade <name> 0->1 at=x,y,z` / `lose upgrade ...` | An upgrade was added (Piero, a script, or our own `upgrade` request) or removed |
 

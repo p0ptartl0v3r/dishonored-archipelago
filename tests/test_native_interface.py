@@ -208,7 +208,7 @@ def test_real_events_from_the_first_mission():
         "pickup L_OutsiderDream_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_0 DisAbstractItemPickup "
         "Rune_AbsItm at=8881,1236,-2484": "The Void: Outsider's Gift Rune",
         full + "DisAbstractItemPickup_155 DisAbstractItemPickup Rune_AbsItm at=-11585,-5794,-528": "The Pub: River Rune",
-        full + "DisAbstractItemPickup_156 DisAbstractItemPickup Rune_AbsItm at=-1279,-2902,401": "The Pub: Shop Rune",
+        "buy item Rune_AbsItm for 500 at=-1282,-3174,386": "The Pub: Shop Rune",
         "grant inventory Twk_Inv_CrossbowCorvo by L_PrsnSewer_Script.TheWorld.PersistentLevel.Main_Sequence."
         "Corvo_SpecialGear.DisSeqAct_AddInventoryItem_3": "Dishonored (Mission): Folding Blade and Crossbow",
         "pickup L_PrsnSewer_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_79 DisAbstractItemPickup "

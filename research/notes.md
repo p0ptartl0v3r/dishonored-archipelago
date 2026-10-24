@@ -240,6 +240,15 @@ through `ProcessEvent`.
   `Twk_Inv_CrossbowCorvo` (Corvo_SpecialGear); Void `grant power Blink 1`,
   `Twk_Inv_HeartCorvo`; pub `grant upgrade Twk_Upgrade_Mask`. Tutorials arrive as
   `grant pickup *Tutorial_PickUp` (noise).
+- Third run (connected to a seed): all detected checks reached the server; Windblast
+  was granted mid-prison; the Void removed a received upgrade and the client
+  re-granted it, and the game's own restore on return found it "already owned".
+- Piero's rune is **bought** (500 coins). Its pickup then spawns at a different spot
+  each run, so it's detected with the `buy` event (coins down + something up in one
+  reading) instead of by position.
+- The DLC packs at the pub add 4 × 500 coins, `DLC_Only_*` notes and the four
+  `Twk_Upgrade_Statue*` upgrades (seen as `gain upgrade`, no pickup event).
+- In-game door keys (`DisKey_Base_*`) stay vanilla, as in the Manual.
 - `TowerEmpress_HideNSeek` is completed when you win and *failed* twice later, so
   match only `DisSeqAct_CompleteObjective`.
 

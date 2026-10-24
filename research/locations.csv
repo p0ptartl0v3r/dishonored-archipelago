@@ -1,7 +1,7 @@
 location_id,name,kind,mission,region,detection,game_object,notes
 219480065,Prologue: Hide And Seek,Other,Intro,Prologue,objective,TowerEmpress_HideNSeek completed,a FailObjective for it fires later; ignore
 219480066,Dishonored (Mission): Victory,Mission,Intro,Dunwall Sewers,objective,Prison_Escape completed,end of the sewers
-219480067,The Pub: Shop Rune,Rune,Intro,Hound Pits Pub,pickup (spawned),"Rune_AbsItm at -1279,-2902,401",appears after Piero's shop scene
+219480067,The Pub: Shop Rune,Rune,Intro,Hound Pits Pub,buy,Rune_AbsItm bought for 500 coins,"bought at Piero's shop; the rune's pickup spawns at a different spot each run, so position matching failed"
 219480068,The Pub: River Rune,Rune,Intro,Hound Pits Pub,pickup (spawned),"Rune_AbsItm at -11585,-5794,-528",
 219480069,The Void: Outsider's Gift Rune,Rune,Intro,The Void,pickup,L_OutsiderDream_Script...DisAbstractItemPickup_0,
 219480070,Distillery District: Granny Rags Shrine Rune,Rune,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisAbstractItemPickup_19,Granny Rags' basement

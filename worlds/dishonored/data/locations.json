@@ -29,7 +29,7 @@
     ],
     "requires": "|The Void Zone Key|",
     "detect": [
-      "pickup Rune_AbsItm near=-1279,-2902,401"
+      "buy item Rune_AbsItm"
     ]
   },
   {
