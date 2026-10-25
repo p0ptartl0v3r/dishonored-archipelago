@@ -33,6 +33,10 @@ std::string handle(const std::string& request) {
     show_message(request.substr(8));
     return "ok";
   }
+  if (request.rfind("notice ", 0) == 0) {
+    show_notice(request.substr(7));
+    return "ok";
+  }
   if (request.rfind("limit ", 0) == 0) {
     // limit <power|upgrade> <name> <value>
     std::istringstream words(request.substr(6));

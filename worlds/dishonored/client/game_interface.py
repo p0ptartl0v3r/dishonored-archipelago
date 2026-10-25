@@ -69,6 +69,10 @@ class GameInterface(ABC):
         """Send the player back to the main menu. Return False to retry later."""
         return True
 
+    def show_notice(self, text: str) -> bool:
+        """Show a line at the top of the main menu (until a game is loaded). Return False to retry later."""
+        return True
+
     def take_travel_blocked(self) -> str | None:
         """The travel prompt option ("<path>#<index>") the game last refused, once (None if none since)."""
         return None
@@ -332,6 +336,12 @@ class NativeInterface(GameInterface):
     def quit_to_menu(self) -> bool:
         try:
             return self._request("quittomenu") == "queued"
+        except OSError:
+            return False
+
+    def show_notice(self, text: str) -> bool:
+        try:
+            return self._request("notice " + " ".join(text.split())) == "ok"
         except OSError:
             return False
 

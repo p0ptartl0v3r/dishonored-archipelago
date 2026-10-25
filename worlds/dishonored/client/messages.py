@@ -58,6 +58,12 @@ def missing_key_line(zone_key: str) -> str:
         colored(" yet: returning to the main menu", WARNING)
 
 
+def sent_to_menu_notice(zone_key: str) -> str:
+    """Shown at the top of the main menu after being sent there for a missing zone key."""
+    return colored("Sent back to the main menu: you don't have the ", WARNING) + \
+        colored(zone_key, item_color(PROGRESSION)) + colored(" yet", WARNING)
+
+
 def requires_key_line(zone_key: str) -> str:
     """Shown when a travel prompt was refused because its zone key hasn't been received."""
     return colored("Requires the ", WARNING) + colored(zone_key, item_color(PROGRESSION))

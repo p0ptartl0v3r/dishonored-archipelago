@@ -1201,6 +1201,15 @@ struct Message {
 };
 std::mutex g_messages_mutex;
 std::deque<Message> g_messages;
+// A notice for the main menu (why the player was sent back there), drawn only in the
+// menu, centered at the top, until a game is loaded or kNoticeMs has passed.
+constexpr DWORD kNoticeMs = 60000;
+Message g_notice;
+
+void clear_notice() {
+  std::lock_guard lock(g_messages_mutex);
+  g_notice.text.clear();
+}
 
 // A message may contain colour markers "{RRGGBB}" (hex); text after one is drawn in that
 // colour, default white. The client uses them for Archipelago's item/player colours.
@@ -1241,24 +1250,67 @@ bool game_paused() {
   return paused & 1;
 }
 
-void draw_messages(ue3::UObject* hud) {
-  auto* canvas = ue3::field<ue3::UObject*>(hud, ue3::kHudCanvas);
-  if (canvas == nullptr) return;
-  std::vector<Message> lines;
-  {
-    std::lock_guard lock(g_messages_mutex);
-    const DWORD now = GetTickCount();
-    while (!g_messages.empty() && now - g_messages.front().shown_at > kMessageMs) g_messages.pop_front();
-    lines.assign(g_messages.begin(), g_messages.end());
-  }
-  if (lines.empty() || g_in_menu || game_paused()) return;  // not over menus or the journal
+// Draws one line of colour segments at (x, y) and returns its width; with draw = false it
+// only measures. Canvas functions are called through the original ProcessEvent.
+float draw_segments(ue3::UObject* canvas, const std::wstring& line, float x, float y, uint8_t alpha, float scale,
+                    bool draw) {
   static ue3::UFunction* set_pos = ue3::find_object("Function Engine.Canvas.SetPos");
   static ue3::UFunction* set_color = ue3::find_object("Function Engine.Canvas.SetDrawColor");
   static ue3::UFunction* draw_text = ue3::find_object("Function Engine.Canvas.DrawText");
   static ue3::UFunction* text_size = ue3::find_object("Function Engine.Canvas.TextSize");
+  if (set_pos == nullptr || set_color == nullptr || draw_text == nullptr || text_size == nullptr) return 0;
+  const float start = x;
+  for (const auto& segment : parse_segments(line)) {
+    const ue3::FString text{segment.text.c_str(), static_cast<int32_t>(segment.text.size() + 1),
+                            static_cast<int32_t>(segment.text.size() + 1)};
+    if (draw) {
+      struct {
+        float x, y, z;
+      } pos{x, y, 0};
+      g_original(canvas, nullptr, set_pos, &pos, nullptr);
+      uint8_t color[4] = {segment.r, segment.g, segment.b, alpha};
+      g_original(canvas, nullptr, set_color, color, nullptr);
+      struct {
+        ue3::FString text;
+        uint32_t carriage_return;
+        float x_scale, y_scale;
+        uint32_t render_flags;  // bClipText (bit 0), bEnableShadow (bit 1)
+        uint8_t glow[0x24];
+      } params{};
+      params.text = text;
+      params.x_scale = params.y_scale = scale;  // optional params arrive as given through ProcessEvent: 0 = invisible
+      params.render_flags = 2;
+      g_original(canvas, nullptr, draw_text, &params, nullptr);
+    }
+    struct {
+      ue3::FString text;
+      float width, height;
+    } size{text, 0, 0};
+    g_original(canvas, nullptr, text_size, &size, nullptr);  // unscaled size of the text
+    x += size.width * scale;
+  }
+  return x - start;
+}
+
+void draw_messages(ue3::UObject* hud) {
+  auto* canvas = ue3::field<ue3::UObject*>(hud, ue3::kHudCanvas);
+  if (canvas == nullptr) return;
+  std::vector<Message> lines;
+  Message notice;
+  const DWORD now = GetTickCount();
+  {
+    std::lock_guard lock(g_messages_mutex);
+    while (!g_messages.empty() && now - g_messages.front().shown_at > kMessageMs) g_messages.pop_front();
+    lines.assign(g_messages.begin(), g_messages.end());
+    if (!g_notice.text.empty() && now - g_notice.shown_at > kNoticeMs) g_notice.text.clear();
+    notice = g_notice;
+  }
+  // Messages stay out of menus and the journal; the notice is only for the main menu.
+  const bool show_lines = !lines.empty() && !g_in_menu && !game_paused();
+  const bool show_notice = !notice.text.empty() && g_in_menu;
+  if (!show_lines && !show_notice) return;
   static ue3::UObject* fallback_font = nullptr;
   static bool font_logged = false;
-  if (set_pos == nullptr || set_color == nullptr || draw_text == nullptr || text_size == nullptr) return;
   auto& font = *reinterpret_cast<ue3::UObject**>(reinterpret_cast<uint8_t*>(canvas) + ue3::kCanvasFont);
   if (font == nullptr) {
     if (fallback_font == nullptr) fallback_font = ue3::find_object("Font EngineFonts.SmallFont");
@@ -1272,40 +1324,23 @@ void draw_messages(ue3::UObject* hud) {
   const float height = ue3::field<float>(canvas, ue3::kCanvasClipY);
   const float width = ue3::field<float>(canvas, ue3::kCanvasClipX);
   const float scale = height > 0 ? height / 720.0f : 1.0f;
+  if (show_notice) {
+    static bool notice_logged = false;
+    if (!notice_logged) {
+      notice_logged = true;
+      log("messages: drawing the main menu notice");
+    }
+    const float notice_scale = scale * 1.25f;
+    const float text_width = draw_segments(canvas, notice.text, 0, 0, 255, notice_scale, false);
+    draw_segments(canvas, notice.text, (width - text_width) / 2, height * 0.05f, 255, notice_scale, true);
+  }
+  if (!show_lines) return;
   const float line = 22.0f * scale;
   float y = height * 0.90f - line * static_cast<float>(lines.size());  // bottom left, oldest on top
-  const DWORD now = GetTickCount();
   for (const auto& message : lines) {
     const DWORD age = now - message.shown_at;
     const uint8_t alpha = age + 1000 > kMessageMs ? static_cast<uint8_t>(255 * (kMessageMs - age) / 1000) : 255;
-    float x = width * 0.02f;
-    for (const auto& segment : parse_segments(message.text)) {
-      const ue3::FString text{segment.text.c_str(), static_cast<int32_t>(segment.text.size() + 1),
-                              static_cast<int32_t>(segment.text.size() + 1)};
-      struct {
-        float x, y, z;
-      } pos{x, y, 0};
-      g_original(canvas, nullptr, set_pos, &pos, nullptr);
-      uint8_t color[4] = {segment.r, segment.g, segment.b, alpha};
-      g_original(canvas, nullptr, set_color, color, nullptr);
-      struct {
-        ue3::FString text;
-        uint32_t carriage_return;
-        float x_scale, y_scale;
-        uint32_t render_flags;  // bClipText (bit 0), bEnableShadow (bit 1)
-        uint8_t glow[0x24];
-      } draw{};
-      draw.text = text;
-      draw.x_scale = draw.y_scale = scale;  // optional params arrive as given through ProcessEvent: 0 = invisible
-      draw.render_flags = 2;
-      g_original(canvas, nullptr, draw_text, &draw, nullptr);
-      struct {
-        ue3::FString text;
-        float width, height;
-      } size{text, 0, 0};
-      g_original(canvas, nullptr, text_size, &size, nullptr);  // unscaled size of the text
-      x += size.width * scale;
-    }
+    draw_segments(canvas, message.text, width * 0.02f, y, alpha, scale, true);
     y += line;
   }
 }
@@ -1354,6 +1389,7 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
           g_in_menu = false;
           g_gameplay_started_tick = now;
           log("left main menu (new game{})", replaced ? "" : ", by timeout");
+          clear_notice();
           emit_event("gameplay");
         }
       }
@@ -1362,6 +1398,7 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
         if (g_ever_lost_gameplay && g_in_menu) {
           g_in_menu = false;  // came back from a loading screen: a real level
           log("left main menu");
+          clear_notice();
         }
         // Every level streams into one persistent map (DishonoredGameFull_P), so the map name
         // says nothing; the zone comes from pickup paths and mapchange events instead.
@@ -1437,6 +1474,11 @@ CommandState command_state() {
 }
 
 void request_mark() { g_mark_requested = true; }
+
+void show_notice(const std::string& text) {
+  std::lock_guard lock(g_messages_mutex);
+  g_notice = {widen(text), GetTickCount()};
+}
 
 void show_message(const std::string& text) {
   std::lock_guard lock(g_messages_mutex);

@@ -144,6 +144,11 @@ Archipelago chat ("Alice: gg", server console as "Server"). Try it:
 python tools/native_console.py "message Hello from Archipelago"
 ```
 
+`notice <text>` sets one line drawn centered at the top of the **main menu** only, for up to
+60 s, cleared when a game is loaded. The client uses it to say why the player was sent back
+there (a missing zone key). Untested: whether the main menu draws the HUD at all; the log
+says `messages: drawing the main menu notice` the first time it's drawn.
+
 The game's own `DisSeqAct_ShowHUDMessage` can't be used: it has no script handler.
 
 ## Upgrades and the state dump (confirmed in-game)

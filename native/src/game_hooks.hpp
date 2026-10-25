@@ -34,6 +34,8 @@ bool set_limit(const std::string& kind, const std::string& name, int32_t value);
 
 // Show a line of text on screen for a few seconds (drawn over the HUD).
 void show_message(const std::string& text);
+// One line shown at the top of the main menu (why the player was sent there).
+void show_notice(const std::string& text);
 
 // Write a marker with the player's position to the log (on the game thread, soon).
 void request_mark();

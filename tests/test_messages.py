@@ -33,3 +33,11 @@ def test_chat_line_names_the_speaker():
 
     assert chat_line("Alice", False, "gg") == "{FAFAD2}Alice{FFFFFF}: gg"
     assert chat_line("me", True, "hi") == "{EE00EE}me{FFFFFF}: hi"
+
+
+def test_main_menu_notice_names_the_missing_key():
+    from dishonored.client.messages import sent_to_menu_notice
+
+    notice = sent_to_menu_notice("Kennels Zone Key")
+    assert notice.startswith("{FA8072}Sent back to the main menu: you don't have the ")
+    assert "{AF99EF}Kennels Zone Key{FA8072} yet" in notice

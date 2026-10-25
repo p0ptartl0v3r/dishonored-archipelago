@@ -12,7 +12,7 @@ from NetUtils import ClientStatus, NetworkItem
 from ..game_data import GAME_NAME
 from .game_interface import BACKENDS, GameInterface
 from .item_commands import limits
-from .messages import chat_line, missing_key_line, received_line, requires_key_line, sent_line
+from .messages import chat_line, missing_key_line, received_line, requires_key_line, sent_line, sent_to_menu_notice
 from .zones import zone_key_for_level, zone_key_for_travel
 
 POLL_SECONDS = 0.5
@@ -196,7 +196,7 @@ async def sync_with_game(ctx: DishonoredContext, game: GameInterface) -> None:
         else:
             ctx.leave_zone = None
     if ctx.leave_zone and time.monotonic() >= ctx.leave_zone[1]:
-        if has(ctx.leave_zone[0]) or game.quit_to_menu():
+        if has(ctx.leave_zone[0]) or (game.show_notice(sent_to_menu_notice(ctx.leave_zone[0])) and game.quit_to_menu()):
             ctx.leave_zone = None
 
     blocked = game.take_travel_blocked()
