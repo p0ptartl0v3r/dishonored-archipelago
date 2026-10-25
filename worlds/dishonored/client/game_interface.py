@@ -64,6 +64,10 @@ class GameInterface(ABC):
         """The streaming level of the zone the player last walked into, once (None if none since)."""
         return None
 
+    def take_travel_blocked(self) -> str | None:
+        """The travel prompt option ("<path>#<index>") the game last refused, once (None if none since)."""
+        return None
+
 
 def log_unlock_for_player(item_name: str, level: int) -> None:
     """Tell the player what they got and, if known, what to type in the console."""
@@ -207,6 +211,7 @@ class NativeInterface(GameInterface):
         self._warned_no_cheats = False
         self._resync = False
         self._zone_entered: str | None = None
+        self._travel_blocked: str | None = None
         self._shown: set[tuple[str, int]] = set()  # manual unlocks already shown to the player
         data = load_game_data()
         # (event prefix, location id or None for the goal)
@@ -281,6 +286,8 @@ class NativeInterface(GameInterface):
                     # Only the latest counts: replayed events after reconnecting would
                     # otherwise warn about every zone visited since the game started.
                     self._zone_entered = text.split()[1]
+                if text.startswith("blocked travel "):
+                    self._travel_blocked = text.split()[2]
                 if text == "gameplay":
                     # A save was loaded (or a new level started): the game may have
                     # forgotten items granted since that save, so grant them all again.
@@ -309,6 +316,10 @@ class NativeInterface(GameInterface):
     def take_zone_entered(self) -> str | None:
         entered, self._zone_entered = self._zone_entered, None
         return entered
+
+    def take_travel_blocked(self) -> str | None:
+        blocked, self._travel_blocked = self._travel_blocked, None
+        return blocked
 
     def set_limits(self, lines: list[str]) -> bool:
         try:

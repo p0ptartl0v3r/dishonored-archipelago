@@ -124,7 +124,14 @@ Today they're only shown as received, nothing in the game checks them.
 - [ ] Warn in-game when entering a zone without its key (written: the client shows
       "You don't have the X Zone Key yet" on mapchange; untested. A loaded save emits
       no mapchange, so loading inside a zone doesn't warn yet)
-- [ ] Enforce (plan agreed 2026-10-25): refuse player-initiated transition prompts into
+- [ ] Refuse travel prompts into zones without their key (written): prompts are
+      `DisSeqAct_DialogScriptedChoice` actions whose options flag a map change; the DLL
+      picks the "stay" option instead (refusal confirmed in-game with `limit travel all 0`).
+      Each option is mapped to its destination level in `zones.py` `TRAVEL_PROMPTS` from
+      play logs (`travel ...` then `mapchange ...`): 2 so far (Bottle Street <-> Distillery)
+- [ ] Forced entries (story transitions, save loads, mission select) into keyless zones:
+      warn, then `quittomenu` (confirmed working)
+- [ ] Earlier plan (2026-10-25; replaced by the two items above): refuse player-initiated transition prompts into
       a zone without its key ("Requires the X Zone Key"), and hold back checks found in
       zones the story puts you in without the key (Coldridge, sewers, Void, pub, any
       mission start), sending them once the key arrives. Story transitions (cutscenes,

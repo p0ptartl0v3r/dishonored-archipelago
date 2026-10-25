@@ -99,3 +99,9 @@ def test_equipment_allows_ammo_types_in_order():
 def test_sword_needs_the_first_progressive_sword():
     assert "limit equip Sword 0" in limits({})
     assert "limit equip Sword 1" in limits({"Progressive Sword": 1})
+
+
+def test_travel_prompts_are_refused_until_their_zone_key_arrives():
+    to_distillery = "L_Streets1_Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_1#0"
+    assert f"limit travel {to_distillery} 0" in limits({})
+    assert f"limit travel {to_distillery} 1" in limits({"Old Dunwall Distillery (HOC) Zone Key": 1})

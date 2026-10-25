@@ -19,6 +19,8 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 
+from .zones import TRAVEL_PROMPTS, zone_key_for_travel
+
 CommandBuilder = Callable[[int], list[str]]
 
 
@@ -166,6 +168,11 @@ def limits(received: Mapping[str, int]) -> list[str]:
         lines += [f"limit item {name} {int(received.get(item, 0) > 0)}" for name in names]
     # The first Progressive Sword allows holding a sword at all.
     lines.append(f"limit equip Sword {int(received.get('Progressive Sword', 0) > 0)}")
+    # Travel prompts into zones whose key hasn't been received are refused.
+    for option in TRAVEL_PROMPTS:
+        key = zone_key_for_travel(option)
+        if key:
+            lines.append(f"limit travel {option} {int(received.get(key, 0) > 0)}")
     return lines
 
 

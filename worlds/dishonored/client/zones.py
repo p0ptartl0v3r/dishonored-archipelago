@@ -44,6 +44,23 @@ LEVEL_PREFIX_ZONE_KEYS: list[tuple[str, str]] = [
 ]
 
 
+# Travel prompts ("Go to X?") the player chooses to take: "<choice action path>#<option>"
+# (the DLL's `travel` event) -> the level it loads (the `mapchange` that follows). The
+# client refuses those leading into a zone whose key hasn't been received. Story
+# transitions (cutscenes, mission ends) aren't prompts and are never refused.
+TRAVEL_PROMPTS: dict[str, str] = {
+    # High Overseer Campbell (confirmed in-game)
+    "L_Streets1_Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_1#0": "L_Distillery_P",
+    "L_Distillery_Strt1Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_1#0": "L_Streets1_P",
+}
+
+
+def zone_key_for_travel(option: str) -> str | None:
+    """The zone key a travel prompt's option leads into, or None if unknown."""
+    level = TRAVEL_PROMPTS.get(option)
+    return zone_key_for_level(level) if level else None
+
+
 def zone_key_for_level(level: str) -> str | None:
     """The zone key a streaming level needs, or None if unknown or not a zone (script levels)."""
     name = level.lower()

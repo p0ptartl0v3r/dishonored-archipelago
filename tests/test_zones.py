@@ -22,3 +22,15 @@ def test_sublevels_and_unknown_levels_are_not_zones():
 def test_every_key_is_a_real_item():
     names = {i["name"] for i in json.loads(ITEMS.read_text("utf-8"))}
     assert set(LEVEL_ZONE_KEYS.values()) | {key for _, key in LEVEL_PREFIX_ZONE_KEYS} <= names
+
+
+def test_travel_prompts_lead_into_known_zones():
+    from dishonored.client.zones import TRAVEL_PROMPTS, zone_key_for_travel
+
+    names = {item["name"] for item in json.loads(ITEMS.read_text(encoding="utf-8"))}
+    for option, level in TRAVEL_PROMPTS.items():
+        assert "#" in option and " " not in option  # one word: "<action path>#<index>"
+        assert zone_key_for_travel(option) in names, (option, level)
+    bottle_street = "L_Distillery_Strt1Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_1#0"
+    assert zone_key_for_travel(bottle_street) == "Distillery District (HOC) Zone Key"
+    assert zone_key_for_travel("L_Unknown.DisSeqAct_DialogScriptedChoice_0#0") is None

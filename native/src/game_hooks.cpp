@@ -970,100 +970,11 @@ std::string pickup_item_name(ue3::UObject* pickup) {
   return "-";
 }
 
-// Where a scripted choice's option leads: follows its output link through the level
-// script and collects the travel destination tags it sets, and the kinds of actions on
-// the way (for research). The action's first output is "Player Busy", so the option's
-// output is found by name (its text), else assumed to be index + 1.
-struct ChoiceRoute {
-  std::string output = "?";  // the output link's name in the level script
-  std::string outputs;       // every output's name (research)
-  std::vector<std::string> tags;
-  std::vector<std::string> ops;
-};
-
-ChoiceRoute choice_route(ue3::UObject* action, int32_t index, const std::string& text) {
-  ChoiceRoute route;
-  const auto outputs = ue3::field<ue3::TArray<uint8_t>>(action, ue3::kSequenceOpOutputLinks);
-  if (outputs.data == nullptr || outputs.count <= 0 || outputs.count > 64) return route;
-  const auto desc = [&](int32_t i) {
-    return ue3::to_string(*reinterpret_cast<const ue3::FString*>(outputs.data + i * ue3::kOutputLinkSize +
-                                                                 ue3::kOutputLinkDesc));
-  };
-  int32_t chosen = index + 1;
-  for (int32_t i = 0; i < outputs.count; ++i) {
-    route.outputs += (i ? "|" : "") + desc(i);
-    if (desc(i) == text) chosen = i;
-  }
-  if (chosen < 0 || chosen >= outputs.count) return route;
-  const uint8_t* output = outputs.data + chosen * ue3::kOutputLinkSize;
-  route.output = desc(chosen);
-  static const int32_t set_destination = ue3::find_name_index("DisSeqAct_SetPlayerTravelDestination");
-  static const int32_t activate_remote = ue3::find_name_index("SeqAct_ActivateRemoteEvent");
-  static const int32_t remote_event = ue3::find_name_index("SeqEvent_RemoteEvent");
-  std::vector<ue3::UObject*> queue, remote_events;
-  const auto add_links = [&](const uint8_t* link) {
-    const auto links = *reinterpret_cast<const ue3::TArray<uint8_t>*>(link);
-    for (int32_t i = 0; i < links.count && i < 16 && links.data != nullptr; ++i) {
-      auto* op = *reinterpret_cast<ue3::UObject* const*>(links.data + i * 8);
-      if (op != nullptr && std::find(queue.begin(), queue.end(), op) == queue.end()) queue.push_back(op);
-    }
-  };
-  add_links(output);
-  for (size_t next = 0; next < queue.size() && next < 96; ++next) {
-    auto* op = queue[next];
-    const std::string kind = ue3::class_name(op);
-    if (std::find(route.ops.begin(), route.ops.end(), kind) == route.ops.end()) route.ops.push_back(kind);
-    if (set_destination >= 0 && op->klass != nullptr && op->klass->name.index == set_destination) {
-      route.tags.push_back(ue3::name_string(ue3::field<ue3::FName>(op, ue3::kSetTravelDestinationTag)));
-      continue;  // the destination is known; don't wander further down this path
-    }
-    if (activate_remote >= 0 && op->klass != nullptr && op->klass->name.index == activate_remote) {
-      // A jump to every remote event of the same name (in any level's script).
-      const int32_t event_name = ue3::field<ue3::FName>(op, ue3::kActivateRemoteEventName).index;
-      if (remote_events.empty() && remote_event >= 0) remote_events = ue3::find_instances(remote_event);
-      for (auto* event : remote_events) {
-        if (ue3::field<ue3::FName>(event, ue3::kRemoteEventName).index == event_name &&
-            std::find(queue.begin(), queue.end(), event) == queue.end()) {
-          queue.push_back(event);
-        }
-      }
-    }
-    const auto op_outputs = ue3::field<ue3::TArray<uint8_t>>(op, ue3::kSequenceOpOutputLinks);
-    for (int32_t i = 0; i < op_outputs.count && i < 16 && op_outputs.data != nullptr; ++i) {
-      add_links(op_outputs.data + i * ue3::kOutputLinkSize);
-    }
-  }
-  return route;
-}
-
-std::string join(const std::vector<std::string>& parts) {
-  std::string out;
-  for (const auto& part : parts) out += (out.empty() ? "" : ",") + part;
-  return out.empty() ? "-" : out;
-}
-
-// The level packages of the actors named like a travel destination tag (the tags seen so
-// far name PlayerStarts, e.g. PlayerStart_DistilleryMainEntrance). Research only.
-std::string destination_levels(const std::vector<std::string>& tags) {
-  std::vector<std::string> levels;
-  static const int32_t actor = ue3::find_name_index("Actor");
-  if (tags.empty() || actor < 0) return "-";
-  for (auto* object : ue3::find_instances_of_subclasses(actor)) {
-    const std::string name = ue3::object_name(object);
-    for (const auto& tag : tags) {
-      if (lower(name) == lower(tag)) levels.push_back(ue3::package_name(object));
-    }
-  }
-  return join(levels);
-}
-
-// Should this travel prompt be refused? Unknown tags are allowed.
-bool travel_refused(const std::vector<std::string>& tags) {
-  if (allowed_in(g_travel_allowed, "all") == false) return true;
-  for (const auto& tag : tags) {
-    if (allowed_in(g_travel_allowed, lower(tag)) == false) return true;
-  }
-  return false;
+// Should this travel option be refused? Options are named "<choice action path>#<index>";
+// the client lists those leading into zones whose key hasn't been received. "all" (for
+// testing) refuses every travel option.
+bool travel_refused(const std::string& option) {
+  return allowed_in(g_travel_allowed, "all") == false || allowed_in(g_travel_allowed, lower(option)) == false;
 }
 
 // Called on the game thread for every ProcessEvent, before the function runs
@@ -1149,18 +1060,18 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
         travel = travels(index);
       }
       if (travel) {
-        const ChoiceRoute route = choice_route(action, index, text);
-        emit_event(std::format("travel prompt \"{}\" output \"{}\" of \"{}\" to {} in {} via {} by {}", text,
-                               route.output, route.outputs, join(route.tags), destination_levels(route.tags),
-                               join(route.ops), node));
-        if (g_limits_known && travel_refused(route.tags)) {
+        // The prompt's path and the option say where it goes (the destination is in the
+        // next level's script, which isn't loaded yet); the client maps them to zones.
+        const std::string option = std::format("{}#{}", node, index);
+        emit_event(std::format("travel {} \"{}\"", option, text));
+        if (g_limits_known && travel_refused(option)) {
           // Pick the prompt's "stay" option instead: the prompt closes as if declined.
           int32_t stay = -1;
           for (int32_t i = 0; i < choices.count && stay < 0; ++i) {
             if (!travels(i)) stay = i;
           }
           if (stay >= 0) {
-            emit_event(std::format("blocked travel {} by {}", join(route.tags), node));
+            emit_event("blocked travel " + option);
             if (allowed_in(g_travel_allowed, "all") == false) {
               show_message("{FA8072}Travel refused (test: limit travel all 0)");
             }

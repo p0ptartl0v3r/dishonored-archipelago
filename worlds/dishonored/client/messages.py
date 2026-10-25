@@ -58,6 +58,11 @@ def missing_key_line(zone_key: str) -> str:
         colored(" yet: this area is out of logic", WARNING)
 
 
+def requires_key_line(zone_key: str) -> str:
+    """Shown when a travel prompt was refused because its zone key hasn't been received."""
+    return colored("Requires the ", WARNING) + colored(zone_key, item_color(PROGRESSION))
+
+
 def sent_line(item: str, flags: int, receiver: str, location: str) -> str:
     """'Sent <item> to <player> (<location>)' for an item found for someone else."""
     return colored("Sent ", WHITE) + colored(item, item_color(flags)) + colored(" to ", WHITE) + \
