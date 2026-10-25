@@ -426,11 +426,6 @@ std::vector<std::pair<std::string, int32_t>> power_levels(ue3::UObject* pawn) {
 DWORD g_last_world_upgrade_scan = 0;
 std::unordered_set<ue3::UObject*> g_world_upgrades_destroyed;
 
-// The statues are placed in the level and can't be destroyed (Destroy returns false), so
-// they're hidden, made non-colliding and moved far below the map instead. Level scripts
-// may show them again (the DLC reveals them in the morning), so this repeats every scan.
-constexpr float kHiddenUpgradeZ = -100000.0f;
-
 // The base bone charm capacity is a tweak value (3 in the shipped game). The client sets
 // it so that base + granted capacity upgrades = Bone Charm Slot items received.
 void apply_bone_charm_base() {
@@ -445,33 +440,35 @@ void apply_bone_charm_base() {
   }
 }
 
+// Upgrades lying in the world (the DLC statues) are placed in the level: Destroy fails,
+// SetLocation doesn't move them, and picking one up ignores collision. So each randomized
+// one is pointed at Corvo's Mask (always owned, no attributes), which makes picking it up
+// give nothing, and hidden. Hiding repeats every scan in case a level script shows it again.
 void remove_world_upgrades(DWORD now) {
   if (!g_limits_known || now - g_last_world_upgrade_scan < 2000) return;
   g_last_world_upgrade_scan = now;
   apply_bone_charm_base();
   static ue3::UFunction* set_hidden = ue3::find_object("Function Engine.Actor.SetHidden");
-  static ue3::UFunction* set_collision = ue3::find_object("Function Engine.Actor.SetCollision");
-  static ue3::UFunction* set_location = ue3::find_object("Function Engine.Actor.SetLocation");
-  if (set_hidden == nullptr || set_collision == nullptr || set_location == nullptr) return;
+  static ue3::UObject* harmless = nullptr;
+  if (harmless == nullptr) {
+    const int32_t mask = ue3::find_name_index("Twk_Upgrade_Mask");
+    for (auto* upgrade : ue3::find_instances(g_names.upgrade_tweaks)) {
+      if (upgrade->name.index == mask) harmless = upgrade;
+    }
+  }
+  if (set_hidden == nullptr || harmless == nullptr) return;
   for (auto* actor : ue3::find_instances(g_names.world_upgrade)) {
-    const std::string upgrade = ue3::object_name(ue3::field<ue3::UObject*>(actor, ue3::kWorldUpgradeTweaks));
-    if (!upgrade_allowed(upgrade).has_value()) continue;  // not randomized: leave it
-    const bool first_time = g_world_upgrades_destroyed.insert(actor).second;
-    const std::string was_at = location_of(actor);
+    auto& tweaks = *reinterpret_cast<ue3::UObject**>(reinterpret_cast<uint8_t*>(actor) + ue3::kWorldUpgradeTweaks);
+    if (tweaks != harmless) {
+      const std::string upgrade = ue3::object_name(tweaks);
+      if (!upgrade_allowed(upgrade).has_value()) continue;  // not randomized: leave it
+      tweaks = harmless;
+      g_world_upgrades_destroyed.insert(actor);
+      emit_event(std::format("disarmed world upgrade {} {}", upgrade, location_of(actor)));
+    }
+    if (!g_world_upgrades_destroyed.contains(actor)) continue;  // a real Mask pickup: leave it
     uint32_t hidden = 1;
     g_original(actor, nullptr, set_hidden, &hidden, nullptr);
-    uint32_t no_collision[3] = {0, 0, 0};  // bNewColActors, bNewBlockActors, bNewIgnoreEncroachers
-    g_original(actor, nullptr, set_collision, no_collision, nullptr);
-    struct {
-      ue3::FVector location;
-      uint32_t result;
-    } move{{0, 0, kHiddenUpgradeZ}, 0};
-    if (ue3::field<ue3::FVector>(actor, ue3::kActorLocation).z > kHiddenUpgradeZ / 2) {
-      g_original(actor, nullptr, set_location, &move, nullptr);
-    }
-    if (first_time) {
-      emit_event(std::format("hid world upgrade {} {} (now {})", upgrade, was_at, location_of(actor)));
-    }
   }
 }
 

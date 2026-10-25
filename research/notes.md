@@ -277,7 +277,9 @@ through `ProcessEvent`.
   nothing (2026-10-25). Upgrade effects are still not undoable; the approach is to
   prevent them instead (shop blocking; destroying `DisUpgrade` statues before pickup).
 - The statues are `DisUpgrade` actors (`m_pTweaks` +0x254) with no script functions:
-  pickup is native, so it can't be refused through ProcessEvent.
+  pickup is native, so it can't be refused through ProcessEvent. In-game: `Destroy`
+  returns false (placed in the level), `SetHidden` works, `SetLocation` doesn't move
+  them, and a hidden, non-colliding statue can still be picked up.
 - A long-running Launcher keeps the client code it started with: restart it after
   client changes.
 

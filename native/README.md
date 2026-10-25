@@ -95,10 +95,11 @@ arrives). From then on the DLL:
 - refuses buying a not-yet-received upgrade at a shop (`Req_BuyItem`; the entry is
   looked up in the shop's displayed list): `blocked buy upgrade ...`. The log line
   `shop: buying entry <n> = <item>` shows what each purchase was (confirmed in-game)
-- hides randomized upgrades lying in the world (`DisUpgrade` actors: the DLC statues),
-  every 2 s: hidden, no collision, moved far below the map (`hid world upgrade ...`).
-  They're placed in the level, so `Destroy` fails. Their items grant the upgrade anyway,
-  and picking one up applies an effect that can't be undone (untested)
+- disarms randomized upgrades lying in the world (`DisUpgrade` actors: the DLC statues):
+  their upgrade is swapped for Corvo's Mask (always owned, no attributes), so picking
+  one up gives nothing, and they're hidden (`disarmed world upgrade ...`). They're placed
+  in the level: `Destroy` fails, `SetLocation` doesn't move them, and pickup ignores
+  collision (all seen in-game). Their items grant the upgrade anyway (untested)
 - sets the base bone charm capacity (`DisTweaks_PlayerPawn.m_MaxActivatedBoneCharmCount`,
   3 in the shipped game) from `limit bonecharms base <n>`, so base + granted capacity
   upgrades = Bone Charm Slot items received (`bone charm base ...`; untested)
