@@ -62,7 +62,8 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
       (`upgrade <name>` request). Names found with `dump` and mapped in
       `client/item_commands.py`, including the second tier of Sword, Sleep Darts,
       Bullets and Grenades. Granting confirmed in-game (Pistol Accuracy 1)
-- [ ] Bone charm slots: mapped onto the 2 Piero + 4 DLC statue capacity upgrades
+- [ ] Bone charm slots: base capacity set by the DLL (0-3 items = 0-3 slots, untested);
+      mapped onto the 2 Piero + 4 DLC statue capacity upgrades
       (`BONE_CHARM_CAPACITY`; a statue grant added a 7th slot in-game). Still to do: cap slots below the base 3 for the
       first copies (DLL), and block buying the Piero ones before they're received
 - [ ] Equipment and ammo: the inventory keeps (count, capacity) per ammo type

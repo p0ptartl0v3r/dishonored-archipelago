@@ -86,6 +86,7 @@ inline constexpr size_t kPlayerPawnBoneCharmSlots = 0xB10;       // ADishonoredP
 inline constexpr size_t kPlayerPawnUpgrades = 0xB50;             // ADishonoredPlayerPawn::m_Upgrades
 inline constexpr size_t kStoreDisplayedItems = 0x1C4;            // UDisGFxMoviePlayerStore::m_DisplayedItems (FDisStoreItem*?)
 inline constexpr size_t kStoreItemItem = 0x5C;                   // FDisStoreItem::m_Item (UDisTweaksBase*)
+inline constexpr size_t kPawnTweaksBoneCharmBase = 0x210;        // UDisTweaks_PlayerPawn::m_MaxActivatedBoneCharmCount
 inline constexpr size_t kWorldUpgradeTweaks = 0x254;             // ADisUpgrade::m_pTweaks (an upgrade lying in the world)
 inline constexpr size_t kUpgradeAttributes = 0x9C;               // UDisTweaks_Upgrade::m_Attributes (FName, float: 0xC each)
 inline constexpr size_t kRemoveModifierActionAttribute = 0xF8;   // UDisSeqAct_RemoveAttributeModifier::m_AttributeName

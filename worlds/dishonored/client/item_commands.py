@@ -86,8 +86,8 @@ for _item, _name in _SECOND_TIER_UPGRADES.items():
 # Bone charm capacity: Corvo starts with 3 slots; Piero's two upgrades add 1 and 2,
 # and each DLC "Mystical ... Artifact" statue adds 1 (10 in total, one per Manual item).
 # Each entry is (slots once owned, upgrade). Copy N grants every upgrade that keeps the
-# total at or below N, so the slot count matches N except: 1-3 copies leave the base 3
-# (fewer needs the DLL to cap slots; not done yet), and 5 copies give 4.
+# total at or below N; the DLL then sets the base capacity (bone_charm_base) so the total
+# is exactly N, from 0 slots with no items up to 10.
 BONE_CHARM_CAPACITY = [
     (4, "Twk_Upgrade_BoneCharms"),  # Bone Charm Capacity Upgrade 1
     (6, "Twk_Upgrade_BoneCharms2"),  # Bone Charm Capacity Upgrade 2 (requires 1)
@@ -116,6 +116,16 @@ def commands_for(item_name: str, level: int) -> list[str]:
     return builder(level) if builder else []
 
 
+BASE_BONE_CHARM_SLOTS = 3  # Corvo's slots without any capacity upgrade
+
+
+def bone_charm_base(slots: int) -> int:
+    """Base capacity the DLL should set so that base + granted upgrades = ``slots``
+    (the Manual's one slot per item, starting from none)."""
+    granted = max((total for total, _ in BONE_CHARM_CAPACITY if total <= slots), default=BASE_BONE_CHARM_SLOTS)
+    return slots - (granted - BASE_BONE_CHARM_SLOTS)
+
+
 def limits(received: Mapping[str, int]) -> list[str]:
     """DLL "limit" requests: how far each randomized power and upgrade may go, given how
     many copies of each item have been received. The DLL blocks and removes anything beyond."""
@@ -129,6 +139,7 @@ def limits(received: Mapping[str, int]) -> list[str]:
         every = [r.removeprefix("upgrade ") for r in builder(99) if r.startswith("upgrade ")]
         allowed = {r.removeprefix("upgrade ") for r in builder(received.get(item, 0))}
         lines += [f"limit upgrade {name} {int(name in allowed)}" for name in every]
+    lines.append(f"limit bonecharms base {bone_charm_base(received.get('Bone Charm Slot', 0))}")
     return lines
 
 

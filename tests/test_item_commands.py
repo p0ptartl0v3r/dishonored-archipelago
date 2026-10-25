@@ -77,3 +77,10 @@ def test_limits_follow_what_was_received():
 
 def test_extra_copies_never_exceed_the_maximum():
     assert "limit power Blink 2" in limits({"Progressive Blink": 5})
+
+
+def test_bone_charm_base_makes_the_total_match_the_items():
+    from dishonored.client.item_commands import bone_charm_base
+
+    assert [bone_charm_base(n) for n in range(11)] == [0, 1, 2, 3, 3, 4, 3, 3, 3, 3, 3]
+    assert "limit bonecharms base 1" in limits({"Bone Charm Slot": 1})

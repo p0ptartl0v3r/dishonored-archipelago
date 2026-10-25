@@ -96,6 +96,7 @@ struct EventNames {
   int32_t active_power_component = -1;  // class DishonoredActivePowerComponent (one object per active power)
   int32_t req_buy_item = -1;            // DisGFxMoviePlayerStore.Req_BuyItem(ItemIdx): buying at a shop
   int32_t world_upgrade = -1;           // class DisUpgrade: an upgrade picked up in the world (DLC statues)
+  int32_t player_pawn_tweaks = -1;      // class DisTweaks_PlayerPawn: holds the base bone charm capacity
   int32_t pickup_base = -1;                // class DisPickup_Base
   int32_t abstract_item_pickup = -1;       // class DisAbstractItemPickup
   int32_t whale_bone_charm = -1;           // class DisWhaleBoneCharm
@@ -325,6 +326,7 @@ std::mutex g_limits_mutex;
 std::map<std::string, int32_t> g_power_limits;  // lower-case power name -> highest allowed level
 std::map<std::string, bool> g_upgrade_allowed;  // randomized upgrade -> received
 std::atomic<bool> g_limits_known = false;
+std::atomic<int32_t> g_bone_charm_base = -1;  // base capacity to set (-1: leave the game's)
 // The Void needs Blink to cross it, so script grants there go through; leaving the Void
 // (a mapchange) settles and removes them again unless received.
 std::atomic<bool> g_in_void = false;
@@ -424,19 +426,52 @@ std::vector<std::pair<std::string, int32_t>> power_levels(ue3::UObject* pawn) {
 DWORD g_last_world_upgrade_scan = 0;
 std::unordered_set<ue3::UObject*> g_world_upgrades_destroyed;
 
+// The statues are placed in the level and can't be destroyed (Destroy returns false), so
+// they're hidden, made non-colliding and moved far below the map instead. Level scripts
+// may show them again (the DLC reveals them in the morning), so this repeats every scan.
+constexpr float kHiddenUpgradeZ = -100000.0f;
+
+// The base bone charm capacity is a tweak value (3 in the shipped game). The client sets
+// it so that base + granted capacity upgrades = Bone Charm Slot items received.
+void apply_bone_charm_base() {
+  const int32_t base = g_bone_charm_base;
+  if (base < 0) return;
+  for (auto* tweaks : ue3::find_instances_of_subclasses(g_names.player_pawn_tweaks)) {
+    auto& value = *reinterpret_cast<int32_t*>(reinterpret_cast<uint8_t*>(tweaks) + ue3::kPawnTweaksBoneCharmBase);
+    if (value != base) {
+      emit_event(std::format("bone charm base {} {}->{}", ue3::object_name(tweaks), value, base));
+      value = base;
+    }
+  }
+}
+
 void remove_world_upgrades(DWORD now) {
   if (!g_limits_known || now - g_last_world_upgrade_scan < 2000) return;
   g_last_world_upgrade_scan = now;
-  static ue3::UFunction* destroy = ue3::find_object("Function Engine.Actor.Destroy");
-  if (destroy == nullptr) return;
+  apply_bone_charm_base();
+  static ue3::UFunction* set_hidden = ue3::find_object("Function Engine.Actor.SetHidden");
+  static ue3::UFunction* set_collision = ue3::find_object("Function Engine.Actor.SetCollision");
+  static ue3::UFunction* set_location = ue3::find_object("Function Engine.Actor.SetLocation");
+  if (set_hidden == nullptr || set_collision == nullptr || set_location == nullptr) return;
   for (auto* actor : ue3::find_instances(g_names.world_upgrade)) {
-    if (!g_world_upgrades_destroyed.insert(actor).second) continue;  // one try each
     const std::string upgrade = ue3::object_name(ue3::field<ue3::UObject*>(actor, ue3::kWorldUpgradeTweaks));
     if (!upgrade_allowed(upgrade).has_value()) continue;  // not randomized: leave it
-    uint32_t destroyed = 0;  // Actor.Destroy() returns bool
-    g_original(actor, nullptr, destroy, &destroyed, nullptr);
-    emit_event(std::format("removed world upgrade {} {}{}", upgrade, location_of(actor),
-                           destroyed & 1 ? "" : " (Destroy failed)"));
+    const bool first_time = g_world_upgrades_destroyed.insert(actor).second;
+    const std::string was_at = location_of(actor);
+    uint32_t hidden = 1;
+    g_original(actor, nullptr, set_hidden, &hidden, nullptr);
+    uint32_t no_collision[3] = {0, 0, 0};  // bNewColActors, bNewBlockActors, bNewIgnoreEncroachers
+    g_original(actor, nullptr, set_collision, no_collision, nullptr);
+    struct {
+      ue3::FVector location;
+      uint32_t result;
+    } move{{0, 0, kHiddenUpgradeZ}, 0};
+    if (ue3::field<ue3::FVector>(actor, ue3::kActorLocation).z > kHiddenUpgradeZ / 2) {
+      g_original(actor, nullptr, set_location, &move, nullptr);
+    }
+    if (first_time) {
+      emit_event(std::format("hid world upgrade {} {} (now {})", upgrade, was_at, location_of(actor)));
+    }
   }
 }
 
@@ -830,6 +865,7 @@ void resolve_engine_objects() {
   g_names.active_power_component = ue3::find_name_index("DishonoredActivePowerComponent");
   g_names.req_buy_item = ue3::find_name_index("Req_BuyItem");
   g_names.world_upgrade = ue3::find_name_index("DisUpgrade");
+  g_names.player_pawn_tweaks = ue3::find_name_index("DisTweaks_PlayerPawn");
   g_names.pickup_base = ue3::find_name_index("DisPickup_Base");
   g_names.abstract_item_pickup = ue3::find_name_index("DisAbstractItemPickup");
   g_names.whale_bone_charm = ue3::find_name_index("DisWhaleBoneCharm");
@@ -958,6 +994,8 @@ bool set_limit(const std::string& kind, const std::string& name, int32_t value) 
     g_power_limits[lower(name)] = value;
   } else if (kind == "upgrade") {
     g_upgrade_allowed[name] = value > 0;
+  } else if (kind == "bonecharms" && name == "base") {
+    g_bone_charm_base = value;
   } else {
     return false;
   }
