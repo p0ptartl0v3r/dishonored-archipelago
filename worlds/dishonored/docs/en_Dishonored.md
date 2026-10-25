@@ -31,3 +31,20 @@ Every other check can be reached whatever you decide.
 
 With the in-game mod installed, received powers are granted directly, so you
 don't need runes to unlock them.
+
+## Zone keys
+
+With the in-game mod, a door or boat prompt into an area whose zone key you haven't
+received is refused ("Requires the ... Zone Key"). The story also moves you on by itself
+(the end of the Prologue takes you to Dunwall Prison); if that puts you in an area
+without its key, you're warned and sent back to the main menu after a few seconds,
+unless you walk back out first. Load a save from before, or wait for the key.
+
+## Options
+
+- **Void Walker's Arsenal DLC** (`void_walkers_arsenal`, on by default): turn it off if
+  you don't own the DLC. Without its bone charm statues the game allows at most 6 bone
+  charm slots, so only 6 Bone Charm Slot items are shuffled instead of 10.
+- **Starting Zone Keys** (`starting_zone_keys`): `none` (default, like the Manual),
+  `prison` (start with the Dunwall Prison key, so finishing the Prologue never sends you
+  back to the menu) or `intro` (also the Sewers, Hound Pits Pub and Void keys).

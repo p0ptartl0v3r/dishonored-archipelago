@@ -94,8 +94,8 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
       until the Outsider gives the mark). Level scripts toggle it with
       `DisSeqAct_ToggleHUDElement` (`m_HudElement` = `DHE_Mana`); find how that action
       takes effect and do the same from the DLL
-- [ ] Option for players without the DLC: 6 Bone Charm Slot items instead of 10 (the
-      game caps them at 6 slots; the statue upgrades do nothing)
+- [x] Option for players without the DLC (`void_walkers_arsenal` off): 6 Bone Charm Slot
+      items instead of 10 (the game caps them at 6 slots; the statue upgrades do nothing)
 - [x] Block the DLC statues: disarmed by pointing them at Corvo's Mask (confirmed): the game hands all four out at the
       pub on the first night, and each adds a bone charm slot
 
@@ -131,11 +131,12 @@ Today they're only shown as received, nothing in the game checks them.
       play logs (`travel ...` then `mapchange ...`) and `dump` (lists every travel prompt
       in the loaded levels). High Overseer Campbell: all 19 prompts mapped, refusal confirmed
       for the Kennels. Other missions: run `dump` once per area
-- [ ] Forced entries (story transitions, save loads, mission select, doors missing from
+- [x] Forced entries (story transitions, save loads, mission select, doors missing from
       the table) into keyless zones: the DLL reports `area <levels>` once settled; the client
-      warns, then sends `quittomenu` 6 s later unless they walk out first (confirmed in-game for the Kennels). Possibly
-      later: an option to start with the first zones' keys, and a warning that stays visible
-      in the main menu (the overlay is hidden there)
+      warns, then sends `quittomenu` 6 s later unless they walk out first, and the main menu
+      shows why (`notice`). Confirmed in-game for the Kennels
+- [x] Option `starting_zone_keys` (none / prison / intro) so the end of the Prologue
+      doesn't depend on other players
 - [ ] Earlier plan (2026-10-25; replaced by the two items above): refuse player-initiated transition prompts into
       a zone without its key ("Requires the X Zone Key"), and hold back checks found in
       zones the story puts you in without the key (Coldridge, sewers, Void, pub, any

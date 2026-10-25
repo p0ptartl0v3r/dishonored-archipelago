@@ -8,7 +8,7 @@ from worlds.AutoWorld import WebWorld, World
 from worlds.generic.Rules import set_rule
 
 from . import game_data, requirements
-from .options import DishonoredOptions
+from .options import BONE_CHARM_SLOTS_WITHOUT_DLC, STARTING_ZONE_KEYS, DishonoredOptions
 
 DATA = game_data.load()
 
@@ -132,8 +132,13 @@ class DishonoredWorld(World):
     def create_items(self) -> None:
         pool: list[DishonoredItem] = []
         locked = [l.place_item for l in DATA.locations.values() if l.place_item]
+        starting = STARTING_ZONE_KEYS[self.options.starting_zone_keys.value]
+        for name in starting:
+            self.multiworld.push_precollected(self.create_item(name))
         for data in DATA.items.values():
-            count = data.count - locked.count(data.name)
+            count = data.count - locked.count(data.name) - starting.count(data.name)
+            if data.name == "Bone Charm Slot" and not self.options.void_walkers_arsenal:
+                count = min(count, BONE_CHARM_SLOTS_WITHOUT_DLC)  # the game caps slots at 6 without the DLC
             pool += [self.create_item(data.name) for _ in range(count)]
 
         open_locations = sum(1 for l in DATA.locations.values() if not l.victory and not l.place_item)
@@ -149,5 +154,5 @@ class DishonoredWorld(World):
         # Everything the client/game needs to know about this seed goes here.
         return {
             "world_version": 1,
-            **self.options.as_dict("death_link"),
+            **self.options.as_dict("death_link", "void_walkers_arsenal", "starting_zone_keys"),
         }
