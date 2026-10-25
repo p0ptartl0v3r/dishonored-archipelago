@@ -124,8 +124,15 @@ Today they're only shown as received, nothing in the game checks them.
 - [ ] Warn in-game when entering a zone without its key (written: the client shows
       "You don't have the X Zone Key yet" on mapchange; untested. A loaded save emits
       no mapchange, so loading inside a zone doesn't warn yet)
-- [ ] Decide how to enforce: e.g. hold back checks found in a zone without its key and
-      send them once the key arrives (no movement blocking needed), or block transitions
+- [ ] Enforce (plan agreed 2026-10-25): refuse player-initiated transition prompts into
+      a zone without its key ("Requires the X Zone Key"), and hold back checks found in
+      zones the story puts you in without the key (Coldridge, sewers, Void, pub, any
+      mission start), sending them once the key arrives. Story transitions (cutscenes,
+      mission ends) are never blocked. Research first: what runs when a travel prompt is
+      used (call logging around a transition); the move itself is native
+      (`DisSeqAct_GotoPlayerTravelDestination`, no handler). Rejected for now: visible
+      barriers (hand-placed per transition, Blink gets around them) and pushing the
+      player back (fragile around mission ends)
 - [ ] Then block: undo the transition or move the player back. Loading a save
       emits no `mapchange`, so the DLL also needs the list of loaded streaming
       levels (`WorldInfo.StreamingLevels`)
