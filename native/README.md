@@ -94,7 +94,10 @@ arrives). From then on the DLL:
   player's upgrade list): `remove power ...` / `remove upgrade ...`
 - refuses buying a not-yet-received upgrade at a shop (`Req_BuyItem`; the entry is
   looked up in the shop's displayed list): `blocked buy upgrade ...`. The log line
-  `shop: buying entry <n> = <item>` shows what each purchase was (untested)
+  `shop: buying entry <n> = <item>` shows what each purchase was (confirmed in-game)
+- destroys randomized upgrades lying in the world (`DisUpgrade` actors: the DLC
+  statues), checked every 2 s: `removed world upgrade ...`. Their items grant the
+  upgrade anyway, and picking one up applies an effect that can't be undone (untested)
 - if a purchase still goes through, refunds the coins: `refund ...`
 
 Confirmed in-game: removal from the upgrade list, refunds, and lowering a power.

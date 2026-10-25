@@ -95,6 +95,7 @@ struct EventNames {
   int32_t power_buy = -1;  // DisGFxMoviePlayerJournal.PowerBuy(PowerId, Level): buying a power with runes
   int32_t active_power_component = -1;  // class DishonoredActivePowerComponent (one object per active power)
   int32_t req_buy_item = -1;            // DisGFxMoviePlayerStore.Req_BuyItem(ItemIdx): buying at a shop
+  int32_t world_upgrade = -1;           // class DisUpgrade: an upgrade picked up in the world (DLC statues)
   int32_t pickup_base = -1;                // class DisPickup_Base
   int32_t abstract_item_pickup = -1;       // class DisAbstractItemPickup
   int32_t whale_bone_charm = -1;           // class DisWhaleBoneCharm
@@ -416,6 +417,29 @@ std::vector<std::pair<std::string, int32_t>> power_levels(ue3::UObject* pawn) {
   return out;
 }
 
+// Upgrades lying in the world (the DLC statues at the pub) are picked up in native code,
+// so there's no call to refuse, and removing the upgrade afterwards leaves its effect.
+// So randomized ones are destroyed before they can be picked up: their items grant the
+// upgrade anyway. Scanned every 2 s.
+DWORD g_last_world_upgrade_scan = 0;
+std::unordered_set<ue3::UObject*> g_world_upgrades_destroyed;
+
+void remove_world_upgrades(DWORD now) {
+  if (!g_limits_known || now - g_last_world_upgrade_scan < 2000) return;
+  g_last_world_upgrade_scan = now;
+  static ue3::UFunction* destroy = ue3::find_object("Function Engine.Actor.Destroy");
+  if (destroy == nullptr) return;
+  for (auto* actor : ue3::find_instances(g_names.world_upgrade)) {
+    if (!g_world_upgrades_destroyed.insert(actor).second) continue;  // one try each
+    const std::string upgrade = ue3::object_name(ue3::field<ue3::UObject*>(actor, ue3::kWorldUpgradeTweaks));
+    if (!upgrade_allowed(upgrade).has_value()) continue;  // not randomized: leave it
+    uint32_t destroyed = 0;  // Actor.Destroy() returns bool
+    g_original(actor, nullptr, destroy, &destroyed, nullptr);
+    emit_event(std::format("removed world upgrade {} {}{}", upgrade, location_of(actor),
+                           destroyed & 1 ? "" : " (Destroy failed)"));
+  }
+}
+
 // Removes randomized powers above their limit and upgrades not received. Runs every
 // half second during settled gameplay, outside the Void.
 void enforce_limits(ue3::UObject* pawn, DWORD now) {
@@ -542,6 +566,7 @@ void track_holdings(ue3::UObject* player_controller, bool settled, DWORD now) {
   if (!settled) {
     g_holdings.reset();
     g_active_powers_pawn = nullptr;  // loads free the old components; rescan once settled
+    g_world_upgrades_destroyed.clear();
   }
   if (pawn == nullptr || now - g_last_holdings_tick < 500) return;  // possessing: keep the baseline
   g_last_holdings_tick = now;
@@ -554,6 +579,7 @@ void track_holdings(ue3::UObject* player_controller, bool settled, DWORD now) {
     report_purchases(pawn, *g_holdings, current, where);
   }
   enforce_limits(pawn, now);
+  remove_world_upgrades(now);
   g_holdings = read_holdings(pawn);  // after enforcement, so its removals aren't reported as changes
 }
 
@@ -803,6 +829,7 @@ void resolve_engine_objects() {
   g_names.power_buy = ue3::find_name_index("PowerBuy");
   g_names.active_power_component = ue3::find_name_index("DishonoredActivePowerComponent");
   g_names.req_buy_item = ue3::find_name_index("Req_BuyItem");
+  g_names.world_upgrade = ue3::find_name_index("DisUpgrade");
   g_names.pickup_base = ue3::find_name_index("DisPickup_Base");
   g_names.abstract_item_pickup = ue3::find_name_index("DisAbstractItemPickup");
   g_names.whale_bone_charm = ue3::find_name_index("DisWhaleBoneCharm");
@@ -871,6 +898,7 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
       else {
         g_holdings.reset();
         g_active_powers_pawn = nullptr;
+        g_world_upgrades_destroyed.clear();
       }
       g_cheats_ready = settled && ensure_cheat_manager(controller);
       if (g_cheats_ready && g_queue_pending) drain_queue(controller);

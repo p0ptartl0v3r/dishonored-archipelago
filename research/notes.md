@@ -270,7 +270,14 @@ through `ProcessEvent`.
   `DisAttributes` keeps named modifiers in a native map. The exe has the string
   "Upgrade" (candidate modifier name) and "TRANSITION-LOAD : Upgrade %d of %d".
 - The shop: `DisGFxMoviePlayerStore.Req_BuyItem(ItemIdx)`; `m_DisplayedItems` (+0x1C4)
-  is presumably pointers to `FDisStoreItem` (`m_Item` +0x5C).
+  holds pointers to `FDisStoreItem` (`m_Item` +0x5C): confirmed, blocking a purchase
+  there works and nothing is applied.
+- `OnRemoveAttributeModifier` on `Attribute_MaxActivatedBoneCharmCountBonus` with the
+  modifier names `Upgrade`, `Twk_Upgrade_StatueFish`, `Twk_Upgrade_BoneCharms` changed
+  nothing (2026-10-25). Upgrade effects are still not undoable; the approach is to
+  prevent them instead (shop blocking; destroying `DisUpgrade` statues before pickup).
+- The statues are `DisUpgrade` actors (`m_pTweaks` +0x254) with no script functions:
+  pickup is native, so it can't be refused through ProcessEvent.
 - A long-running Launcher keeps the client code it started with: restart it after
   client changes.
 
