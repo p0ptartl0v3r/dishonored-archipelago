@@ -242,3 +242,43 @@ def test_messages_are_sent_on_one_line():
     pipe = FakePipe()
     assert attached(pipe).show_message("Alice sent Progressive Blink\nto Bob")
     assert pipe.sent == ["message Alice sent Progressive Blink to Bob"]
+
+
+def test_real_events_from_high_overseer_campbell():
+    """Event lines from a playthrough of the second mission (2026-10-25)."""
+    from dishonored import game_data
+
+    ids = game_data.load().location_name_to_id
+    game = NativeInterface()
+    back = "pickup L_Ovrsr_Back_Script.TheWorld.PersistentLevel."
+    full = "pickup DishonoredGameFull_P.TheWorld.PersistentLevel."
+    cases = {
+        "objective L_Streets1_P.TheWorld.PersistentLevel.Main_Sequence.Objectives_Manager.DisSeqAct_CompleteObjective_0 "
+        "DisSeqAct_CompleteObjective Optional_HelpGrannyRags": "Distillery District: Granny Rags Poison Bootleg Elixer Reward Rune",
+        "buy item BP_SpyglassZoom_AbsItm for 200 at=-2402,-2164,2452":
+            "Distillery District: Griff's Shop Lens Magnification Blueprint",
+        "buy item BP_HealthPotion_AbsItm for 200 at=-2402,-2164,2452":
+            "Distillery District: Griff's Shop Sokolov's Formula Blueprint",
+        "pickup L_Distillery_Strt1Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_1 DisWhaleBoneCharm "
+        "WhaleBoneCharm_01_twk at=3159,-6086,2046": "Old Dunwall Distillery: Rafter Bone Charm",
+        "pickup L_Ovrsr_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_29 DisAbstractItemPickup Coins_AbsItm "
+        "at=-1335,-27798,-356": "High Overseer's Office: Campbell's Secret Room Painting",
+        back + "DisAbstractItemPickup_2 DisAbstractItemPickup Rune_AbsItm at=-5770,-30442,-50": "Backyard: Workshop Rune",
+        back + "DisAbstractItemPickup_65 DisAbstractItemPickup BP_ArmorIncrease_AbsItm at=-6395,-29809,-59":
+            "Backyard: Bonded Galvani Weave Blueprint",
+        back + "DisWhaleBoneCharm_0 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=-1380,-35481,-537":
+            "Backyard: Rat Infested Building Bone Charm",
+        back + "DisWhaleBoneCharm_3 DisWhaleBoneCharm Ovrsr_PhysBoneCharm at=-10720,-30298,-108":
+            "Backyard: Overseer Stolen Bone Charm",
+        "objective L_Ovrsr_Back_Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_CompleteObjective_1 "
+        "DisSeqAct_CompleteObjective Strt1Obj_ReturnToSamuel": "High Overseer Campbell: Victory",
+        full + "DisAbstractItemPickup_155 DisAbstractItemPickup Rune_AbsItm at=1128,-3197,-619": "The Pub: Weeper Chest Rune",
+        full + "DisAbstractItemPickup_156 DisAbstractItemPickup Rune_AbsItm at=1638,-3551,-870":
+            "The Pub: Weeper Underwater Rune",
+    }
+    for event, location in cases.items():
+        assert game.match_event(event) == [ids[location]], event
+    # The meeting room rune (_2 in the office) must not be confused with the painting (_29).
+    assert game.match_event("pickup L_Ovrsr_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_2 x") == [
+        ids["High Overseer's Office: Meeting Room Rune"]
+    ]

@@ -82,7 +82,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": "|Dr Galvani's Offices (HOC) Zone Key|"
+    "requires": "|Dr Galvani's Offices (HOC) Zone Key|",
+    "detect": [
+      "objective DisSeqAct_CompleteObjective Optional_HelpGrannyRags"
+    ]
   },
   {
     "region": "Distillery District (HOC)",
@@ -113,7 +116,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": "|Old Dunwall Distillery (HOC) Zone Key| AND |Dr Galvani's Offices (HOC) Zone Key|"
+    "requires": "|Old Dunwall Distillery (HOC) Zone Key| AND |Dr Galvani's Offices (HOC) Zone Key|",
+    "detect": [
+      "objective DisSeqAct_CompleteObjective Strt1Obj_ReturnToSamuel"
+    ]
   },
   {
     "name": "High Overseer's Office: Campbell's Secret Room Rune",
@@ -132,7 +138,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Ovrsr_Back_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_2"
+    ]
   },
   {
     "region": "Backyard",
@@ -140,7 +149,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup Rune_AbsItm near=1128,-3197,-619"
+    ]
   },
   {
     "region": "Backyard",
@@ -148,7 +160,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup Rune_AbsItm near=1638,-3551,-870"
+    ]
   },
   {
     "region": "Dr Galvani's Offices (HoP)",
@@ -454,7 +469,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Ovrsr_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_29"
+    ]
   },
   {
     "region": "Art Dealer's Apartment",
@@ -587,7 +605,11 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "buy item BP_SpyglassZoom_AbsItm",
+      "pickup BP_SpyglassZoom_AbsItm"
+    ]
   },
   {
     "region": "Distillery District (HOC)",
@@ -595,7 +617,11 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "buy item BP_HealthPotion_AbsItm",
+      "pickup BP_HealthPotion_AbsItm"
+    ]
   },
   {
     "region": "Backyard",
@@ -603,7 +629,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Ovrsr_Back_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_65"
+    ]
   },
   {
     "name": "Old Dunwall Distillery: Incandescent Paste Blueprint",
@@ -665,7 +694,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Distillery_Strt1Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_1"
+    ]
   },
   {
     "region": "Backyard",
@@ -673,7 +705,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Ovrsr_Back_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Backyard",
@@ -681,7 +716,11 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Ovrsr_Back_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_2",
+      "pickup L_Ovrsr_Back_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_3"
+    ]
   },
   {
     "region": "Distillery District (HoP)",

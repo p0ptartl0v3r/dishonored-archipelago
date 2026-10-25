@@ -6,14 +6,14 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480069,The Void: Outsider's Gift Rune,Rune,Intro,The Void,pickup,L_OutsiderDream_Script...DisAbstractItemPickup_0,
 219480070,Distillery District: Granny Rags Shrine Rune,Rune,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisAbstractItemPickup_19,Granny Rags' basement
 219480071,Distillery District: Granny Rags Gentlemen Callers Reward Rune,Rune,High Overseer Campbell,Distillery District (HOC),pickup (spawned),"DishonoredGameFull_P...DisAbstractItemPickup_N at -6138,-5804,3261",spawns on Granny's top floor after the gentlemen callers
-219480072,Distillery District: Granny Rags Poison Bootleg Elixer Reward Rune,Rune,High Overseer Campbell,Old Dunwall Distillery (HOC),,,
+219480072,Distillery District: Granny Rags Poison Bootleg Elixer Reward Rune,Rune,High Overseer Campbell,Old Dunwall Distillery (HOC),objective,Optional_HelpGrannyRags completed,reward rune spawns where the Gentlemen Callers one did; told apart by the objective
 219480073,Distillery District: Boulevard Confiscated Rune,Rune,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisAbstractItemPickup_26,guard station before the Overseer's office
 219480074,High Overseer's Office: Meeting Room Rune,Rune,High Overseer Campbell,High Overseer's Office,pickup,L_Ovrsr_Script...DisAbstractItemPickup_2,meeting room
-219480075,High Overseer Campbell: Victory,Mission,High Overseer Campbell,Backyard,,,
+219480075,High Overseer Campbell: Victory,Mission,High Overseer Campbell,Backyard,objective,Strt1Obj_ReturnToSamuel completed,
 219480076,High Overseer's Office: Campbell's Secret Room Rune,Rune,High Overseer Campbell,High Overseer's Office,pickup,L_Ovrsr_Script...DisAbstractItemPickup_74,Campbell's secret room in the basement
-219480077,Backyard: Workshop Rune,Rune,High Overseer Campbell,Backyard,,,
-219480078,The Pub: Weeper Chest Rune,Rune,High Overseer Campbell,Backyard,,,
-219480079,The Pub: Weeper Underwater Rune,Rune,High Overseer Campbell,Backyard,,,
+219480077,Backyard: Workshop Rune,Rune,High Overseer Campbell,Backyard,pickup,L_Ovrsr_Back_Script...DisAbstractItemPickup_2,
+219480078,The Pub: Weeper Chest Rune,Rune,High Overseer Campbell,Backyard,pickup (spawned),"Rune_AbsItm at 1128,-3197,-619",in the pub after the mission; region Backyard = after the mission
+219480079,The Pub: Weeper Underwater Rune,Rune,High Overseer Campbell,Backyard,pickup (spawned),"Rune_AbsItm at 1638,-3551,-870",in the pub after the mission; region Backyard = after the mission
 219480080,Dr Galvani's Offices: Galvani's Secret Room Rune,Rune,House of Pleasure,Dr Galvani's Offices (HoP),,,
 219480081,Art Dealer's Apartment: Art Dealer's Safe,Other,House of Pleasure,Art Dealer's Apartment,,,
 219480082,The Golden Cat Bathhouse: Opposite Golden Cat Rune,Rune,House of Pleasure,The Golden Cat Bathhouse,,,
@@ -49,7 +49,7 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480112,The Loyalists: Victory,Mission,The Loyalists,Hound Pits Pub (The Loyalists),,,
 219480113,The Void: Receive the Mark,Other,Intro,The Void,grant,OnAddPower Blink 1,the Outsider gives Blink with the mark
 219480114,Dishonored (Mission): Clockwork Explosive,Other,Intro,Dunwall Prison,pickup,L_Prison_Script...DisAbstractItemPickup_0 ExplosiveDevice_AbsItm,
-219480115,High Overseer's Office: Campbell's Secret Room Painting,Painting,High Overseer Campbell,High Overseer's Office,,,
+219480115,High Overseer's Office: Campbell's Secret Room Painting,Painting,High Overseer Campbell,High Overseer's Office,pickup,L_Ovrsr_Script...DisAbstractItemPickup_29,a valuable worth 300 coins (paintings turn into coins)
 219480116,Art Dealer's Apartment: Second Floor Painting,Painting,House of Pleasure,Art Dealer's Apartment,,,
 219480117,Art Dealer's Apartment: Third Floor Painting,Painting,House of Pleasure,Art Dealer's Apartment,,,
 219480118,Art Dealer's Apartment: Inside Safe Painting,Painting,House of Pleasure,Art Dealer's Apartment,,,
@@ -64,18 +64,18 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480127,Rudshore Waterfront: Weeper Room Painting,Painting,The Flooded District,Rudshore Waterfront,,,
 219480128,Central Rudshore: Daud's Base Exit Painting,Painting,The Flooded District,Central Rudshore,,,
 219480129,Old Dunwall Sewers: Granny Rags Painting,Painting,The Flooded District,Old Dunwall Sewers,,,
-219480130,Distillery District: Griff's Shop Lens Magnification Blueprint,Blueprint,High Overseer Campbell,Distillery District (HOC),,,
-219480131,Distillery District: Griff's Shop Sokolov's Formula Blueprint,Blueprint,High Overseer Campbell,Distillery District (HOC),,,
-219480132,Backyard: Bonded Galvani Weave Blueprint,Blueprint,High Overseer Campbell,Backyard,,,
+219480130,Distillery District: Griff's Shop Lens Magnification Blueprint,Blueprint,High Overseer Campbell,Distillery District (HOC),buy,BP_SpyglassZoom_AbsItm (200 coins),bought at Griff's shop; its pickup is spawned
+219480131,Distillery District: Griff's Shop Sokolov's Formula Blueprint,Blueprint,High Overseer Campbell,Distillery District (HOC),buy,BP_HealthPotion_AbsItm (200 coins),bought at Griff's shop; its pickup is spawned
+219480132,Backyard: Bonded Galvani Weave Blueprint,Blueprint,High Overseer Campbell,Backyard,pickup,L_Ovrsr_Back_Script...DisAbstractItemPickup_65 BP_ArmorIncrease_AbsItm,
 219480133,Old Dunwall Distillery: Incandescent Paste Blueprint,Blueprint,House of Pleasure,Old Dunwall Distillery (HoP),,,
 219480134,Southside Gate: Folded Galvani Resin Blueprint,Blueprint,The Royal Physician,Southside Gate,,,
 219480135,Boyle Mansion Exterior: Spiked Grenade Housing Blueprint,Blueprint,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
 219480136,Tower Interior: Small-scale Combustion Refinement Blueprint,Blueprint,Return to the Tower,Tower Interior,,,
 219480137,Distillery District: Bridge End Bone Charm,Bone Charm,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisWhaleBoneCharm_0,"behind the gate where guards unload bodies (seen twice as (load), at 642,-10745,2985)"
 219480138,Distillery District: Griff's Building Bone Charm,Bone Charm,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisWhaleBoneCharm_1,2nd floor of the building where Griff is saved
-219480139,Old Dunwall Distillery: Rafter Bone Charm,Bone Charm,High Overseer Campbell,Old Dunwall Distillery (HOC),,,
-219480140,Backyard: Rat Infested Building Bone Charm,Bone Charm,High Overseer Campbell,Backyard,,,
-219480141,Backyard: Overseer Stolen Bone Charm,Bone Charm,High Overseer Campbell,Backyard,,,
+219480139,Old Dunwall Distillery: Rafter Bone Charm,Bone Charm,High Overseer Campbell,Old Dunwall Distillery (HOC),pickup,L_Distillery_Strt1Script...DisWhaleBoneCharm_1,
+219480140,Backyard: Rat Infested Building Bone Charm,Bone Charm,High Overseer Campbell,Backyard,pickup,L_Ovrsr_Back_Script...DisWhaleBoneCharm_0,
+219480141,Backyard: Overseer Stolen Bone Charm,Bone Charm,High Overseer Campbell,Backyard,pickup,L_Ovrsr_Back_Script...DisWhaleBoneCharm_2 or _3,"two objects (Ovrsr_NoPhysBoneCharm, Ovrsr_PhysBoneCharm)"
 219480142,Distillery District: Apartment Bone Charm,Bone Charm,House of Pleasure,Distillery District (HoP),,,
 219480143,Distillery District: Granny Rags Bone Charm,Bone Charm,House of Pleasure,Distillery District (HoP),,,
 219480144,Distillery District: Captain's Chair Hotel Bone Charm,Bone Charm,House of Pleasure,Distillery District (HOC),,,

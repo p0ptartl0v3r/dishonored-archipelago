@@ -44,17 +44,17 @@ read the map name in Cheat Engine or the console) and change "?" to "yes".
 
 | Persistent map | Zone (regions.json) | Confirmed |
 |---|---|---|
-| `L_Tower_P` | Prologue | ? |
-| `L_Prison_P` | Dunwall Prison | ? |
-| `L_PrsnSewer_P` | Dunwall Sewers | ? |
-| `L_Pub_Morning_P` / `_Day_P` / `_Dusk_P` / `_Night_P` | Hound Pits Pub (time of day changes per visit) | ? |
-| `L_OutsiderDream_P` | The Void | ? |
-| `L_Streets1_P` | Distillery District (HOC) | ? |
-| `L_Distillery_P` | Old Dunwall Distillery (HOC) | ? |
-| `L_Galvani1_P` | Dr Galvani's Offices (HOC) | ? |
-| `L_Ovrsr_P` | High Overseer's Office | ? |
-| `L_Ovrsr_Back_P` | Backyard | ? |
-| `L_Ovrsr_Kennel_P` | Kennels (has a zone key but no region yet) | ? |
+| `L_Tower_P` | Prologue | yes (`l_tower_p`) |
+| `L_Prison_P` | Dunwall Prison | yes |
+| `L_PrsnSewer_P` | Dunwall Sewers | yes |
+| `L_Pub_Morning_P` / `_Day_P` / `_Dusk_P` / `_Night_P` | Hound Pits Pub (time of day changes per visit) | yes (+ `L_Pub_From<Mission>_Script[_Sleep]`) |
+| `L_OutsiderDream_P` | The Void | yes |
+| `L_Streets1_P` | Distillery District (HOC) | yes |
+| `L_Distillery_P` | Old Dunwall Distillery (HOC) | yes |
+| `L_Galvani1_P` | Dr Galvani's Offices (HOC) | yes |
+| `L_Ovrsr_P` | High Overseer's Office | yes |
+| `L_Ovrsr_Back_P` | Backyard | yes |
+| `L_Ovrsr_Kennel_P` | Kennels (has a zone key but no region yet) | yes |
 | `L_Streets2_P` | Distillery District (HoP) | ? |
 | `L_Distillery2_P` | Old Dunwall Distillery (HoP) | ? |
 | `L_Galvani2_P` | Dr Galvani's Offices (HoP) | ? |
