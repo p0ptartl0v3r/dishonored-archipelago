@@ -1028,18 +1028,37 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
     }
     emit_event(std::format("grant {} by {}", what, ue3::path_name(action)));
   } else if (name == g_names.player_choice_confirm) {
-    // A player choice was confirmed: dialogue, or a travel prompt ("go to X?"). The active
-    // choice node is held by the player's dialog state; its path names the conversation.
+    // A player choice was confirmed. Travel prompts (and the wine, the still, ...) are
+    // scripted choices: a level-script DisSeqAct_DialogScriptedChoice held by the player's
+    // scripted-choice state. Each choice says whether it leads to a map change. Dialogue
+    // uses conversation nodes held by the dialog state instead.
     const int32_t index = *static_cast<int32_t*>(params);
-    std::string text = "?", node = "None";
-    if (auto* state = ue3::find_instance("StatePlayerMasterInDialog")) {
-      if (auto* choice = ue3::field<ue3::UObject*>(state, ue3::kDialogActiveChoice)) {
+    std::string text = "?", title = "", node = "None";
+    bool travel = false;
+    for (auto* state : ue3::find_instances(ue3::find_name_index("StatePlayerMasterInScriptedChoice"))) {
+      auto* action = ue3::field<ue3::UObject*>(state, ue3::kScriptedChoiceActive);
+      if (action == nullptr) continue;
+      node = ue3::path_name(action);
+      title = ue3::to_string(ue3::field<ue3::FString>(action, ue3::kScriptedChoiceTitle));
+      const auto choices = ue3::field<ue3::TArray<uint8_t>>(action, ue3::kScriptedChoiceChoices);
+      if (index >= 0 && index < choices.count && choices.data != nullptr) {
+        const uint8_t* choice = choices.data + index * ue3::kChoiceInfoSize;
+        text = ue3::to_string(*reinterpret_cast<const ue3::FString*>(choice));
+        travel = *reinterpret_cast<const uint32_t*>(choice + ue3::kChoiceInfoFlags) & 1;
+      }
+      break;
+    }
+    if (node == "None") {
+      for (auto* state : ue3::find_instances(ue3::find_name_index("StatePlayerMasterInDialog"))) {
+        auto* choice = ue3::field<ue3::UObject*>(state, ue3::kDialogActiveChoice);
+        if (choice == nullptr) continue;
         node = ue3::path_name(choice);
         const auto texts = ue3::field<ue3::TArray<ue3::FString>>(choice, ue3::kPlayerChoiceTexts);
         if (index >= 0 && index < texts.count && texts.data != nullptr) text = ue3::to_string(texts.data[index]);
+        break;
       }
     }
-    emit_event(std::format("choice {} \"{}\" by {}", index, text, node));
+    emit_event(std::format("choice {} \"{}\" title \"{}\" travel={} by {}", index, text, title, travel ? 1 : 0, node));
   } else if (name == g_names.on_objective_action) {
     auto* action = *static_cast<ue3::UObject**>(params);
     if (action == nullptr) return;

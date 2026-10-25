@@ -304,10 +304,15 @@ through `ProcessEvent`.
   Dialogue answers use the same function. The active choice node is
   `StatePlayerMasterInDialog.m_pActivePlayerChoice` (+0x64), a `DisConv_PlayerChoice`
   with its texts in `m_Choices` (+0xA0). The DLL now reports `choice <index> "<text>" by
-  <node path>` to learn which choices are travel prompts.
-- `disconnect` is stripped from the release build ("unrecognized command"). Candidate
-  for "quit to main menu": `DisGFxMoviePlayerPauseMenu.OnQuitGameConfirm` (request
-  `quittomenu`, untested).
+  <node path>` to learn which choices are travel prompts. That state held nothing for
+  travel prompts: they are **scripted** choices, `StatePlayerMasterInScriptedChoice
+  .m_pActiveScriptedChoice` (+0x5C), a level-script `DisSeqAct_DialogScriptedChoice` with
+  `m_Title` (+0x10C) and `m_Choices` (+0x118; text, then flags with bit 0
+  `m_bDisablePlayerInputUntilMapChange` = this choice travels). The wine (HOC), the
+  still (Old Dunwall Distillery) and the donation box are scripted choices too.
+- `disconnect` is stripped from the release build ("unrecognized command").
+  `DisGFxMoviePlayerPauseMenu.OnQuitGameConfirm` on the pause menu object (exists once the
+  pause menu has been opened) returns to the main menu: confirmed (`quittomenu`).
 
 ## Memory (Cheat Engine)
 
