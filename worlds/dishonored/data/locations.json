@@ -707,7 +707,7 @@
     ],
     "requires": [],
     "detect": [
-      "pickup L_Ovrsr_Back_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+      "pickup Ovrsr_PhysBoneCharm near=-10714,-30305,-107"
     ]
   },
   {
@@ -718,8 +718,7 @@
     ],
     "requires": [],
     "detect": [
-      "pickup L_Ovrsr_Back_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_2",
-      "pickup L_Ovrsr_Back_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_3"
+      "pickup L_Ovrsr_Back_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
     ]
   },
   {

@@ -74,8 +74,8 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480137,Distillery District: Bridge End Bone Charm,Bone Charm,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisWhaleBoneCharm_0,"behind the gate where guards unload bodies (seen twice as (load), at 642,-10745,2985)"
 219480138,Distillery District: Griff's Building Bone Charm,Bone Charm,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisWhaleBoneCharm_1,2nd floor of the building where Griff is saved
 219480139,Old Dunwall Distillery: Rafter Bone Charm,Bone Charm,High Overseer Campbell,Old Dunwall Distillery (HOC),pickup,L_Distillery_Strt1Script...DisWhaleBoneCharm_1,
-219480140,Backyard: Rat Infested Building Bone Charm,Bone Charm,High Overseer Campbell,Backyard,pickup,L_Ovrsr_Back_Script...DisWhaleBoneCharm_0,
-219480141,Backyard: Overseer Stolen Bone Charm,Bone Charm,High Overseer Campbell,Backyard,pickup,L_Ovrsr_Back_Script...DisWhaleBoneCharm_2 or _3,"two objects (Ovrsr_NoPhysBoneCharm, Ovrsr_PhysBoneCharm)"
+219480140,Backyard: Rat Infested Building Bone Charm,Bone Charm,High Overseer Campbell,Backyard,pickup,Ovrsr_PhysBoneCharm near=-10714,-30305,-107,"held in a vise: opening it destroys the static Ovrsr_NoPhysBoneCharm (DisWhaleBoneCharm_2) and spawns a loose Ovrsr_PhysBoneCharm, numbered at runtime; was swapped with Overseer Stolen until 2026-10-26"
+219480141,Backyard: Overseer Stolen Bone Charm,Bone Charm,High Overseer Campbell,Backyard,pickup,L_Ovrsr_Back_Script...DisWhaleBoneCharm_0,"an ordinary WhaleBoneCharm_01_twk"
 219480142,Distillery District: Apartment Bone Charm,Bone Charm,House of Pleasure,Distillery District (HoP),,,
 219480143,Distillery District: Granny Rags Bone Charm,Bone Charm,House of Pleasure,Distillery District (HoP),,,
 219480144,Distillery District: Captain's Chair Hotel Bone Charm,Bone Charm,House of Pleasure,Distillery District (HOC),,,

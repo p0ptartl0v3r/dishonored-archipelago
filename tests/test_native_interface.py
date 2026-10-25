@@ -267,9 +267,10 @@ def test_real_events_from_high_overseer_campbell():
         back + "DisAbstractItemPickup_65 DisAbstractItemPickup BP_ArmorIncrease_AbsItm at=-6395,-29809,-59":
             "Backyard: Bonded Galvani Weave Blueprint",
         back + "DisWhaleBoneCharm_0 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=-1380,-35481,-537":
-            "Backyard: Rat Infested Building Bone Charm",
-        back + "DisWhaleBoneCharm_3 DisWhaleBoneCharm Ovrsr_PhysBoneCharm at=-10720,-30298,-108":
             "Backyard: Overseer Stolen Bone Charm",
+        # The vise releases a loose charm spawned at runtime: its number isn't stable.
+        "pickup DishonoredGameFull_P.TheWorld.PersistentLevel.DisWhaleBoneCharm_3 DisWhaleBoneCharm "
+        "Ovrsr_PhysBoneCharm at=-10708,-30313,-107": "Backyard: Rat Infested Building Bone Charm",
         "objective L_Ovrsr_Back_Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_CompleteObjective_1 "
         "DisSeqAct_CompleteObjective Strt1Obj_ReturnToSamuel": "High Overseer Campbell: Victory",
         full + "DisAbstractItemPickup_155 DisAbstractItemPickup Rune_AbsItm at=1128,-3197,-619": "The Pub: Weeper Chest Rune",
@@ -282,6 +283,11 @@ def test_real_events_from_high_overseer_campbell():
     assert game.match_event("pickup L_Ovrsr_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_2 x") == [
         ids["High Overseer's Office: Meeting Room Rune"]
     ]
+    # Opening the vise destroys the static charm; only picking up the loose one counts.
+    assert game.match_event(
+        "pickup L_Ovrsr_Back_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_2 DisWhaleBoneCharm "
+        "Ovrsr_NoPhysBoneCharm at=-10651,-30305,21"
+    ) == []
 
 
 def test_only_the_latest_settled_zone_is_reported():

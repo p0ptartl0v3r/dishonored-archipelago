@@ -159,12 +159,9 @@ Today they're only shown as received, nothing in the game checks them.
       mission select lists before the game is finished, and what gear a mission started from
       it gives (`DisGFxMoviePlayerMainMenu.OnMissionSelected(MissionIdx)` is native). If it
       only lists missions reached, the DLL would have to unlock them
-- [ ] Backyard: Rat Infested Building Bone Charm may fire when the vise opens rather than on
-      pickup (user report). The log only has the placed charm's `DisWhaleBoneCharm_0` being
-      destroyed, 0.6 m from the player, and no later bone charm pickup. It's an ordinary
-      charm (`WhaleBoneCharm_01_twk`), unlike the Overseer Stolen one, whose static
-      `Ovrsr_NoPhysBoneCharm` is swapped for a loose `Ovrsr_PhysBoneCharm` picked up later (two
-      events). Next visit: F8 before the vise, after it opens, and after the pickup
+- [x] Backyard bone charms were swapped (fixed 2026-10-26): Rat Infested Building is the vise,
+      which destroys a static Ovrsr_NoPhysBoneCharm and spawns a loose Ovrsr_PhysBoneCharm
+      (matched by name and position); Overseer Stolen is DisWhaleBoneCharm_0
 
 ### 7. In-game messages (towards an in-game client)
 - [x] Show "Received X from Y" / "Sent X to Y" on screen: drawn with the HUD's Canvas
