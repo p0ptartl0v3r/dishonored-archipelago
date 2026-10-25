@@ -99,6 +99,7 @@ struct EventNames {
   int32_t player_pawn_tweaks = -1;      // class DisTweaks_PlayerPawn: holds the base bone charm capacity
   int32_t ranged_weapon = -1;           // class DishonoredWeapon_Ranged: pistol, crossbow (loaded magazine)
   int32_t sword = -1;                   // class DishonoredWepSword
+  int32_t sword_tweaks = -1;            // class DisTweaks_WepSword (Twk_Inv_SwordCorvo)
   int32_t pickup_base = -1;                // class DisPickup_Base
   int32_t abstract_item_pickup = -1;       // class DisAbstractItemPickup
   int32_t whale_bone_charm = -1;           // class DisWhaleBoneCharm
@@ -369,55 +370,123 @@ bool blocked(const std::string& kind, const std::string& name) {
   return false;
 }
 
-// Holding a sword not received yet: puts empty hands in its place with the pawn's
-// OnEquipItemType handler (borrowed default DisSeqAct_EquipItemType). The sword stays in
-// the inventory, so receiving the item later just lets Corvo draw it again.
-DWORD g_last_unequip = 0;
+// A sword not received yet. Unequipping alone isn't enough (attacking or blocking draws
+// it again), so it's taken out of the inventory: first empty hands are equipped in its
+// place with the pawn's OnEquipItemType (borrowed default DisSeqAct_EquipItemType, its
+// "Apply" input marked), then, once no hand holds it, its slot is cleared. An empty sword
+// slot is a normal state (Coldridge before the City Watch sword, the Flooded District).
+// When Progressive Sword arrives, Corvo's sword is given back through OnAddInventoryItem,
+// provided the sewer gear cutscene has happened (PrsnSewer_Weapons note) and the game
+// isn't holding the gear in its backup (Flooded District capture).
+DWORD g_last_sword_action = 0;
+DWORD g_last_sword_grant = 0;
 
-void enforce_sword(ue3::UObject* pawn, ue3::UObject* inventory, DWORD now) {
-  if (g_in_prologue || !blocked("equip", "Sword") || now - g_last_unequip < 1000) return;
+ue3::UObject* tweak_named(int32_t class_name_index, const char* name) {
+  const int32_t wanted = ue3::find_name_index(name);
+  for (auto* tweak : ue3::find_instances_of_subclasses(class_name_index)) {
+    if (tweak->name.index == wanted) return tweak;
+  }
+  return nullptr;
+}
+
+void unequip_hand(ue3::UObject* pawn, uint8_t usage) {
   static ue3::UFunction* equip = ue3::find_object("Function DishonoredGame.DishonoredPawn.OnEquipItemType");
   static ue3::UObject* action =
       ue3::find_object("DisSeqAct_EquipItemType DishonoredGame.Default__DisSeqAct_EquipItemType");
   static ue3::UObject* empty_hands = ue3::find_object("Class DishonoredGame.DishonoredItemEmpty");
   if (equip == nullptr || action == nullptr || empty_hands == nullptr) return;
-  const auto slots = ue3::field<ue3::TArray<uint8_t>>(inventory, ue3::kInventorySlots);
-  for (uint8_t usage = 1; usage <= 2; ++usage) {  // EDisEquipUsage_Primary, _Secondary
-    const int32_t slot = ue3::field<int32_t>(inventory, ue3::kInventoryEquipUsage + usage * ue3::kEquipUsageSize);
-    if (slot < 0 || slot >= slots.count || slots.data == nullptr) continue;
-    auto* item = *reinterpret_cast<ue3::UObject**>(slots.data + slot * 0xC);
-    if (!ue3::is_a(item, g_names.sword)) continue;
-    g_last_unequip = now;
-    auto* fields = reinterpret_cast<uint8_t*>(action);
-    auto& type = *reinterpret_cast<ue3::UObject**>(fields + ue3::kEquipActionItemType);
-    auto& preferred = *(fields + ue3::kEquipActionUsage);
-    auto& flags = *reinterpret_cast<uint32_t*>(fields + ue3::kEquipActionFlags);
-    // The handler checks which input fired ("Apply" or "Release (AI only)"), as when a
-    // level script activates the action, so mark input 0 for the call.
-    const auto inputs = ue3::field<ue3::TArray<uint8_t>>(action, ue3::kSequenceOpInputLinks);
-    uint32_t* apply = inputs.count > 0 && inputs.data != nullptr
-                          ? reinterpret_cast<uint32_t*>(inputs.data + ue3::kInputLinkHasImpulse)
-                          : nullptr;
-    const auto saved_type = type;
-    const auto saved_usage = preferred;
-    const auto saved_flags = flags;
-    const uint32_t saved_apply = apply ? *apply : 0;
-    type = empty_hands;
-    preferred = usage;
-    flags = 1;  // m_bDoInstantly
-    if (apply) *apply |= 1;
-    ue3::UObject* params = action;
-    g_original(pawn, nullptr, equip, &params, nullptr);
-    type = saved_type;
-    preferred = saved_usage;
-    flags = saved_flags;
-    if (apply) *apply = saved_apply;
-    static DWORD last_logged = 0;
-    if (now - last_logged >= 30000) {  // it repeats every second while it doesn't take
-      last_logged = now;
-      emit_event(std::format("unequip sword (hand {}, {} input links)", usage, inputs.count));
+  auto* fields = reinterpret_cast<uint8_t*>(action);
+  auto& type = *reinterpret_cast<ue3::UObject**>(fields + ue3::kEquipActionItemType);
+  auto& preferred = *(fields + ue3::kEquipActionUsage);
+  auto& flags = *reinterpret_cast<uint32_t*>(fields + ue3::kEquipActionFlags);
+  // The handler checks which input fired ("Apply" or "Release (AI only)"), as when a
+  // level script activates the action, so mark input 0 for the call.
+  const auto inputs = ue3::field<ue3::TArray<uint8_t>>(action, ue3::kSequenceOpInputLinks);
+  uint32_t* apply = inputs.count > 0 && inputs.data != nullptr
+                        ? reinterpret_cast<uint32_t*>(inputs.data + ue3::kInputLinkHasImpulse)
+                        : nullptr;
+  const auto saved_type = type;
+  const auto saved_usage = preferred;
+  const auto saved_flags = flags;
+  const uint32_t saved_apply = apply ? *apply : 0;
+  type = empty_hands;
+  preferred = usage;
+  flags = 1;  // m_bDoInstantly
+  if (apply) *apply |= 1;
+  ue3::UObject* params = action;
+  g_original(pawn, nullptr, equip, &params, nullptr);
+  type = saved_type;
+  preferred = saved_usage;
+  flags = saved_flags;
+  if (apply) *apply = saved_apply;
+}
+
+void give_sword(ue3::UObject* pawn) {
+  static ue3::UFunction* add = ue3::find_object("Function DishonoredGame.DishonoredPawn.OnAddInventoryItem");
+  static ue3::UObject* action =
+      ue3::find_object("DisSeqAct_AddInventoryItem DishonoredGame.Default__DisSeqAct_AddInventoryItem");
+  static ue3::UObject* sword = tweak_named(g_names.sword_tweaks, "Twk_Inv_SwordCorvo");
+  if (sword == nullptr) sword = tweak_named(g_names.sword_tweaks, "Twk_Inv_SwordCorvo");  // may load later
+  if (add == nullptr || action == nullptr || sword == nullptr) {
+    log("WARNING: can't give the sword back (OnAddInventoryItem {}, Twk_Inv_SwordCorvo {})",
+        add != nullptr && action != nullptr, sword != nullptr);
+    return;
+  }
+  auto& item = *reinterpret_cast<ue3::UObject**>(reinterpret_cast<uint8_t*>(action) + ue3::kAddInventoryActionItem);
+  const auto saved = item;
+  item = sword;
+  ue3::UObject* params = action;
+  g_original(pawn, nullptr, add, &params, nullptr);
+  item = saved;
+  emit_event("give sword Twk_Inv_SwordCorvo");
+}
+
+bool has_abstract_item(ue3::UObject* inventory, const std::string& name) {
+  const auto abstract = ue3::field<ue3::TArray<uint8_t>>(inventory, ue3::kInventoryAbstractItems);
+  for (int32_t i = 0; i < abstract.count && abstract.data != nullptr; ++i) {
+    if (ue3::object_name(*reinterpret_cast<ue3::UObject**>(abstract.data + i * 0xC)) == name &&
+        *reinterpret_cast<int32_t*>(abstract.data + i * 0xC + 4) > 0) {
+      return true;
     }
   }
+  return false;
+}
+
+void enforce_sword(ue3::UObject* pawn, ue3::UObject* inventory, DWORD now) {
+  const auto allowed = allowed_in(g_equip_allowed, "Sword");
+  if (g_in_prologue || !allowed || now - g_last_sword_action < 1000) return;
+  const auto slots = ue3::field<ue3::TArray<uint8_t>>(inventory, ue3::kInventorySlots);
+  if (slots.data == nullptr) return;
+  auto item_in = [&](int32_t slot) { return *reinterpret_cast<ue3::UObject**>(slots.data + slot * 0xC); };
+  auto hand_slot = [&](int usage) {
+    return ue3::field<int32_t>(inventory, ue3::kInventoryEquipUsage + usage * ue3::kEquipUsageSize);
+  };
+  int32_t sword_slot = -1;
+  for (int32_t i = 0; i < slots.count; ++i) {
+    if (ue3::is_a(item_in(i), g_names.sword)) sword_slot = i;
+  }
+  if (*allowed) {
+    const bool backed_up = ue3::field<uint32_t>(inventory, ue3::kInventoryFlags) & 2;  // m_bBackupIsValid
+    if (sword_slot < 0 && !backed_up && has_abstract_item(inventory, "PrsnSewer_Weapons") &&
+        now - g_last_sword_grant >= 10000) {  // one try every 10 s
+      g_last_sword_grant = now;
+      give_sword(pawn);
+    }
+    return;
+  }
+  if (sword_slot < 0) return;
+  g_last_sword_action = now;
+  bool held = false;
+  for (uint8_t usage = 1; usage <= 2; ++usage) {  // EDisEquipUsage_Primary, _Secondary
+    if (hand_slot(usage) == sword_slot) {
+      held = true;
+      unequip_hand(pawn, usage);
+      emit_event(std::format("unequip sword (hand {})", usage));
+    }
+  }
+  if (held) return;  // take it out next time, once it's no longer in a hand
+  emit_event(std::format("take sword {} from slot {}", ue3::object_name(item_in(sword_slot)), sword_slot));
+  *reinterpret_cast<ue3::UObject**>(slots.data + sword_slot * 0xC) = nullptr;
 }
 
 // Equipment not received yet: ammo of that type (and a magazine loaded with it) and
@@ -977,6 +1046,7 @@ void resolve_engine_objects() {
   g_names.player_pawn_tweaks = ue3::find_name_index("DisTweaks_PlayerPawn");
   g_names.ranged_weapon = ue3::find_name_index("DishonoredWeapon_Ranged");
   g_names.sword = ue3::find_name_index("DishonoredWepSword");
+  g_names.sword_tweaks = ue3::find_name_index("DisTweaks_WepSword");
   g_names.pickup_base = ue3::find_name_index("DisPickup_Base");
   g_names.abstract_item_pickup = ue3::find_name_index("DisAbstractItemPickup");
   g_names.whale_bone_charm = ue3::find_name_index("DisWhaleBoneCharm");

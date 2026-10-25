@@ -286,9 +286,11 @@ through `ProcessEvent`.
   Bullets_Store_Ammo_twk, SpringRazor_Ammo_WithItem_twk, Grenade_Ammo_WithItem_twk,
   Elixir_Mana_twk, RewireTool_twk, Rune_twk.
 - Sword: calling `OnEquipItemType` (DishonoredItemEmpty, primary hand) with the borrowed
-  default action did nothing, every second, in the sewers and in Coldridge. Next try:
-  mark the action's "Apply" input (`InputLinks[0].bHasImpulse`) for the call, since the
-  handler probably checks which input fired.
+  default action did nothing, every second, in the sewers and in Coldridge. With its
+  "Apply" input marked (`InputLinks[0].bHasImpulse`) it works, but attacking or
+  blocking draws the sword straight back. So the DLL now also clears the sword's
+  inventory slot once no hand holds it (untested), and gives `Twk_Inv_SwordCorvo` back
+  through `OnAddInventoryItem` when Progressive Sword arrives.
 - A long-running Launcher keeps the client code it started with: restart it after
   client changes.
 

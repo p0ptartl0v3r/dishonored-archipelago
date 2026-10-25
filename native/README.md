@@ -104,9 +104,12 @@ arrives). From then on the DLL:
   ammo of that type (`remove ammo ...`), a pistol/crossbow magazine loaded with it
   (`unload ...`) and collectables like the Rewire Tool (`remove item ...`); shop
   purchases of them are refunded (confirmed in-game)
-- keeps a sword out of Corvo's hands until Progressive Sword arrives (`limit equip Sword`):
-  empty hands are equipped in its place through the pawn's `OnEquipItemType`
-  (`unequip sword ...`). Not in the prologue, whose scripted fight hands you one (untested)
+- takes a sword away until Progressive Sword arrives (`limit equip Sword`): empty hands
+  are equipped in its place (`OnEquipItemType`, "Apply" input marked; `unequip sword`),
+  then its inventory slot is cleared (`take sword ...`). Once received, Corvo's sword is
+  given back (`OnAddInventoryItem`; `give sword ...`) if the sewer gear cutscene has
+  happened and the gear isn't in the game's backup. Not in the prologue, whose scripted
+  fight hands you one (unequip confirmed in-game; the rest untested)
 - sets the base bone charm capacity (`DisTweaks_PlayerPawn.m_MaxActivatedBoneCharmCount`,
   3 in the shipped game) from `limit bonecharms base <n>`, so base + granted capacity
   upgrades = Bone Charm Slot items received (`bone charm base ...`; confirmed in-game:
