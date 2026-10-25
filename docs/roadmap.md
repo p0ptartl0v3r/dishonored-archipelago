@@ -133,6 +133,10 @@ Today they're only shown as received, nothing in the game checks them.
       from the DLL when the HUD renders (`HUD.PostRender` passes through
       `ProcessEvent`; the `Canvas` draw functions are callable the same way).
       Fallbacks: call into the Scaleform HUD, or hook Direct3D 9 and draw an overlay
+- [ ] In-game message log and chat: keep a longer history in the DLL and show it on a
+      hotkey (also while paused, e.g. over the pause menu); send chat from the game's own
+      console (catch a command like `ap <text>` in the DLL and forward it to the client
+      as `Say`), so no text box has to be built
 - [ ] Connect without the Launcher, in stages: (1) server/slot/password in an ini and
       a client that auto-connects; (2) the DLL starts the client itself; (3) settings
       in the game's main menu. The menus are Scaleform (Flash) movies, so adding
