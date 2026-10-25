@@ -62,7 +62,7 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
       (`upgrade <name>` request). Names found with `dump` and mapped in
       `client/item_commands.py`, including the second tier of Sword, Sleep Darts,
       Bullets and Grenades. Granting confirmed in-game (Pistol Accuracy 1)
-- [ ] Bone charm slots: base capacity set by the DLL (0-3 items = 0-3 slots, untested);
+- [x] Bone charm slots: base capacity set by the DLL (confirmed: 1 item = 1 slot);
       mapped onto the 2 Piero + 4 DLC statue capacity upgrades
       (`BONE_CHARM_CAPACITY`; a statue grant added a 7th slot in-game). Still to do: cap slots below the base 3 for the
       first copies (DLL), and block buying the Piero ones before they're received
@@ -92,7 +92,7 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
       takes effect and do the same from the DLL
 - [ ] Option for players without the DLC: 6 Bone Charm Slot items instead of 10 (the
       game caps them at 6 slots; the statue upgrades do nothing)
-- [ ] Block the DLC statues (`Twk_Upgrade_Statue*`; removed by the limits, untested): the game hands all four out at the
+- [x] Block the DLC statues: disarmed by pointing them at Corvo's Mask (confirmed): the game hands all four out at the
       pub on the first night, and each adds a bone charm slot
 
 ### 5. Saves always match what was received

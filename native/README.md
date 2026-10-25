@@ -79,7 +79,7 @@ event's `at=` within about 1.5 m.
 
 Put a `detect` on the victory location to make finishing the game send the goal.
 
-## Blocking and removing what wasn't received (new, untested in-game)
+## Blocking and removing what wasn't received
 
 The client sends `limit power <Name> <max level>` and `limit upgrade <name> <0|1>` for
 every randomized power and upgrade (after each load or transition, and when an item
@@ -99,13 +99,15 @@ arrives). From then on the DLL:
   their upgrade is swapped for Corvo's Mask (always owned, no attributes), so picking
   one up gives nothing, and they're hidden (`disarmed world upgrade ...`). They're placed
   in the level: `Destroy` fails, `SetLocation` doesn't move them, and pickup ignores
-  collision (all seen in-game). Their items grant the upgrade anyway (untested)
+  collision (all seen in-game). Their items grant the upgrade anyway (confirmed in-game)
 - sets the base bone charm capacity (`DisTweaks_PlayerPawn.m_MaxActivatedBoneCharmCount`,
   3 in the shipped game) from `limit bonecharms base <n>`, so base + granted capacity
-  upgrades = Bone Charm Slot items received (`bone charm base ...`; untested)
+  upgrades = Bone Charm Slot items received (`bone charm base ...`; confirmed in-game:
+  1 item = 1 slot)
 - if a purchase still goes through, refunds the coins: `refund ...`
 
-Confirmed in-game: removal from the upgrade list, refunds, and lowering a power.
+Confirmed in-game: shop blocking, statue disarming, base capacity, removal from the
+upgrade list, refunds, and lowering a power. Not yet seen: `blocked buy power` (runes).
 **But removing an upgrade doesn't undo its effect** (bone charm capacity stayed, even
 after a reload): the effect is an attribute modifier on the pawn, stored separately.
 `removemod <attribute> <modifier>` calls the pawn's `OnRemoveAttributeModifier` to find
