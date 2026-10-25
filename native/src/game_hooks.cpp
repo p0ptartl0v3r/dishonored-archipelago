@@ -861,6 +861,19 @@ void dump_player_state(ue3::UObject* player_controller) {
   }
   log("bone charm slots:{}", slots);
   for (const auto& [name, level] : power_levels(pawn)) log("power {} level {}", name, level);
+  // Which areas are loaded: the current zone after a save load (which emits no mapchange).
+  if (auto* world = ue3::field<ue3::UObject*>(pawn, ue3::kActorWorldInfo)) {
+    const auto streaming = ue3::field<ue3::TArray<ue3::UObject*>>(world, ue3::kWorldStreamingLevels);
+    for (int32_t i = 0; i < streaming.count && streaming.data != nullptr; ++i) {
+      auto* level = streaming.data[i];
+      if (level == nullptr) continue;
+      const uint32_t flags = ue3::field<uint32_t>(level, ue3::kStreamingFlags);
+      const bool loaded = ue3::field<ue3::UObject*>(level, ue3::kStreamingLoadedLevel) != nullptr;
+      if (!loaded && !(flags & 1)) continue;
+      log("streaming level {} loaded={} visible={}", ue3::name_string(ue3::field<ue3::FName>(level, ue3::kStreamingPackageName)),
+          loaded, flags & 1);
+    }
+  }
   auto* inventory = ue3::field<ue3::UObject*>(pawn, ue3::kPawnInventory);
   if (inventory == nullptr) return;
   const auto items = ue3::field<ue3::TArray<uint8_t>>(inventory, ue3::kInventorySlots);

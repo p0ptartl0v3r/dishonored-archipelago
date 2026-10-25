@@ -86,6 +86,11 @@ inline constexpr size_t kPlayerPawnBoneCharmSlots = 0xB10;       // ADishonoredP
 inline constexpr size_t kPlayerPawnUpgrades = 0xB50;             // ADishonoredPlayerPawn::m_Upgrades
 inline constexpr size_t kStoreDisplayedItems = 0x1C4;            // UDisGFxMoviePlayerStore::m_DisplayedItems (FDisStoreItem*?)
 inline constexpr size_t kStoreItemItem = 0x5C;                   // FDisStoreItem::m_Item (UDisTweaksBase*)
+inline constexpr size_t kActorWorldInfo = 0x160;                 // AActor::WorldInfo
+inline constexpr size_t kWorldStreamingLevels = 0x314;           // AWorldInfo::StreamingLevels (ULevelStreaming*)
+inline constexpr size_t kStreamingPackageName = 0x38;            // ULevelStreaming::PackageName (FName)
+inline constexpr size_t kStreamingLoadedLevel = 0x40;            // ULevelStreaming::LoadedLevel (non-null = loaded)
+inline constexpr size_t kStreamingFlags = 0x5C;                  // bIsVisible (bit 0), bShouldBeVisible (bit 8)
 inline constexpr size_t kHudCanvas = 0x494;                      // AHUD::Canvas (valid during PostRender)
 inline constexpr size_t kCanvasFont = 0x38;                      // UCanvas::Font
 inline constexpr size_t kCanvasClipX = 0x44;                     // UCanvas::ClipX (screen width)
