@@ -150,6 +150,20 @@ Today they're only shown as received, nothing in the game checks them.
       emits no `mapchange`, so the DLL also needs the list of loaded streaming
       levels (`WorldInfo.StreamingLevels`)
 
+- [ ] Option: missions as separate logic (user idea, 2026-10-26). Today the regions are one
+      chain of ~30 zone keys (Prologue -> ... -> Lighthouse), so late missions need nearly
+      every earlier key. With mission select, each mission's first area could connect from
+      the start and need only its own key; the Pub becomes its own area reached after any
+      mission's end (a forced story transition). Only sound if every mission can actually be
+      started without reaching it in the story: find out which missions the main menu's
+      mission select lists before the game is finished, and what gear a mission started from
+      it gives (`DisGFxMoviePlayerMainMenu.OnMissionSelected(MissionIdx)` is native). If it
+      only lists missions reached, the DLL would have to unlock them
+- [ ] Backyard: Rat Infested Building Bone Charm may fire when the vise opens rather than on
+      pickup (user report). The log only has the placed charm's `DisWhaleBoneCharm_0` being
+      destroyed, 0.6 m from the player, and no later bone charm pickup. Next visit: F8 before
+      the vise, after it opens, and after the pickup
+
 ### 7. In-game messages (towards an in-game client)
 - [x] Show "Received X from Y" / "Sent X to Y" on screen: drawn with the HUD's Canvas
       after `HUD.PostRender` (`message <text>`, colour markers `{RRGGBB}`; drawing
