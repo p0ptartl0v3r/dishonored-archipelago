@@ -16,7 +16,7 @@ from .messages import chat_line, missing_key_line, received_line, requires_key_l
 from .zones import zone_key_for_level, zone_key_for_travel
 
 POLL_SECONDS = 0.5
-LEAVE_ZONE_SECONDS = 8  # time to read the warning before being sent to the main menu
+LEAVE_ZONE_SECONDS = 6  # time to read the warning (or turn back) before being sent to the main menu
 
 
 class DishonoredCommandProcessor(ClientCommandProcessor):
@@ -186,6 +186,8 @@ async def sync_with_game(ctx: DishonoredContext, game: GameInterface) -> None:
 
     # Being in a zone without its key (a story transition, a save load, mission select;
     # travel prompts into it are refused) sends the player to the main menu after a warning.
+    if game.take_zone_left():
+        ctx.leave_zone = None  # walked out (or a load started): the next area decides
     entered = game.take_zone_entered()
     if entered and ctx.slot:
         key = zone_key_for_level(entered)

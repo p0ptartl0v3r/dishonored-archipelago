@@ -305,3 +305,11 @@ def test_areas_without_a_zone_are_ignored():
     game = attached(pipe)
     game.poll_checked_locations()
     assert game.take_zone_entered() is None
+
+
+def test_leaving_the_area_is_reported():
+    pipe = FakePipe(events=["area L_Ovrsr_Kennel_P", "mapchange L_Ovrsr_P"])
+    game = attached(pipe)
+    game.poll_checked_locations()
+    assert game.take_zone_left()
+    assert not game.take_zone_left()

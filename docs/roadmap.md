@@ -133,7 +133,7 @@ Today they're only shown as received, nothing in the game checks them.
       for the Kennels. Other missions: run `dump` once per area
 - [ ] Forced entries (story transitions, save loads, mission select, doors missing from
       the table) into keyless zones: the DLL reports `area <levels>` once settled; the client
-      warns, then sends `quittomenu` 8 s later (confirmed in-game for the Kennels). Possibly
+      warns, then sends `quittomenu` 6 s later unless they walk out first (confirmed in-game for the Kennels). Possibly
       later: an option to start with the first zones' keys, and a warning that stays visible
       in the main menu (the overlay is hidden there)
 - [ ] Earlier plan (2026-10-25; replaced by the two items above): refuse player-initiated transition prompts into

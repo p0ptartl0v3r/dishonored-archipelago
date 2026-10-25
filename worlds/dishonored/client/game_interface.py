@@ -65,6 +65,10 @@ class GameInterface(ABC):
         (None if none since)."""
         return None
 
+    def take_zone_left(self) -> bool:
+        """True (once) when the player left the area since the last call (a mapchange)."""
+        return False
+
     def quit_to_menu(self) -> bool:
         """Send the player back to the main menu. Return False to retry later."""
         return True
@@ -220,6 +224,7 @@ class NativeInterface(GameInterface):
         self._warned_no_cheats = False
         self._resync = False
         self._zone_entered: str | None = None
+        self._zone_left = False
         self._travel_blocked: str | None = None
         self._shown: set[tuple[str, int]] = set()  # manual unlocks already shown to the player
         data = load_game_data()
@@ -293,6 +298,7 @@ class NativeInterface(GameInterface):
                 self._next_event += 1
                 if text.startswith("mapchange "):
                     self._zone_entered = None  # an `area` event follows once the level settles
+                    self._zone_left = True
                 if text.startswith("area "):
                     # Only the latest counts: replayed events after reconnecting would
                     # otherwise act on every zone visited since the game started.
@@ -328,6 +334,10 @@ class NativeInterface(GameInterface):
     def take_zone_entered(self) -> str | None:
         entered, self._zone_entered = self._zone_entered, None
         return entered
+
+    def take_zone_left(self) -> bool:
+        left, self._zone_left = self._zone_left, False
+        return left
 
     def take_travel_blocked(self) -> str | None:
         blocked, self._travel_blocked = self._travel_blocked, None
