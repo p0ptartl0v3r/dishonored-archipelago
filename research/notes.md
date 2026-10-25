@@ -311,8 +311,23 @@ through `ProcessEvent`.
   `m_bDisablePlayerInputUntilMapChange` = this choice travels). The wine (HOC), the
   still (Old Dunwall Distillery) and the donation box are scripted choices too.
 - `disconnect` is stripped from the release build ("unrecognized command").
-  `DisGFxMoviePlayerPauseMenu.OnQuitGameConfirm` on the pause menu object (exists once the
-  pause menu has been opened) returns to the main menu: confirmed (`quittomenu`).
+  `DisGFxMoviePlayerPauseMenu.OnQuitGameConfirm` on the pause menu object returns to the main
+  menu: confirmed (`quittomenu`). The object always exists
+  (`DishonoredGameInfo.pGlobalUIManager.pPauseMenu`), even if the pause menu was never opened.
+- Quitting to the menu drops the player pawn *before* the `Dishonored_MainMenu` mapchange,
+  then the menu's background pawn appears ~50 ms later. Only a pawn lost after that mapchange
+  means a save is loading.
+- Travel prompts are `DisSeqAct_DialogScriptedChoice` actions in the level scripts; options
+  flagged `m_bDisablePlayerInputUntilMapChange` travel. Their output 0 is "Player Busy", then
+  one per option (named "[<option text>]"). The chosen option leads to
+  `DisSeqAct_SetPlayerTravelDestination.m_Tag` (a PlayerStart name in the destination level,
+  e.g. `PlayerStart_DistilleryMainEntrance`), sometimes through remote events and nested
+  sequences. The destination level isn't loaded beforehand, so the tag can't be resolved
+  to a level at runtime: options are mapped by hand (`client/zones.py`). Changing the
+  confirmed index to a non-travel option before `OnPlayerChoiceConfirm` runs declines the
+  prompt cleanly (confirmed). One area can have several doors to the same place (Galvani's
+  has three; the High Overseer's Office has three prompts for the Back Yard, one never
+  found in play).
 
 ## Memory (Cheat Engine)
 

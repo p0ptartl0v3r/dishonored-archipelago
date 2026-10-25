@@ -133,9 +133,9 @@ Today they're only shown as received, nothing in the game checks them.
       for the Kennels. Other missions: run `dump` once per area
 - [ ] Forced entries (story transitions, save loads, mission select, doors missing from
       the table) into keyless zones: the DLL reports `area <levels>` once settled; the client
-      warns, then sends `quittomenu` 8 s later (written, untested; `quittomenu` itself is
-      confirmed when the pause menu has been opened, the `open Dishonored_MainMenu` fallback
-      isn't). Possibly later: an option to start with the first zones' keys
+      warns, then sends `quittomenu` 8 s later (confirmed in-game for the Kennels). Possibly
+      later: an option to start with the first zones' keys, and a warning that stays visible
+      in the main menu (the overlay is hidden there)
 - [ ] Earlier plan (2026-10-25; replaced by the two items above): refuse player-initiated transition prompts into
       a zone without its key ("Requires the X Zone Key"), and hold back checks found in
       zones the story puts you in without the key (Coldridge, sewers, Void, pub, any

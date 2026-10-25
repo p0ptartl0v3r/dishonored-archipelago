@@ -1036,6 +1036,9 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
         g_in_menu = true;
         log("in main menu");
       }
+      // Quitting to the menu drops the pawn before this mapchange; the menu's background
+      // pawn then appears. Only a pawn lost after this point means a level is loading.
+      g_ever_lost_gameplay = false;
     } else if (!g_in_menu && g_in_gameplay) {
       // A level transition. Some swap the player's inventory out and back (the Void keeps
       // a backup and restores it on return), so treat it like a load: wait to settle, then
