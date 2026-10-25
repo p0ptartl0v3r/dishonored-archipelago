@@ -109,7 +109,7 @@ arrives). From then on the DLL:
   then its inventory slot is cleared (`take sword ...`). Once received, Corvo's sword is
   given back (`OnAddInventoryItem`; `give sword ...`) if the sewer gear cutscene has
   happened and the gear isn't in the game's backup. Not in the prologue, whose scripted
-  fight hands you one (unequip confirmed in-game; the rest untested)
+  fight hands you one (confirmed in-game: unequip, take, and give back after /send)
 - sets the base bone charm capacity (`DisTweaks_PlayerPawn.m_MaxActivatedBoneCharmCount`,
   3 in the shipped game) from `limit bonecharms base <n>`, so base + granted capacity
   upgrades = Bone Charm Slot items received (`bone charm base ...`; confirmed in-game:

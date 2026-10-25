@@ -68,8 +68,8 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
       first copies (DLL), and block buying the Piero ones before they're received
 - [ ] Equipment: bullets, bolts, sleep darts, grenades (+ explosive/incendiary/sticky),
       spring razors and the Rewire Tool are held at 0 until received (`limit ammo`,
-      `limit item`; confirmed in-game). The sword: kept out of Corvo's hands with
-      `OnEquipItemType` (untested; there's no callable "remove inventory item").
+      `limit item`; confirmed in-game). The sword: unequipped, taken out of the
+      inventory, and given back when received (confirmed in-game).
       Optional: refuse ammo purchases up front instead of refunding (shop entries:
       Bolt_Ammo_twk, SleepDart_Ammo_twk, Bullets_Store_Ammo_twk,
       SpringRazor_Ammo_WithItem_twk, Grenade_Ammo_WithItem_twk, RewireTool_twk)

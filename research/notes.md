@@ -289,8 +289,8 @@ through `ProcessEvent`.
   default action did nothing, every second, in the sewers and in Coldridge. With its
   "Apply" input marked (`InputLinks[0].bHasImpulse`) it works, but attacking or
   blocking draws the sword straight back. So the DLL now also clears the sword's
-  inventory slot once no hand holds it (untested), and gives `Twk_Inv_SwordCorvo` back
-  through `OnAddInventoryItem` when Progressive Sword arrives.
+  inventory slot once no hand holds it, and gives `Twk_Inv_SwordCorvo` back through
+  `OnAddInventoryItem` when Progressive Sword arrives. Both confirmed in-game.
 - A long-running Launcher keeps the client code it started with: restart it after
   client changes.
 
