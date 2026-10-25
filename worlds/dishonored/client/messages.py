@@ -53,9 +53,9 @@ WARNING = "FA8072"
 
 
 def missing_key_line(zone_key: str) -> str:
-    """Shown when walking into a zone without its key (zone keys aren't enforced yet)."""
+    """Shown when the player is in a zone without its key, before being sent to the main menu."""
     return colored("You don't have the ", WARNING) + colored(zone_key, item_color(PROGRESSION)) + \
-        colored(" yet: this area is out of logic", WARNING)
+        colored(" yet: returning to the main menu", WARNING)
 
 
 def requires_key_line(zone_key: str) -> str:

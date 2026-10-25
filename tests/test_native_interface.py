@@ -284,9 +284,24 @@ def test_real_events_from_high_overseer_campbell():
     ]
 
 
-def test_only_the_latest_zone_entered_is_reported():
-    pipe = FakePipe(events=["mapchange L_Streets1_P", "mapchange L_Pub_FromPrison_Script", "mapchange L_Ovrsr_P"])
+def test_only_the_latest_settled_zone_is_reported():
+    pipe = FakePipe(events=["mapchange L_Streets1_P", "area L_Streets1_P", "mapchange L_Ovrsr_P", "area L_Ovrsr_P"])
     game = attached(pipe)
     game.poll_checked_locations()
     assert game.take_zone_entered() == "L_Ovrsr_P"
+    assert game.take_zone_entered() is None
+
+
+def test_a_zone_left_before_it_settled_is_not_reported():
+    # Quitting to the main menu (or travelling on) after the area event cancels it.
+    pipe = FakePipe(events=["area L_Ovrsr_Kennel_P", "mapchange Dishonored_MainMenu"])
+    game = attached(pipe)
+    game.poll_checked_locations()
+    assert game.take_zone_entered() is None
+
+
+def test_areas_without_a_zone_are_ignored():
+    pipe = FakePipe(events=["area L_Tower_P", "area -"])
+    game = attached(pipe)
+    game.poll_checked_locations()
     assert game.take_zone_entered() is None

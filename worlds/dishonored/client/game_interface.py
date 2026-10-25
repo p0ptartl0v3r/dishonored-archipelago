@@ -61,8 +61,13 @@ class GameInterface(ABC):
         return True
 
     def take_zone_entered(self) -> str | None:
-        """The streaming level of the zone the player last walked into, once (None if none since)."""
+        """The level of the zone the player is in, once after each load or transition settles
+        (None if none since)."""
         return None
+
+    def quit_to_menu(self) -> bool:
+        """Send the player back to the main menu. Return False to retry later."""
+        return True
 
     def take_travel_blocked(self) -> str | None:
         """The travel prompt option ("<path>#<index>") the game last refused, once (None if none since)."""
@@ -282,10 +287,13 @@ class NativeInterface(GameInterface):
             while (reply := self._request(f"event {self._next_event}")) != "none":
                 _, _, text = reply.split(" ", 2)
                 self._next_event += 1
-                if text.startswith("mapchange ") and zone_key_for_level(text.split()[1]):
+                if text.startswith("mapchange "):
+                    self._zone_entered = None  # an `area` event follows once the level settles
+                if text.startswith("area "):
                     # Only the latest counts: replayed events after reconnecting would
-                    # otherwise warn about every zone visited since the game started.
-                    self._zone_entered = text.split()[1]
+                    # otherwise act on every zone visited since the game started.
+                    zones = [level for level in text.split()[1].split(",") if zone_key_for_level(level)]
+                    self._zone_entered = zones[0] if zones else None
                 if text.startswith("blocked travel "):
                     self._travel_blocked = text.split()[2]
                 if text == "gameplay":
@@ -320,6 +328,12 @@ class NativeInterface(GameInterface):
     def take_travel_blocked(self) -> str | None:
         blocked, self._travel_blocked = self._travel_blocked, None
         return blocked
+
+    def quit_to_menu(self) -> bool:
+        try:
+            return self._request("quittomenu") == "queued"
+        except OSError:
+            return False
 
     def set_limits(self, lines: list[str]) -> bool:
         try:

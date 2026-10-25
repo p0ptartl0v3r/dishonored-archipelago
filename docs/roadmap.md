@@ -128,9 +128,14 @@ Today they're only shown as received, nothing in the game checks them.
       `DisSeqAct_DialogScriptedChoice` actions whose options flag a map change; the DLL
       picks the "stay" option instead (refusal confirmed in-game with `limit travel all 0`).
       Each option is mapped to its destination level in `zones.py` `TRAVEL_PROMPTS` from
-      play logs (`travel ...` then `mapchange ...`): 2 so far (Bottle Street <-> Distillery)
-- [ ] Forced entries (story transitions, save loads, mission select) into keyless zones:
-      warn, then `quittomenu` (confirmed working)
+      play logs (`travel ...` then `mapchange ...`) and `dump` (lists every travel prompt
+      in the loaded levels). High Overseer Campbell: all 19 prompts mapped, refusal confirmed
+      for the Kennels. Other missions: run `dump` once per area
+- [ ] Forced entries (story transitions, save loads, mission select, doors missing from
+      the table) into keyless zones: the DLL reports `area <levels>` once settled; the client
+      warns, then sends `quittomenu` 8 s later (written, untested; `quittomenu` itself is
+      confirmed when the pause menu has been opened, the `open Dishonored_MainMenu` fallback
+      isn't). Possibly later: an option to start with the first zones' keys
 - [ ] Earlier plan (2026-10-25; replaced by the two items above): refuse player-initiated transition prompts into
       a zone without its key ("Requires the X Zone Key"), and hold back checks found in
       zones the story puts you in without the key (Coldridge, sewers, Void, pub, any

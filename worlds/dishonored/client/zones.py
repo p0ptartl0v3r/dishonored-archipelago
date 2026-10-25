@@ -71,6 +71,7 @@ TRAVEL_PROMPTS: dict[str, str] = {
     _seq("L_Ovrsr_Script", 3): "L_Ovrsr_Kennel_P",  # Go To Kennel (2nd door)
     _seq("L_Ovrsr_Kennel_Script", 2): "L_Ovrsr_P",  # Go To Office of the High Overseer
     _seq("L_Ovrsr_Script", 1): "L_Ovrsr_Back_P",  # Go To Back Yard (2nd door)
+    _seq("L_Ovrsr_Script", 9): "L_Ovrsr_Back_P",  # Go To Back Yard (3rd door; seen in dump only)
     _seq("L_Ovrsr_Back_Script", 5): "L_Ovrsr_P",  # Go to The Office of the High Overseer
 }
 

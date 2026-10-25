@@ -16,6 +16,7 @@ from .messages import chat_line, missing_key_line, received_line, requires_key_l
 from .zones import zone_key_for_level, zone_key_for_travel
 
 POLL_SECONDS = 0.5
+LEAVE_ZONE_SECONDS = 8  # time to read the warning before being sent to the main menu
 
 
 class DishonoredCommandProcessor(ClientCommandProcessor):
@@ -73,6 +74,7 @@ class DishonoredContext(CommonContext):
         self.items_applied = 0
         self.limits_sent: list[str] | None = None  # last limits the game accepted
         self.game_messages: list[str] = []  # waiting to be shown in-game
+        self.leave_zone: tuple[str, float] | None = None  # (missing zone key, when to quit to the menu)
         self.connected_at = 0.0
         self.slot_data: dict[str, Any] = {}
 
@@ -179,12 +181,23 @@ async def send_checks_and_goal(ctx: DishonoredContext, found: set[int], goal: bo
 async def sync_with_game(ctx: DishonoredContext, game: GameInterface) -> None:
     await send_checks_and_goal(ctx, game.poll_checked_locations(), game.poll_goal_reached())
 
+    def has(item: str) -> bool:
+        return any(ctx.item_names.lookup_in_game(i.item) == item for i in ctx.items_received)
+
+    # Being in a zone without its key (a story transition, a save load, mission select;
+    # travel prompts into it are refused) sends the player to the main menu after a warning.
     entered = game.take_zone_entered()
     if entered and ctx.slot:
         key = zone_key_for_level(entered)
-        if key and not any(ctx.item_names.lookup_in_game(i.item) == key for i in ctx.items_received):
-            logger.warning(f"Entered {entered} without the {key}: this area is out of logic")
+        if key and not has(key):
+            logger.warning(f"In {entered} without the {key}: returning to the main menu")
             ctx.game_messages.append(missing_key_line(key))
+            ctx.leave_zone = (key, time.monotonic() + LEAVE_ZONE_SECONDS)
+        else:
+            ctx.leave_zone = None
+    if ctx.leave_zone and time.monotonic() >= ctx.leave_zone[1]:
+        if has(ctx.leave_zone[0]) or game.quit_to_menu():
+            ctx.leave_zone = None
 
     blocked = game.take_travel_blocked()
     key = zone_key_for_travel(blocked) if blocked else None

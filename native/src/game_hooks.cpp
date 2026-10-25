@@ -845,6 +845,23 @@ bool remove_attribute_modifier(ue3::UObject* player_controller, const std::strin
 }
 
 // Research: writes what the player has, and every upgrade the game knows, to the log.
+// The visible area levels ("L_Ovrsr_P"; sublevels like L_Ovrsr_Script left out), comma-separated.
+DWORD g_area_reported_for = 0;  // g_gameplay_started_tick of the last `area` event
+
+std::string current_areas(ue3::UObject* pawn) {
+  std::string areas;
+  auto* world = pawn != nullptr ? ue3::field<ue3::UObject*>(pawn, ue3::kActorWorldInfo) : nullptr;
+  if (world == nullptr) return "-";
+  const auto streaming = ue3::field<ue3::TArray<ue3::UObject*>>(world, ue3::kWorldStreamingLevels);
+  for (int32_t i = 0; i < streaming.count && streaming.data != nullptr; ++i) {
+    auto* level = streaming.data[i];
+    if (level == nullptr || !(ue3::field<uint32_t>(level, ue3::kStreamingFlags) & 1)) continue;
+    const std::string name = ue3::name_string(ue3::field<ue3::FName>(level, ue3::kStreamingPackageName));
+    if (name.size() > 2 && lower(name.substr(name.size() - 2)) == "_p") areas += (areas.empty() ? "" : ",") + name;
+  }
+  return areas.empty() ? "-" : areas;
+}
+
 void dump_player_state(ue3::UObject* player_controller) {
   ue3::UObject* pawn = player_pawn(player_controller);
   log("==== dump ====");
@@ -924,11 +941,17 @@ bool run_request(ue3::UObject* player_controller, const std::string& request) {
   if (request.rfind("upgrade ", 0) == 0) return grant_upgrade(player_controller, request.substr(8));
   if (request.rfind("removemod ", 0) == 0) return remove_attribute_modifier(player_controller, request.substr(10));
   if (request == "quittomenu") {
-    // Research: the pause menu's "quit to main menu" confirmation ("disconnect" is stripped).
+    // The pause menu's "quit to main menu" confirmation (confirmed; "disconnect" is stripped).
+    // Its object only exists once the pause menu has been opened; otherwise load the main
+    // menu map directly (untested).
     auto* menu = ue3::find_instance("DisGFxMoviePlayerPauseMenu");
     auto* quit = ue3::find_object("Function DishonoredGame.DisGFxMoviePlayerPauseMenu.OnQuitGameConfirm");
     log("quittomenu: pause menu {}, OnQuitGameConfirm {}", ue3::full_name(menu), quit != nullptr);
-    if (menu != nullptr && quit != nullptr) g_original(menu, nullptr, quit, nullptr, nullptr);
+    if (menu != nullptr && quit != nullptr) {
+      g_original(menu, nullptr, quit, nullptr, nullptr);
+    } else {
+      run_console_command(player_controller, "open Dishonored_MainMenu");
+    }
     return true;
   }
   if (request == "dump") {
@@ -1348,6 +1371,11 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
       if (g_mark_requested.exchange(false)) {
         log("==== MARK (F8) {} ====",
             location_of(controller ? ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn) : nullptr));
+      }
+      if (settled && g_area_reported_for != g_gameplay_started_tick) {
+        // Once per load or transition: where the player is (a save load emits no mapchange).
+        g_area_reported_for = g_gameplay_started_tick;
+        emit_event("area " + current_areas(ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn)));
       }
       if (in_gameplay) track_holdings(controller, settled, now);
       else {
