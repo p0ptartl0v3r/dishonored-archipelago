@@ -64,6 +64,14 @@ TRAVEL_PROMPTS: dict[str, str] = {
     _seq("L_Ovrsr_Kennel_Script", 4): "L_Ovrsr_P",  # Go To Office of the High Overseer
     _seq("L_Ovrsr_Script", 2): "L_Ovrsr_Back_P",  # Go To Back Yard
     _seq("L_Ovrsr_Back_Script", 4): "L_Ovrsr_P",  # Go to Holger Square
+    _seq("L_Streets1_Script", 4): "L_Galvani1_P",  # Go to Dr. Galvani's Offices (2nd door)
+    _seq("L_Streets1_Script", 6): "L_Galvani1_P",  # Go to Dr. Galvani's Offices (3rd door)
+    _seq("L_Galvani1_Scripts", 3): "L_Streets1_P",  # Go to Clavering Blvd
+    _seq("L_Galvani1_Scripts", 1): "L_Streets1_P",  # Go to Clavering Blvd
+    _seq("L_Ovrsr_Script", 3): "L_Ovrsr_Kennel_P",  # Go To Kennel (2nd door)
+    _seq("L_Ovrsr_Kennel_Script", 2): "L_Ovrsr_P",  # Go To Office of the High Overseer
+    _seq("L_Ovrsr_Script", 1): "L_Ovrsr_Back_P",  # Go To Back Yard (2nd door)
+    _seq("L_Ovrsr_Back_Script", 5): "L_Ovrsr_P",  # Go to The Office of the High Overseer
 }
 
 

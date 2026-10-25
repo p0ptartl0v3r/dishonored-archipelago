@@ -865,6 +865,18 @@ void dump_player_state(ue3::UObject* player_controller) {
   }
   log("bone charm slots:{}", slots);
   for (const auto& [name, level] : power_levels(pawn)) log("power {} level {}", name, level);
+  // Every travel prompt in the loaded level scripts, for mapping them to zones
+  // (client/zones.py TRAVEL_PROMPTS) without walking through each door.
+  static const int32_t scripted_choice = ue3::find_name_index("DisSeqAct_DialogScriptedChoice");
+  for (auto* action : ue3::find_instances(scripted_choice)) {
+    const auto choices = ue3::field<ue3::TArray<uint8_t>>(action, ue3::kScriptedChoiceChoices);
+    for (int32_t i = 0; i < choices.count && i < 16 && choices.data != nullptr; ++i) {
+      const uint8_t* choice = choices.data + i * ue3::kChoiceInfoSize;
+      if (!(*reinterpret_cast<const uint32_t*>(choice + ue3::kChoiceInfoFlags) & 1)) continue;
+      log("travel prompt {}#{} \"{}\"", ue3::path_name(action), i,
+          ue3::to_string(*reinterpret_cast<const ue3::FString*>(choice)));
+    }
+  }
   // Which areas are loaded: the current zone after a save load (which emits no mapchange).
   if (auto* world = ue3::field<ue3::UObject*>(pawn, ue3::kActorWorldInfo)) {
     const auto streaming = ue3::field<ue3::TArray<ue3::UObject*>>(world, ue3::kWorldStreamingLevels);
