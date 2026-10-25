@@ -64,6 +64,9 @@ and `python tools/native_console.py "event 0"` (1, 2, ...) reads them directly.
 | `buy <item\|upgrade\|ammo> <name> for <coins> at=x,y,z` | Coins went down and this went up in the same reading: a shop purchase. E.g. `buy item Rune_AbsItm for 500` (Piero's rune) |
 | `gain ammo <type> <old>-><new> at=x,y,z` / `lose ammo ...` | Ammo (`Bullet`, `Arrow`, `Arrow_Sleep`, ...) or elixirs (`HealthElixir`, `ManaElixir`) changed. Firing, drinking and picking up all show up |
 | `gain upgrade <name> 0->1 at=x,y,z` / `lose upgrade ...` | An upgrade was added (Piero, a script, or our own `upgrade` request) or removed |
+| `choice <i> "<text>" title "<title>" travel=<0\|1> by <node>` | The player confirmed a choice: a scripted choice (travel prompts, the wine, the still; `DisSeqAct_DialogScriptedChoice`) or dialogue. `travel=1`: that option changes the map (confirmed: "Go to Bottle Street") |
+| `travel prompt "<text>" output "<link>" to <tags> via <op classes> by <node>` | A travel option was picked; `<tags>` are the `SetPlayerTravelDestination` tags found by following its output link through the level script (untested) |
+| `blocked travel <tags> by <node>` | A travel option was refused (`limit travel <tag\|all> 0`): the prompt's stay option is picked instead (untested) |
 
 To turn an event into a check, add a pattern to the location's `detect` list
 in `worlds/dishonored/data/locations.json`. A pattern matches when **every word

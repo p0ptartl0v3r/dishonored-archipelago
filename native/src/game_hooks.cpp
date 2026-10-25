@@ -338,6 +338,9 @@ std::atomic<int32_t> g_bone_charm_base = -1;  // base capacity to set (-1: leave
 std::map<std::string, bool> g_ammo_allowed;   // randomized ammo type (kAmmoTypes name) -> received
 std::map<std::string, bool> g_item_allowed;   // randomized abstract item (RewireTool) -> received
 std::map<std::string, bool> g_equip_allowed;  // randomized equipment that can be held (Sword) -> received
+// Travel prompts by destination tag ("all" for every prompt) -> allowed. A refused prompt
+// acts as if the player picked its "stay" option.
+std::map<std::string, bool> g_travel_allowed;
 // The prologue's scripted fight hands Corvo a sword; it's allowed there (like Blink in
 // the Void) so the fight can't softlock. Set by mapchange; a save loaded mid-prologue
 // isn't recognised.
@@ -967,6 +970,62 @@ std::string pickup_item_name(ue3::UObject* pickup) {
   return "-";
 }
 
+// Where a scripted choice's option leads: follows its output link through the level
+// script and collects the travel destination tags it sets, and the kinds of actions on
+// the way (for research). Output link `index` belongs to choice `index`.
+struct ChoiceRoute {
+  std::string output = "?";  // the output link's name in the level script
+  std::vector<std::string> tags;
+  std::vector<std::string> ops;
+};
+
+ChoiceRoute choice_route(ue3::UObject* action, int32_t index) {
+  ChoiceRoute route;
+  const auto outputs = ue3::field<ue3::TArray<uint8_t>>(action, ue3::kSequenceOpOutputLinks);
+  if (index < 0 || index >= outputs.count || outputs.data == nullptr || outputs.count > 64) return route;
+  const uint8_t* output = outputs.data + index * ue3::kOutputLinkSize;
+  route.output = ue3::to_string(*reinterpret_cast<const ue3::FString*>(output + ue3::kOutputLinkDesc));
+  static const int32_t set_destination = ue3::find_name_index("DisSeqAct_SetPlayerTravelDestination");
+  std::vector<ue3::UObject*> queue;
+  const auto add_links = [&](const uint8_t* link) {
+    const auto links = *reinterpret_cast<const ue3::TArray<uint8_t>*>(link);
+    for (int32_t i = 0; i < links.count && i < 16 && links.data != nullptr; ++i) {
+      auto* op = *reinterpret_cast<ue3::UObject* const*>(links.data + i * 8);
+      if (op != nullptr && std::find(queue.begin(), queue.end(), op) == queue.end()) queue.push_back(op);
+    }
+  };
+  add_links(output);
+  for (size_t next = 0; next < queue.size() && next < 48; ++next) {
+    auto* op = queue[next];
+    const std::string kind = ue3::class_name(op);
+    if (std::find(route.ops.begin(), route.ops.end(), kind) == route.ops.end()) route.ops.push_back(kind);
+    if (set_destination >= 0 && op->klass != nullptr && op->klass->name.index == set_destination) {
+      route.tags.push_back(ue3::name_string(ue3::field<ue3::FName>(op, ue3::kSetTravelDestinationTag)));
+      continue;  // the destination is known; don't wander further down this path
+    }
+    const auto op_outputs = ue3::field<ue3::TArray<uint8_t>>(op, ue3::kSequenceOpOutputLinks);
+    for (int32_t i = 0; i < op_outputs.count && i < 16 && op_outputs.data != nullptr; ++i) {
+      add_links(op_outputs.data + i * ue3::kOutputLinkSize);
+    }
+  }
+  return route;
+}
+
+std::string join(const std::vector<std::string>& parts) {
+  std::string out;
+  for (const auto& part : parts) out += (out.empty() ? "" : ",") + part;
+  return out.empty() ? "-" : out;
+}
+
+// Should this travel prompt be refused? Unknown tags are allowed.
+bool travel_refused(const std::vector<std::string>& tags) {
+  if (allowed_in(g_travel_allowed, "all") == false) return true;
+  for (const auto& tag : tags) {
+    if (allowed_in(g_travel_allowed, lower(tag)) == false) return true;
+  }
+  return false;
+}
+
 // Called on the game thread for every ProcessEvent, before the function runs
 // (so the object is still intact). Cheap integer compares unless something matches.
 void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
@@ -1032,7 +1091,8 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
     // scripted choices: a level-script DisSeqAct_DialogScriptedChoice held by the player's
     // scripted-choice state. Each choice says whether it leads to a map change. Dialogue
     // uses conversation nodes held by the dialog state instead.
-    const int32_t index = *static_cast<int32_t*>(params);
+    int32_t& index = *static_cast<int32_t*>(params);
+    const int32_t picked = index;
     std::string text = "?", title = "", node = "None";
     bool travel = false;
     for (auto* state : ue3::find_instances(ue3::find_name_index("StatePlayerMasterInScriptedChoice"))) {
@@ -1041,10 +1101,33 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
       node = ue3::path_name(action);
       title = ue3::to_string(ue3::field<ue3::FString>(action, ue3::kScriptedChoiceTitle));
       const auto choices = ue3::field<ue3::TArray<uint8_t>>(action, ue3::kScriptedChoiceChoices);
+      const auto travels = [&](int32_t i) {
+        return (*reinterpret_cast<const uint32_t*>(choices.data + i * ue3::kChoiceInfoSize + ue3::kChoiceInfoFlags) & 1) != 0;
+      };
       if (index >= 0 && index < choices.count && choices.data != nullptr) {
-        const uint8_t* choice = choices.data + index * ue3::kChoiceInfoSize;
-        text = ue3::to_string(*reinterpret_cast<const ue3::FString*>(choice));
-        travel = *reinterpret_cast<const uint32_t*>(choice + ue3::kChoiceInfoFlags) & 1;
+        text = ue3::to_string(*reinterpret_cast<const ue3::FString*>(choices.data + index * ue3::kChoiceInfoSize));
+        travel = travels(index);
+      }
+      if (travel) {
+        const ChoiceRoute route = choice_route(action, index);
+        emit_event(std::format("travel prompt \"{}\" output \"{}\" to {} via {} by {}", text, route.output,
+                               join(route.tags), join(route.ops), node));
+        if (g_limits_known && travel_refused(route.tags)) {
+          // Pick the prompt's "stay" option instead: the prompt closes as if declined.
+          int32_t stay = -1;
+          for (int32_t i = 0; i < choices.count && stay < 0; ++i) {
+            if (!travels(i)) stay = i;
+          }
+          if (stay >= 0) {
+            emit_event(std::format("blocked travel {} by {}", join(route.tags), node));
+            if (allowed_in(g_travel_allowed, "all") == false) {
+              show_message("{FA8072}Travel refused (test: limit travel all 0)");
+            }
+            index = stay;
+          } else {
+            log("travel prompt has no stay option; not refused");
+          }
+        }
       }
       break;
     }
@@ -1058,7 +1141,7 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
         break;
       }
     }
-    emit_event(std::format("choice {} \"{}\" title \"{}\" travel={} by {}", index, text, title, travel ? 1 : 0, node));
+    emit_event(std::format("choice {} \"{}\" title \"{}\" travel={} by {}", picked, text, title, travel ? 1 : 0, node));
   } else if (name == g_names.on_objective_action) {
     auto* action = *static_cast<ue3::UObject**>(params);
     if (action == nullptr) return;
@@ -1380,6 +1463,8 @@ bool set_limit(const std::string& kind, const std::string& name, int32_t value) 
     g_item_allowed[name] = value > 0;
   } else if (kind == "equip") {
     g_equip_allowed[name] = value > 0;
+  } else if (kind == "travel") {
+    g_travel_allowed[lower(name)] = value > 0;
   } else {
     return false;
   }
