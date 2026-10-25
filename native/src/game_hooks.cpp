@@ -102,6 +102,7 @@ struct EventNames {
   int32_t ranged_weapon = -1;           // class DishonoredWeapon_Ranged: pistol, crossbow (loaded magazine)
   int32_t sword = -1;                   // class DishonoredWepSword
   int32_t sword_tweaks = -1;            // class DisTweaks_WepSword (Twk_Inv_SwordCorvo)
+  int32_t player_choice_confirm = -1;   // DisGFxMoviePlayerHUD.OnPlayerChoiceConfirm(Index): travel prompts, dialogue
   int32_t post_render = -1;             // HUD.PostRender: the HUD draws a frame (Canvas valid)
   int32_t hud = -1;                     // class HUD
   int32_t pickup_base = -1;                // class DisPickup_Base
@@ -907,6 +908,14 @@ bool run_request(ue3::UObject* player_controller, const std::string& request) {
   }
   if (request.rfind("upgrade ", 0) == 0) return grant_upgrade(player_controller, request.substr(8));
   if (request.rfind("removemod ", 0) == 0) return remove_attribute_modifier(player_controller, request.substr(10));
+  if (request == "quittomenu") {
+    // Research: the pause menu's "quit to main menu" confirmation ("disconnect" is stripped).
+    auto* menu = ue3::find_instance("DisGFxMoviePlayerPauseMenu");
+    auto* quit = ue3::find_object("Function DishonoredGame.DisGFxMoviePlayerPauseMenu.OnQuitGameConfirm");
+    log("quittomenu: pause menu {}, OnQuitGameConfirm {}", ue3::full_name(menu), quit != nullptr);
+    if (menu != nullptr && quit != nullptr) g_original(menu, nullptr, quit, nullptr, nullptr);
+    return true;
+  }
   if (request == "dump") {
     dump_player_state(player_controller);
     return true;
@@ -1018,6 +1027,19 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
       what = "inventory " + ue3::object_name(ue3::field<ue3::UObject*>(action, ue3::kAddInventoryActionItem));
     }
     emit_event(std::format("grant {} by {}", what, ue3::path_name(action)));
+  } else if (name == g_names.player_choice_confirm) {
+    // A player choice was confirmed: dialogue, or a travel prompt ("go to X?"). The active
+    // choice node is held by the player's dialog state; its path names the conversation.
+    const int32_t index = *static_cast<int32_t*>(params);
+    std::string text = "?", node = "None";
+    if (auto* state = ue3::find_instance("StatePlayerMasterInDialog")) {
+      if (auto* choice = ue3::field<ue3::UObject*>(state, ue3::kDialogActiveChoice)) {
+        node = ue3::path_name(choice);
+        const auto texts = ue3::field<ue3::TArray<ue3::FString>>(choice, ue3::kPlayerChoiceTexts);
+        if (index >= 0 && index < texts.count && texts.data != nullptr) text = ue3::to_string(texts.data[index]);
+      }
+    }
+    emit_event(std::format("choice {} \"{}\" by {}", index, text, node));
   } else if (name == g_names.on_objective_action) {
     auto* action = *static_cast<ue3::UObject**>(params);
     if (action == nullptr) return;
@@ -1065,6 +1087,7 @@ void resolve_engine_objects() {
   g_names.sword = ue3::find_name_index("DishonoredWepSword");
   g_names.sword_tweaks = ue3::find_name_index("DisTweaks_WepSword");
   g_names.post_render = ue3::find_name_index("PostRender");
+  g_names.player_choice_confirm = ue3::find_name_index("OnPlayerChoiceConfirm");
   g_names.hud = ue3::find_name_index("HUD");
   g_names.pickup_base = ue3::find_name_index("DisPickup_Base");
   g_names.abstract_item_pickup = ue3::find_name_index("DisAbstractItemPickup");

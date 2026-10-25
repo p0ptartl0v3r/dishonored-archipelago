@@ -24,6 +24,7 @@ std::string handle(const std::string& request) {
     return "pong waiting";
   }
   if (request.rfind("console ", 0) == 0 || request.rfind("upgrade ", 0) == 0 || request.rfind("removemod ", 0) == 0 ||
+      request == "quittomenu" ||
       request == "dump") {
     queue_game_request(request);
     return "queued";

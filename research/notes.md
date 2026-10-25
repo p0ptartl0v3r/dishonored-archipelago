@@ -294,6 +294,21 @@ through `ProcessEvent`.
 - A long-running Launcher keeps the client code it started with: restart it after
   client changes.
 
+### Zones and transitions (2026-10-25)
+- The current zone after a save load: `WorldInfo.StreamingLevels` (+0x314) lists
+  `LevelStreaming` objects (`PackageName` +0x38, `LoadedLevel` +0x40, `bIsVisible` bit 0
+  of +0x5C). After every load and transition the area's `L_..._P` level and its
+  sublevels were the loaded, visible ones (Streets1, Galvani1, Distillery, Ovrsr).
+- A travel prompt is a conversation player choice: `Dis_PlayerChoice_RequestSkip`, then
+  `DisGFxMoviePlayerHUD.OnPlayerChoiceConfirm(Index)`, then `mapchange` 22 ms later.
+  Dialogue answers use the same function. The active choice node is
+  `StatePlayerMasterInDialog.m_pActivePlayerChoice` (+0x64), a `DisConv_PlayerChoice`
+  with its texts in `m_Choices` (+0xA0). The DLL now reports `choice <index> "<text>" by
+  <node path>` to learn which choices are travel prompts.
+- `disconnect` is stripped from the release build ("unrecognized command"). Candidate
+  for "quit to main menu": `DisGFxMoviePlayerPauseMenu.OnQuitGameConfirm` (request
+  `quittomenu`, untested).
+
 ## Memory (Cheat Engine)
 
 | Value | Module + pointer path | Type | Notes |
