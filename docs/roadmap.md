@@ -126,8 +126,9 @@ Today they're only shown as received, nothing in the game checks them.
       levels (`WorldInfo.StreamingLevels`)
 
 ### 7. In-game messages (towards an in-game client)
-- [ ] Show "Received X from Y" / "Sent X to Y" on screen: drawn with the HUD's Canvas
-      after `HUD.PostRender` (`message <text>`; written, untested). The game's own
+- [x] Show "Received X from Y" / "Sent X to Y" on screen: drawn with the HUD's Canvas
+      after `HUD.PostRender` (`message <text>`, colour markers `{RRGGBB}`; drawing
+      confirmed in-game, colours/pause/client side untested). The game's own
       `DisSeqAct_ShowHUDMessage` has no script handler, so it can't be called. Earlier idea: draw text
       from the DLL when the HUD renders (`HUD.PostRender` passes through
       `ProcessEvent`; the `Canvas` draw functions are callable the same way).

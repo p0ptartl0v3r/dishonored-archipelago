@@ -126,11 +126,14 @@ the modifier name upgrades use; `dump` lists each upgrade's `attributes=`.
 
 Without limits (no client connected) nothing is blocked or removed.
 
-## On-screen messages (untested in-game)
+## On-screen messages
 
-`message <text>` shows a line on screen for 7 seconds (up to 6 at once, fading out),
-drawn with the HUD's Canvas right after the game's own `HUD.PostRender`. The client
-sends one for every item sent or received that involves your slot. Try it directly:
+`message <text>` shows a line at the bottom left for 7 seconds (up to 6 at once, fading
+out), drawn with the HUD's Canvas right after the game's own `HUD.PostRender` (confirmed
+in-game). `{RRGGBB}` inside the text switches colour (default white); the client colours
+items, players and locations like Archipelago's text client. Nothing is drawn while the
+game is paused (menus, journal) or in the main menu. The client shows every item received
+(from `ReceivedItems`, so cheats too) and every item found here for someone else. Try it:
 
 ```
 python tools/native_console.py "message Hello from Archipelago"

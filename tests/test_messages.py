@@ -1,0 +1,28 @@
+from dishonored.client.messages import PROGRESSION, TRAP, USEFUL, colored, item_color, received_line, sent_line
+
+
+def test_item_colours_follow_archipelago():
+    assert item_color(PROGRESSION) == "AF99EF"
+    assert item_color(USEFUL) == "6D8BE8"
+    assert item_color(TRAP) == "FA8072"
+    assert item_color(0) == "00EEEE"
+
+
+def test_received_line_is_coloured_segments_with_spaces_kept():
+    assert received_line("Progressive Blink", PROGRESSION, "Alice", False, "Pub: River Rune") == (
+        "{FFFFFF}Received {AF99EF}Progressive Blink{FFFFFF} from {FAFAD2}Alice{FFFFFF} ("
+        "{00FF7F}Pub: River Rune{FFFFFF})"
+    )
+    assert received_line("Whalebone", 0, "me", True, "Pub: Shop Rune") == (
+        "{FFFFFF}Found {00EEEE}Whalebone{FFFFFF} ({00FF7F}Pub: Shop Rune{FFFFFF})"
+    )
+
+
+def test_sent_line():
+    assert sent_line("Hookshot", USEFUL, "Bob", "Prologue: Get Framed") == (
+        "{FFFFFF}Sent {6D8BE8}Hookshot{FFFFFF} to {FAFAD2}Bob{FFFFFF} ({00FF7F}Prologue: Get Framed{FFFFFF})"
+    )
+
+
+def test_braces_and_newlines_cannot_break_a_line():
+    assert colored("weird {name}\nhere", "FFFFFF") == "{FFFFFF}weird (name} here"

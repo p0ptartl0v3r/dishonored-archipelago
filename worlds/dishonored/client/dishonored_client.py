@@ -1,17 +1,18 @@
 from __future__ import annotations
 
 import asyncio
-import copy
 import logging
+import time
 from collections import Counter
 from typing import Any
 
 from CommonClient import ClientCommandProcessor, CommonContext, gui_enabled, logger, server_loop
-from NetUtils import ClientStatus
+from NetUtils import ClientStatus, NetworkItem
 
 from ..game_data import GAME_NAME
 from .game_interface import BACKENDS, GameInterface
 from .item_commands import limits
+from .messages import received_line, sent_line
 
 POLL_SECONDS = 0.5
 
@@ -71,6 +72,7 @@ class DishonoredContext(CommonContext):
         self.items_applied = 0
         self.limits_sent: list[str] | None = None  # last limits the game accepted
         self.game_messages: list[str] = []  # waiting to be shown in-game
+        self.connected_at = 0.0
         self.slot_data: dict[str, Any] = {}
 
     async def server_auth(self, password_requested: bool = False) -> None:
@@ -81,13 +83,33 @@ class DishonoredContext(CommonContext):
 
     def on_print_json(self, args: dict) -> None:
         super().on_print_json(args)
-        # Item sends and cheats that involve this slot are also shown in-game.
-        if args.get("type") in ("ItemSend", "ItemCheat") and not self.is_uninteresting_item_send(args):
-            text = self.rawjsontotextparser(copy.deepcopy(args["data"]))
-            self.game_messages.append(" ".join(text.split()))
+        # Items found here for other players are shown in-game; received ones come from
+        # ReceivedItems below (which also covers cheats and starting items).
+        if args.get("type") == "ItemSend" and self.slot is not None:
+            item = NetworkItem(*args["item"]) if isinstance(args["item"], (list, tuple)) else args["item"]
+            receiver = args["receiving"]
+            if item.player == self.slot and not self.slot_concerns_self(receiver):
+                self.game_messages.append(sent_line(
+                    self.item_names.lookup_in_slot(item.item, receiver), item.flags,
+                    self.player_names.get(receiver, f"Player {receiver}"),
+                    self.location_names.lookup_in_slot(item.location, item.player)))
+
+    def show_received(self, args: dict) -> None:
+        # The packet right after connecting resends everything received so far: not news.
+        if args["index"] == 0 and time.monotonic() - self.connected_at < 5:
+            return
+        for raw in args["items"]:
+            item = NetworkItem(*raw) if isinstance(raw, (list, tuple)) else raw
+            self.game_messages.append(received_line(
+                self.item_names.lookup_in_slot(item.item, self.slot), item.flags,
+                self.player_names.get(item.player, f"Player {item.player}"), item.player == self.slot,
+                self.location_names.lookup_in_slot(item.location, item.player)))
 
     def on_package(self, cmd: str, args: dict) -> None:
+        if cmd == "ReceivedItems":
+            self.show_received(args)
         if cmd == "Connected":
+            self.connected_at = time.monotonic()
             self.slot_data = args.get("slot_data", {})
             self.items_applied = 0
             self.limits_sent = None
