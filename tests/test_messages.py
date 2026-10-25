@@ -26,3 +26,10 @@ def test_sent_line():
 
 def test_braces_and_newlines_cannot_break_a_line():
     assert colored("weird {name}\nhere", "FFFFFF") == "{FFFFFF}weird (name} here"
+
+
+def test_chat_line_names_the_speaker():
+    from dishonored.client.messages import chat_line
+
+    assert chat_line("Alice", False, "gg") == "{FAFAD2}Alice{FFFFFF}: gg"
+    assert chat_line("me", True, "hi") == "{EE00EE}me{FFFFFF}: hi"

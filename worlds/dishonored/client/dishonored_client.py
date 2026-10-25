@@ -12,7 +12,7 @@ from NetUtils import ClientStatus, NetworkItem
 from ..game_data import GAME_NAME
 from .game_interface import BACKENDS, GameInterface
 from .item_commands import limits
-from .messages import received_line, sent_line
+from .messages import chat_line, received_line, sent_line
 
 POLL_SECONDS = 0.5
 
@@ -85,6 +85,12 @@ class DishonoredContext(CommonContext):
         super().on_print_json(args)
         # Items found here for other players are shown in-game; received ones come from
         # ReceivedItems below (which also covers cheats and starting items).
+        if args.get("type") == "Chat":
+            speaker = args.get("slot")
+            self.game_messages.append(chat_line(
+                self.player_names.get(speaker, f"Player {speaker}"), speaker == self.slot, args.get("message", "")))
+        elif args.get("type") == "ServerChat":
+            self.game_messages.append(chat_line("Server", False, args.get("message", "")))
         if args.get("type") == "ItemSend" and self.slot is not None:
             item = NetworkItem(*args["item"]) if isinstance(args["item"], (list, tuple)) else args["item"]
             receiver = args["receiving"]

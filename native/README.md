@@ -133,7 +133,8 @@ out), drawn with the HUD's Canvas right after the game's own `HUD.PostRender` (c
 in-game). `{RRGGBB}` inside the text switches colour (default white); the client colours
 items, players and locations like Archipelago's text client. Nothing is drawn while the
 game is paused (menus, journal) or in the main menu. The client shows every item received
-(from `ReceivedItems`, so cheats too) and every item found here for someone else. Try it:
+(from `ReceivedItems`, so cheats too), every item found here for someone else, and
+Archipelago chat ("Alice: gg", server console as "Server"). Try it:
 
 ```
 python tools/native_console.py "message Hello from Archipelago"

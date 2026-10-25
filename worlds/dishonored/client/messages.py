@@ -44,6 +44,11 @@ def received_line(item: str, flags: int, sender: str, from_self: bool, location:
         colored(sender, OTHER_PLAYER) + colored(" (", WHITE) + colored(location, LOCATION) + colored(")", WHITE)
 
 
+def chat_line(speaker: str, from_self: bool, text: str) -> str:
+    """'<speaker>: <text>' for Archipelago chat; the server console speaks as "Server"."""
+    return colored(speaker, SELF if from_self else OTHER_PLAYER) + colored(": " + text, WHITE)
+
+
 def sent_line(item: str, flags: int, receiver: str, location: str) -> str:
     """'Sent <item> to <player> (<location>)' for an item found for someone else."""
     return colored("Sent ", WHITE) + colored(item, item_color(flags)) + colored(" to ", WHITE) + \
