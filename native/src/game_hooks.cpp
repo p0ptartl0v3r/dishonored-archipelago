@@ -972,19 +972,31 @@ std::string pickup_item_name(ue3::UObject* pickup) {
 
 // Where a scripted choice's option leads: follows its output link through the level
 // script and collects the travel destination tags it sets, and the kinds of actions on
-// the way (for research). Output link `index` belongs to choice `index`.
+// the way (for research). The action's first output is "Player Busy", so the option's
+// output is found by name (its text), else assumed to be index + 1.
 struct ChoiceRoute {
   std::string output = "?";  // the output link's name in the level script
+  std::string outputs;       // every output's name (research)
   std::vector<std::string> tags;
   std::vector<std::string> ops;
 };
 
-ChoiceRoute choice_route(ue3::UObject* action, int32_t index) {
+ChoiceRoute choice_route(ue3::UObject* action, int32_t index, const std::string& text) {
   ChoiceRoute route;
   const auto outputs = ue3::field<ue3::TArray<uint8_t>>(action, ue3::kSequenceOpOutputLinks);
-  if (index < 0 || index >= outputs.count || outputs.data == nullptr || outputs.count > 64) return route;
-  const uint8_t* output = outputs.data + index * ue3::kOutputLinkSize;
-  route.output = ue3::to_string(*reinterpret_cast<const ue3::FString*>(output + ue3::kOutputLinkDesc));
+  if (outputs.data == nullptr || outputs.count <= 0 || outputs.count > 64) return route;
+  const auto desc = [&](int32_t i) {
+    return ue3::to_string(*reinterpret_cast<const ue3::FString*>(outputs.data + i * ue3::kOutputLinkSize +
+                                                                 ue3::kOutputLinkDesc));
+  };
+  int32_t chosen = index + 1;
+  for (int32_t i = 0; i < outputs.count; ++i) {
+    route.outputs += (i ? "|" : "") + desc(i);
+    if (desc(i) == text) chosen = i;
+  }
+  if (chosen < 0 || chosen >= outputs.count) return route;
+  const uint8_t* output = outputs.data + chosen * ue3::kOutputLinkSize;
+  route.output = desc(chosen);
   static const int32_t set_destination = ue3::find_name_index("DisSeqAct_SetPlayerTravelDestination");
   std::vector<ue3::UObject*> queue;
   const auto add_links = [&](const uint8_t* link) {
@@ -1109,9 +1121,9 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
         travel = travels(index);
       }
       if (travel) {
-        const ChoiceRoute route = choice_route(action, index);
-        emit_event(std::format("travel prompt \"{}\" output \"{}\" to {} via {} by {}", text, route.output,
-                               join(route.tags), join(route.ops), node));
+        const ChoiceRoute route = choice_route(action, index, text);
+        emit_event(std::format("travel prompt \"{}\" output \"{}\" of \"{}\" to {} via {} by {}", text, route.output,
+                               route.outputs, join(route.tags), join(route.ops), node));
         if (g_limits_known && travel_refused(route.tags)) {
           // Pick the prompt's "stay" option instead: the prompt closes as if declined.
           int32_t stay = -1;
