@@ -280,6 +280,15 @@ through `ProcessEvent`.
   pickup is native, so it can't be refused through ProcessEvent. In-game: `Destroy`
   returns false (placed in the level), `SetHidden` works, `SetLocation` doesn't move
   them, and a hidden, non-colliding statue can still be picked up.
+- Equipment: holding unreceived ammo types and the Rewire Tool (`RewireTool_AbsItm`) at 0
+  works, magazines included (`DishonoredWeapon_Ranged.m_LoadedAmmoInfo`; the grenade
+  launcher is one too). Shop entries: Bolt_Ammo_twk, SleepDart_Ammo_twk,
+  Bullets_Store_Ammo_twk, SpringRazor_Ammo_WithItem_twk, Grenade_Ammo_WithItem_twk,
+  Elixir_Mana_twk, RewireTool_twk, Rune_twk.
+- Sword: calling `OnEquipItemType` (DishonoredItemEmpty, primary hand) with the borrowed
+  default action did nothing, every second, in the sewers and in Coldridge. Next try:
+  mark the action's "Apply" input (`InputLinks[0].bHasImpulse`) for the call, since the
+  handler probably checks which input fired.
 - A long-running Launcher keeps the client code it started with: restart it after
   client changes.
 

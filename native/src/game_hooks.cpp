@@ -392,18 +392,31 @@ void enforce_sword(ue3::UObject* pawn, ue3::UObject* inventory, DWORD now) {
     auto& type = *reinterpret_cast<ue3::UObject**>(fields + ue3::kEquipActionItemType);
     auto& preferred = *(fields + ue3::kEquipActionUsage);
     auto& flags = *reinterpret_cast<uint32_t*>(fields + ue3::kEquipActionFlags);
+    // The handler checks which input fired ("Apply" or "Release (AI only)"), as when a
+    // level script activates the action, so mark input 0 for the call.
+    const auto inputs = ue3::field<ue3::TArray<uint8_t>>(action, ue3::kSequenceOpInputLinks);
+    uint32_t* apply = inputs.count > 0 && inputs.data != nullptr
+                          ? reinterpret_cast<uint32_t*>(inputs.data + ue3::kInputLinkHasImpulse)
+                          : nullptr;
     const auto saved_type = type;
     const auto saved_usage = preferred;
     const auto saved_flags = flags;
+    const uint32_t saved_apply = apply ? *apply : 0;
     type = empty_hands;
     preferred = usage;
     flags = 1;  // m_bDoInstantly
+    if (apply) *apply |= 1;
     ue3::UObject* params = action;
     g_original(pawn, nullptr, equip, &params, nullptr);
     type = saved_type;
     preferred = saved_usage;
     flags = saved_flags;
-    emit_event(std::format("unequip sword (hand {})", usage));
+    if (apply) *apply = saved_apply;
+    static DWORD last_logged = 0;
+    if (now - last_logged >= 30000) {  // it repeats every second while it doesn't take
+      last_logged = now;
+      emit_event(std::format("unequip sword (hand {}, {} input links)", usage, inputs.count));
+    }
   }
 }
 
