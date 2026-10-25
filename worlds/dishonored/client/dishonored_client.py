@@ -12,7 +12,8 @@ from NetUtils import ClientStatus, NetworkItem
 from ..game_data import GAME_NAME
 from .game_interface import BACKENDS, GameInterface
 from .item_commands import limits
-from .messages import chat_line, received_line, sent_line
+from .messages import chat_line, missing_key_line, received_line, sent_line
+from .zones import zone_key_for_level
 
 POLL_SECONDS = 0.5
 
@@ -177,6 +178,13 @@ async def send_checks_and_goal(ctx: DishonoredContext, found: set[int], goal: bo
 
 async def sync_with_game(ctx: DishonoredContext, game: GameInterface) -> None:
     await send_checks_and_goal(ctx, game.poll_checked_locations(), game.poll_goal_reached())
+
+    entered = game.take_zone_entered()
+    if entered and ctx.slot:
+        key = zone_key_for_level(entered)
+        if key and not any(ctx.item_names.lookup_in_game(i.item) == key for i in ctx.items_received):
+            logger.warning(f"Entered {entered} without the {key}: this area is out of logic")
+            ctx.game_messages.append(missing_key_line(key))
 
     while ctx.game_messages and game.show_message(ctx.game_messages[0]):
         ctx.game_messages.pop(0)

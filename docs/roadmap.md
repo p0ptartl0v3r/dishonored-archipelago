@@ -116,11 +116,16 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
 
 ### 6. Zone keys
 Today they're only shown as received, nothing in the game checks them.
-- [ ] Map each zone to its streaming levels (`mapchange L_...` events, research/notes.md)
+- [x] Map each zone to its streaming levels (`client/zones.py`; confirmed for the first
+      two missions, the rest from package names where unambiguous)
 - [ ] Show received zone keys in the journal's Key Ring tab: give a key through the
       pawn's native `OnAddKey` (`DisSeqAct_AddKey`: `m_Name`, `m_KeyTweaks`) like
       upgrades. Open question: can the entry show a custom name?
-- [ ] Warn in-game when entering a zone without its key
+- [ ] Warn in-game when entering a zone without its key (written: the client shows
+      "You don't have the X Zone Key yet" on mapchange; untested. A loaded save emits
+      no mapchange, so loading inside a zone doesn't warn yet)
+- [ ] Decide how to enforce: e.g. hold back checks found in a zone without its key and
+      send them once the key arrives (no movement blocking needed), or block transitions
 - [ ] Then block: undo the transition or move the player back. Loading a save
       emits no `mapchange`, so the DLL also needs the list of loaded streaming
       levels (`WorldInfo.StreamingLevels`)

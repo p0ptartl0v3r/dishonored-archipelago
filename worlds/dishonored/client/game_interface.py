@@ -15,6 +15,7 @@ from abc import ABC, abstractmethod
 
 from ..game_data import load as load_game_data
 from .item_commands import APPLIED_BY_LIMITS, UNVERIFIED, commands_for, console_commands
+from .zones import zone_key_for_level
 
 logger = logging.getLogger("DishonoredClient")
 
@@ -58,6 +59,10 @@ class GameInterface(ABC):
     def show_message(self, text: str) -> bool:
         """Show a line of text in-game (e.g. "Alice sent Blink to Bob"). Return False to retry later."""
         return True
+
+    def take_zone_entered(self) -> str | None:
+        """The streaming level of the zone the player last walked into, once (None if none since)."""
+        return None
 
 
 def log_unlock_for_player(item_name: str, level: int) -> None:
@@ -201,6 +206,7 @@ class NativeInterface(GameInterface):
         self._goal_reached = False
         self._warned_no_cheats = False
         self._resync = False
+        self._zone_entered: str | None = None
         self._shown: set[tuple[str, int]] = set()  # manual unlocks already shown to the player
         data = load_game_data()
         # (event prefix, location id or None for the goal)
@@ -271,6 +277,10 @@ class NativeInterface(GameInterface):
             while (reply := self._request(f"event {self._next_event}")) != "none":
                 _, _, text = reply.split(" ", 2)
                 self._next_event += 1
+                if text.startswith("mapchange ") and zone_key_for_level(text.split()[1]):
+                    # Only the latest counts: replayed events after reconnecting would
+                    # otherwise warn about every zone visited since the game started.
+                    self._zone_entered = text.split()[1]
                 if text == "gameplay":
                     # A save was loaded (or a new level started): the game may have
                     # forgotten items granted since that save, so grant them all again.
@@ -295,6 +305,10 @@ class NativeInterface(GameInterface):
     def take_resync_request(self) -> bool:
         resync, self._resync = self._resync, False
         return resync
+
+    def take_zone_entered(self) -> str | None:
+        entered, self._zone_entered = self._zone_entered, None
+        return entered
 
     def set_limits(self, lines: list[str]) -> bool:
         try:

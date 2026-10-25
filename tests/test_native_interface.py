@@ -282,3 +282,11 @@ def test_real_events_from_high_overseer_campbell():
     assert game.match_event("pickup L_Ovrsr_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_2 x") == [
         ids["High Overseer's Office: Meeting Room Rune"]
     ]
+
+
+def test_only_the_latest_zone_entered_is_reported():
+    pipe = FakePipe(events=["mapchange L_Streets1_P", "mapchange L_Pub_FromPrison_Script", "mapchange L_Ovrsr_P"])
+    game = attached(pipe)
+    game.poll_checked_locations()
+    assert game.take_zone_entered() == "L_Ovrsr_P"
+    assert game.take_zone_entered() is None
