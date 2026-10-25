@@ -48,10 +48,22 @@ LEVEL_PREFIX_ZONE_KEYS: list[tuple[str, str]] = [
 # (the DLL's `travel` event) -> the level it loads (the `mapchange` that follows). The
 # client refuses those leading into a zone whose key hasn't been received. Story
 # transitions (cutscenes, mission ends) aren't prompts and are never refused.
+def _seq(package: str, choice: int, option: int = 0) -> str:
+    return f"{package}.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_{choice}#{option}"
+
+
 TRAVEL_PROMPTS: dict[str, str] = {
     # High Overseer Campbell (confirmed in-game)
-    "L_Streets1_Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_1#0": "L_Distillery_P",
-    "L_Distillery_Strt1Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_1#0": "L_Streets1_P",
+    _seq("L_Streets1_Script", 1): "L_Distillery_P",  # Go to Dunwall Whiskey Distillery
+    _seq("L_Distillery_Strt1Script", 1): "L_Streets1_P",  # Go to Bottle Street
+    _seq("L_Streets1_Script", 5): "L_Galvani1_P",  # Go to Dr. Galvani's Offices
+    _seq("L_Galvani1_Scripts", 4): "L_Streets1_P",  # Go to Clavering Blvd
+    _seq("L_Streets1_P", 0): "L_Ovrsr_P",  # Go to Holger Square
+    _seq("L_Ovrsr_Script", 4): "L_Streets1_P",  # Go To Distillery District
+    _seq("L_Ovrsr_Script", 0): "L_Ovrsr_Kennel_P",  # Go To Kennel
+    _seq("L_Ovrsr_Kennel_Script", 4): "L_Ovrsr_P",  # Go To Office of the High Overseer
+    _seq("L_Ovrsr_Script", 2): "L_Ovrsr_Back_P",  # Go To Back Yard
+    _seq("L_Ovrsr_Back_Script", 4): "L_Ovrsr_P",  # Go to Holger Square
 }
 
 

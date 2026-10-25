@@ -1416,6 +1416,10 @@ bool set_limit(const std::string& kind, const std::string& name, int32_t value) 
   } else if (kind == "equip") {
     g_equip_allowed[name] = value > 0;
   } else if (kind == "travel") {
+    const auto it = g_travel_allowed.find(lower(name));
+    if (it == g_travel_allowed.end() || it->second != (value > 0)) {
+      log("travel {} {}", value > 0 ? "allowed:" : "refused:", name);
+    }
     g_travel_allowed[lower(name)] = value > 0;
   } else {
     return false;
