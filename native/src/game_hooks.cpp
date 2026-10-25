@@ -97,6 +97,7 @@ struct EventNames {
   int32_t req_buy_item = -1;            // DisGFxMoviePlayerStore.Req_BuyItem(ItemIdx): buying at a shop
   int32_t world_upgrade = -1;           // class DisUpgrade: an upgrade picked up in the world (DLC statues)
   int32_t player_pawn_tweaks = -1;      // class DisTweaks_PlayerPawn: holds the base bone charm capacity
+  int32_t ranged_weapon = -1;           // class DishonoredWeapon_Ranged: pistol, crossbow (loaded magazine)
   int32_t pickup_base = -1;                // class DisPickup_Base
   int32_t abstract_item_pickup = -1;       // class DisAbstractItemPickup
   int32_t whale_bone_charm = -1;           // class DisWhaleBoneCharm
@@ -327,6 +328,8 @@ std::map<std::string, int32_t> g_power_limits;  // lower-case power name -> high
 std::map<std::string, bool> g_upgrade_allowed;  // randomized upgrade -> received
 std::atomic<bool> g_limits_known = false;
 std::atomic<int32_t> g_bone_charm_base = -1;  // base capacity to set (-1: leave the game's)
+std::map<std::string, bool> g_ammo_allowed;   // randomized ammo type (kAmmoTypes name) -> received
+std::map<std::string, bool> g_item_allowed;   // randomized abstract item (RewireTool) -> received
 // The Void needs Blink to cross it, so script grants there go through; leaving the Void
 // (a mapchange) settles and removes them again unless received.
 std::atomic<bool> g_in_void = false;
@@ -343,10 +346,54 @@ std::optional<int32_t> power_limit(const std::string& power) {
   return it == g_power_limits.end() ? std::nullopt : std::optional(it->second);
 }
 
-std::optional<bool> upgrade_allowed(const std::string& upgrade) {
+std::optional<bool> allowed_in(const std::map<std::string, bool>& limits, const std::string& name) {
   std::lock_guard lock(g_limits_mutex);
-  const auto it = g_upgrade_allowed.find(upgrade);
-  return it == g_upgrade_allowed.end() ? std::nullopt : std::optional(it->second);
+  const auto it = limits.find(name);
+  return it == limits.end() ? std::nullopt : std::optional(it->second);
+}
+
+std::optional<bool> upgrade_allowed(const std::string& upgrade) { return allowed_in(g_upgrade_allowed, upgrade); }
+
+// Is this (kind, name) from a purchase or holding something the player may not have yet?
+bool blocked(const std::string& kind, const std::string& name) {
+  if (kind == "upgrade") return upgrade_allowed(name) == false;
+  if (kind == "ammo") return allowed_in(g_ammo_allowed, name) == false;
+  if (kind == "item") return allowed_in(g_item_allowed, name) == false;
+  return false;
+}
+
+// Equipment not received yet: ammo of that type (and a magazine loaded with it) and
+// collectable items like the Rewire Tool are kept at 0.
+void enforce_equipment(ue3::UObject* pawn) {
+  auto* inventory = ue3::field<ue3::UObject*>(pawn, ue3::kPawnInventory);
+  if (inventory == nullptr) return;
+  const auto ammo = ue3::field<ue3::TArray<int32_t>>(inventory, ue3::kInventoryAmmo);
+  for (int32_t i = 0; i < ammo.count && i < 12 && ammo.data != nullptr; ++i) {
+    if (ammo.data[2 * i] > 0 && blocked("ammo", kAmmoTypes[i])) {
+      emit_event(std::format("remove ammo {} {}->0", kAmmoTypes[i], ammo.data[2 * i]));
+      ammo.data[2 * i] = 0;
+    }
+  }
+  const auto slots = ue3::field<ue3::TArray<uint8_t>>(inventory, ue3::kInventorySlots);
+  for (int32_t i = 0; i < slots.count && slots.data != nullptr; ++i) {
+    auto* weapon = *reinterpret_cast<ue3::UObject**>(slots.data + i * 0xC);
+    if (!ue3::is_a(weapon, g_names.ranged_weapon)) continue;
+    const uint8_t type = ue3::field<uint8_t>(weapon, ue3::kRangedCurAmmoType);
+    auto& loaded = *reinterpret_cast<int32_t*>(reinterpret_cast<uint8_t*>(weapon) + ue3::kRangedLoadedAmmo);
+    if (type < 12 && loaded > 0 && blocked("ammo", kAmmoTypes[type])) {
+      emit_event(std::format("unload {} {} {}->0", ue3::class_name(weapon), kAmmoTypes[type], loaded));
+      loaded = 0;
+    }
+  }
+  const auto abstract = ue3::field<ue3::TArray<uint8_t>>(inventory, ue3::kInventoryAbstractItems);
+  for (int32_t i = 0; i < abstract.count && abstract.data != nullptr; ++i) {
+    const std::string name = ue3::object_name(*reinterpret_cast<ue3::UObject**>(abstract.data + i * 0xC));
+    auto& quantity = *reinterpret_cast<int32_t*>(abstract.data + i * 0xC + 4);
+    if (quantity > 0 && blocked("item", name)) {
+      emit_event(std::format("remove item {} {}->0", name, quantity));
+      quantity = 0;
+    }
+  }
 }
 
 // Takes a power away the way level scripts do: the pawn's OnRemovePower handler with the
@@ -476,6 +523,7 @@ void remove_world_upgrades(DWORD now) {
 // half second during settled gameplay, outside the Void.
 void enforce_limits(ue3::UObject* pawn, DWORD now) {
   if (!g_limits_known || g_in_void) return;
+  enforce_equipment(pawn);
   for (const auto& [name, level] : power_levels(pawn)) {
     const auto limit = power_limit(name);
     if (!limit || level <= *limit) continue;
@@ -579,9 +627,9 @@ void report_purchases(ue3::UObject* pawn, const Holdings& before, const Holdings
       const auto old = was.find(name);
       if (name != "Coins_AbsItm" && count > (old == was.end() ? 0 : old->second)) {
         emit_event(std::format("buy {} {} for {} {}", kind, name, spent, where));
-        // A randomized upgrade bought before it was received: enforce_limits takes it
-        // away, so give the coins back.
-        if (g_limits_known && std::string(kind) == "upgrade" && upgrade_allowed(name) == false) {
+        // Something randomized bought before it was received: enforcement takes it away,
+        // so give the coins back.
+        if (g_limits_known && blocked(kind, name)) {
           add_coins(pawn, spent);
           emit_event(std::format("refund {} for {}", spent, name));
         }
@@ -863,6 +911,7 @@ void resolve_engine_objects() {
   g_names.req_buy_item = ue3::find_name_index("Req_BuyItem");
   g_names.world_upgrade = ue3::find_name_index("DisUpgrade");
   g_names.player_pawn_tweaks = ue3::find_name_index("DisTweaks_PlayerPawn");
+  g_names.ranged_weapon = ue3::find_name_index("DishonoredWeapon_Ranged");
   g_names.pickup_base = ue3::find_name_index("DisPickup_Base");
   g_names.abstract_item_pickup = ue3::find_name_index("DisAbstractItemPickup");
   g_names.whale_bone_charm = ue3::find_name_index("DisWhaleBoneCharm");
@@ -993,6 +1042,10 @@ bool set_limit(const std::string& kind, const std::string& name, int32_t value) 
     g_upgrade_allowed[name] = value > 0;
   } else if (kind == "bonecharms" && name == "base") {
     g_bone_charm_base = value;
+  } else if (kind == "ammo") {
+    g_ammo_allowed[name] = value > 0;
+  } else if (kind == "item") {
+    g_item_allowed[name] = value > 0;
   } else {
     return false;
   }

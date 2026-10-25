@@ -14,7 +14,7 @@ import logging
 from abc import ABC, abstractmethod
 
 from ..game_data import load as load_game_data
-from .item_commands import UNVERIFIED, commands_for, console_commands
+from .item_commands import APPLIED_BY_LIMITS, UNVERIFIED, commands_for, console_commands
 
 logger = logging.getLogger("DishonoredClient")
 
@@ -301,6 +301,12 @@ class NativeInterface(GameInterface):
     def give_item(self, item_id: int, item_name: str, level: int) -> bool:
         commands = commands_for(item_name, level)
         # Unverified command names would silently do nothing, so show those to the player instead.
+        if not commands and item_name in APPLIED_BY_LIMITS:
+            # Takes effect through the limits the client sends (e.g. ammo allowed).
+            if (item_name, level) not in self._shown:
+                logger.info(f"Unlocked: {item_name}" + (f" ({level})" if level > 1 else "") + " (applied in-game)")
+                self._shown.add((item_name, level))
+            return True
         if not commands or item_name in UNVERIFIED:
             if (item_name, level) not in self._shown:  # don't repeat on every reload
                 log_unlock_for_player(item_name, level)

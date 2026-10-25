@@ -66,9 +66,12 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
       mapped onto the 2 Piero + 4 DLC statue capacity upgrades
       (`BONE_CHARM_CAPACITY`; a statue grant added a 7th slot in-game). Still to do: cap slots below the base 3 for the
       first copies (DLL), and block buying the Piero ones before they're received
-- [ ] Equipment and ammo: the inventory keeps (count, capacity) per ammo type
-      (`UDishonoredInventory.m_AmmoInfo`), which could block ammo types until received.
-      `dump` shows the current values
+- [ ] Equipment: bullets, bolts, sleep darts, grenades (+ explosive/incendiary/sticky),
+      spring razors and the Rewire Tool are held at 0 until received (`limit ammo`,
+      `limit item`; written, untested). Still to do: the sword (no callable "remove
+      inventory item": `DisSeqAct_RemoveInventoryItem` is latent with no handler), and
+      refusing ammo purchases before they happen (learn the shop entry names from
+      `shop: buying entry ...`)
 - [ ] Bone charm slots
 - [ ] Zone keys (hardest; may stay honor-system for a long time)
 - [x] Survive save reloads: the client re-applies every received item after each

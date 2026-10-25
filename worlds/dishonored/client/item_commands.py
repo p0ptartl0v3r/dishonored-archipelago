@@ -116,6 +116,26 @@ def commands_for(item_name: str, level: int) -> list[str]:
     return builder(level) if builder else []
 
 
+# Equipment items allow using an ammo type (the DLL's EeDisAmmoType names): copy N of a
+# progressive item allows the first N types. Until then the DLL keeps that type's count,
+# and a loaded magazine of it, at 0, and refunds shop purchases of it.
+AMMO: dict[str, tuple[str, ...]] = {
+    "Progressive Bullets": ("Bullet", "Bullet_Explosive"),
+    "Progressive Crossbow Bolts": ("Arrow", "Arrow_Flare"),  # Arrow_Flare = incendiary bolts
+    "Progressive Sleep Darts": ("Arrow_Sleep",),
+    "Progressive Grenades": ("Grenade", "StickyGrenade"),
+    "Spring Razor": ("SpringRazor",),
+}
+
+# Items that allow a collectable (abstract) item; held at 0 until received. The Rewire
+# Tool has shown up under both names (inventory list and pickup).
+ABSTRACT_ITEMS: dict[str, tuple[str, ...]] = {
+    "Rewire Tool": ("RewireTool", "RewireTool_AbsItm"),
+}
+
+# Items whose effect comes (at least partly) from the limits rather than a command.
+APPLIED_BY_LIMITS: set[str] = set(AMMO) | set(ABSTRACT_ITEMS) | {"Bone Charm Slot"}
+
 BASE_BONE_CHARM_SLOTS = 3  # Corvo's slots without any capacity upgrade
 
 
@@ -140,6 +160,10 @@ def limits(received: Mapping[str, int]) -> list[str]:
         allowed = {r.removeprefix("upgrade ") for r in builder(received.get(item, 0))}
         lines += [f"limit upgrade {name} {int(name in allowed)}" for name in every]
     lines.append(f"limit bonecharms base {bone_charm_base(received.get('Bone Charm Slot', 0))}")
+    for item, types in AMMO.items():
+        lines += [f"limit ammo {ammo} {int(i < received.get(item, 0))}" for i, ammo in enumerate(types)]
+    for item, names in ABSTRACT_ITEMS.items():
+        lines += [f"limit item {name} {int(received.get(item, 0) > 0)}" for name in names]
     return lines
 
 

@@ -84,3 +84,13 @@ def test_bone_charm_base_makes_the_total_match_the_items():
 
     assert [bone_charm_base(n) for n in range(11)] == [0, 1, 2, 3, 3, 4, 3, 3, 3, 3, 3]
     assert "limit bonecharms base 1" in limits({"Bone Charm Slot": 1})
+
+
+def test_equipment_allows_ammo_types_in_order():
+    lines = limits({"Progressive Bullets": 1, "Progressive Grenades": 2})
+    assert "limit ammo Bullet 1" in lines
+    assert "limit ammo Bullet_Explosive 0" in lines
+    assert "limit ammo Grenade 1" in lines and "limit ammo StickyGrenade 1" in lines
+    assert "limit ammo Arrow 0" in lines and "limit ammo Arrow_Sleep 0" in lines
+    assert "limit item RewireTool 0" in lines
+    assert "limit item RewireTool_AbsItm 1" in limits({"Rewire Tool": 1})

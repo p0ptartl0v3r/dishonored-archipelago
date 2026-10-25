@@ -100,6 +100,10 @@ arrives). From then on the DLL:
   one up gives nothing, and they're hidden (`disarmed world upgrade ...`). They're placed
   in the level: `Destroy` fails, `SetLocation` doesn't move them, and pickup ignores
   collision (all seen in-game). Their items grant the upgrade anyway (confirmed in-game)
+- keeps equipment not received at 0 (`limit ammo <type> <0|1>`, `limit item <name> <0|1>`):
+  ammo of that type (`remove ammo ...`), a pistol/crossbow magazine loaded with it
+  (`unload ...`) and collectables like the Rewire Tool (`remove item ...`); shop
+  purchases of them are refunded (untested)
 - sets the base bone charm capacity (`DisTweaks_PlayerPawn.m_MaxActivatedBoneCharmCount`,
   3 in the shipped game) from `limit bonecharms base <n>`, so base + granted capacity
   upgrades = Bone Charm Slot items received (`bone charm base ...`; confirmed in-game:
