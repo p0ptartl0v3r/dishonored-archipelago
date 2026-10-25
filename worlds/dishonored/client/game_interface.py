@@ -55,6 +55,10 @@ class GameInterface(ABC):
         """Tell the game what may be kept (item_commands.limits). Return False to retry later."""
         return True
 
+    def show_message(self, text: str) -> bool:
+        """Show a line of text in-game (e.g. "Alice sent Blink to Bob"). Return False to retry later."""
+        return True
+
 
 def log_unlock_for_player(item_name: str, level: int) -> None:
     """Tell the player what they got and, if known, what to type in the console."""
@@ -295,6 +299,12 @@ class NativeInterface(GameInterface):
     def set_limits(self, lines: list[str]) -> bool:
         try:
             return all(self._request(line) == "ok" for line in lines)
+        except OSError:
+            return False
+
+    def show_message(self, text: str) -> bool:
+        try:
+            return self._request("message " + " ".join(text.split())) == "ok"
         except OSError:
             return False
 

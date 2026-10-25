@@ -126,6 +126,18 @@ the modifier name upgrades use; `dump` lists each upgrade's `attributes=`.
 
 Without limits (no client connected) nothing is blocked or removed.
 
+## On-screen messages (untested in-game)
+
+`message <text>` shows a line on screen for 7 seconds (up to 6 at once, fading out),
+drawn with the HUD's Canvas right after the game's own `HUD.PostRender`. The client
+sends one for every item sent or received that involves your slot. Try it directly:
+
+```
+python tools/native_console.py "message Hello from Archipelago"
+```
+
+The game's own `DisSeqAct_ShowHUDMessage` can't be used: it has no script handler.
+
 ## Upgrades and the state dump (confirmed in-game)
 
 - `upgrade <name>` gives one of Piero's upgrades by its `DisTweaks_Upgrade` object

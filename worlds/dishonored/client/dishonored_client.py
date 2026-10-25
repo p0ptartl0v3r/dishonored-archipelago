@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import copy
 import logging
 from collections import Counter
 from typing import Any
@@ -69,6 +70,7 @@ class DishonoredContext(CommonContext):
         # everything) whenever the game reports that a save was loaded.
         self.items_applied = 0
         self.limits_sent: list[str] | None = None  # last limits the game accepted
+        self.game_messages: list[str] = []  # waiting to be shown in-game
         self.slot_data: dict[str, Any] = {}
 
     async def server_auth(self, password_requested: bool = False) -> None:
@@ -76,6 +78,13 @@ class DishonoredContext(CommonContext):
             await super().server_auth(password_requested)
         await self.get_username()
         await self.send_connect()
+
+    def on_print_json(self, args: dict) -> None:
+        super().on_print_json(args)
+        # Item sends and cheats that involve this slot are also shown in-game.
+        if args.get("type") in ("ItemSend", "ItemCheat") and not self.is_uninteresting_item_send(args):
+            text = self.rawjsontotextparser(copy.deepcopy(args["data"]))
+            self.game_messages.append(" ".join(text.split()))
 
     def on_package(self, cmd: str, args: dict) -> None:
         if cmd == "Connected":
@@ -140,6 +149,9 @@ async def send_checks_and_goal(ctx: DishonoredContext, found: set[int], goal: bo
 
 async def sync_with_game(ctx: DishonoredContext, game: GameInterface) -> None:
     await send_checks_and_goal(ctx, game.poll_checked_locations(), game.poll_goal_reached())
+
+    while ctx.game_messages and game.show_message(ctx.game_messages[0]):
+        ctx.game_messages.pop(0)
 
     # After a save is loaded the game may lack items granted since that save, so
     # replay everything. Commands set absolute state (AddPower Blink 2), so

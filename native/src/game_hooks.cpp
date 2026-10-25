@@ -100,6 +100,8 @@ struct EventNames {
   int32_t ranged_weapon = -1;           // class DishonoredWeapon_Ranged: pistol, crossbow (loaded magazine)
   int32_t sword = -1;                   // class DishonoredWepSword
   int32_t sword_tweaks = -1;            // class DisTweaks_WepSword (Twk_Inv_SwordCorvo)
+  int32_t post_render = -1;             // HUD.PostRender: the HUD draws a frame (Canvas valid)
+  int32_t hud = -1;                     // class HUD
   int32_t pickup_base = -1;                // class DisPickup_Base
   int32_t abstract_item_pickup = -1;       // class DisAbstractItemPickup
   int32_t whale_bone_charm = -1;           // class DisWhaleBoneCharm
@@ -1047,6 +1049,8 @@ void resolve_engine_objects() {
   g_names.ranged_weapon = ue3::find_name_index("DishonoredWeapon_Ranged");
   g_names.sword = ue3::find_name_index("DishonoredWepSword");
   g_names.sword_tweaks = ue3::find_name_index("DisTweaks_WepSword");
+  g_names.post_render = ue3::find_name_index("PostRender");
+  g_names.hud = ue3::find_name_index("HUD");
   g_names.pickup_base = ue3::find_name_index("DisPickup_Base");
   g_names.abstract_item_pickup = ue3::find_name_index("DisAbstractItemPickup");
   g_names.whale_bone_charm = ue3::find_name_index("DisWhaleBoneCharm");
@@ -1056,8 +1060,88 @@ void resolve_engine_objects() {
   log("found DishonoredEngine ({}) and PlayerController.ConsoleCommand", ue3::object_name(g_engine));
 }
 
+// ---- On-screen messages ("Received X from Y") ----
+// Drawn with the HUD's Canvas right after the game's own HUD.PostRender, every frame.
+constexpr DWORD kMessageMs = 7000;  // how long each line stays (the last second fades)
+constexpr size_t kMaxMessages = 6;
+
+struct Message {
+  std::wstring text;
+  DWORD shown_at;
+};
+std::mutex g_messages_mutex;
+std::deque<Message> g_messages;
+
+void draw_messages(ue3::UObject* hud) {
+  auto* canvas = ue3::field<ue3::UObject*>(hud, ue3::kHudCanvas);
+  if (canvas == nullptr) return;
+  std::vector<Message> lines;
+  {
+    std::lock_guard lock(g_messages_mutex);
+    const DWORD now = GetTickCount();
+    while (!g_messages.empty() && now - g_messages.front().shown_at > kMessageMs) g_messages.pop_front();
+    lines.assign(g_messages.begin(), g_messages.end());
+  }
+  if (lines.empty()) return;
+  static ue3::UFunction* set_pos = ue3::find_object("Function Engine.Canvas.SetPos");
+  static ue3::UFunction* set_color = ue3::find_object("Function Engine.Canvas.SetDrawColor");
+  static ue3::UFunction* draw_text = ue3::find_object("Function Engine.Canvas.DrawText");
+  static ue3::UObject* fallback_font = nullptr;
+  static bool font_logged = false;
+  if (set_pos == nullptr || set_color == nullptr || draw_text == nullptr) return;
+  auto& font = *reinterpret_cast<ue3::UObject**>(reinterpret_cast<uint8_t*>(canvas) + ue3::kCanvasFont);
+  if (font == nullptr) {
+    if (fallback_font == nullptr) fallback_font = ue3::find_object("Font EngineFonts.SmallFont");
+    if (fallback_font == nullptr) return;
+    font = fallback_font;
+  }
+  if (!font_logged) {
+    font_logged = true;
+    log("messages: drawing with font {}", ue3::full_name(font));
+  }
+  const float height = ue3::field<float>(canvas, ue3::kCanvasClipY);
+  const float width = ue3::field<float>(canvas, ue3::kCanvasClipX);
+  const float scale = height > 0 ? height / 720.0f : 1.0f;
+  const float line = 22.0f * scale;
+  float y = height * 0.62f - line * static_cast<float>(lines.size());
+  const DWORD now = GetTickCount();
+  for (const auto& message : lines) {
+    const DWORD age = now - message.shown_at;
+    const uint8_t alpha = age + 1000 > kMessageMs ? static_cast<uint8_t>(255 * (kMessageMs - age) / 1000) : 255;
+    struct {
+      float x, y, z;
+    } pos{width * 0.02f, y, 0};
+    g_original(canvas, nullptr, set_pos, &pos, nullptr);
+    uint8_t color[4] = {255, 235, 190, alpha};  // R, G, B, A: warm white
+    g_original(canvas, nullptr, set_color, color, nullptr);
+    struct {
+      ue3::FString text;
+      uint32_t carriage_return;
+      float x_scale, y_scale;
+      uint32_t render_flags;  // bClipText (bit 0), bEnableShadow (bit 1)
+      uint8_t glow[0x24];
+    } draw{};
+    draw.text = {message.text.c_str(), static_cast<int32_t>(message.text.size() + 1),
+                 static_cast<int32_t>(message.text.size() + 1)};
+    draw.x_scale = draw.y_scale = scale;  // optional params arrive as given through ProcessEvent: 0 = invisible
+    draw.render_flags = 2;
+    g_original(canvas, nullptr, draw_text, &draw, nullptr);
+    y += line;
+  }
+}
+
 void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction* function, void* params,
                                    void* result) {
+  // Messages are drawn after the HUD's own frame, so they sit on top of it.
+  if (function != nullptr && self != nullptr && g_names.post_render >= 0 &&
+      function->name.index == g_names.post_render && !g_shutting_down && !g_inside_hook_work &&
+      ue3::is_a(self, g_names.hud)) {
+    g_original(self, edx, function, params, result);
+    g_inside_hook_work = true;
+    draw_messages(self);
+    g_inside_hook_work = false;
+    return;
+  }
   if (g_names.pre_exit >= 0 && function != nullptr && function->name.index == g_names.pre_exit &&
       !g_shutting_down) {
     g_shutting_down = true;
@@ -1168,6 +1252,12 @@ CommandState command_state() {
 }
 
 void request_mark() { g_mark_requested = true; }
+
+void show_message(const std::string& text) {
+  std::lock_guard lock(g_messages_mutex);
+  g_messages.push_back({widen(text), GetTickCount()});
+  while (g_messages.size() > kMaxMessages) g_messages.pop_front();
+}
 
 bool set_limit(const std::string& kind, const std::string& name, int32_t value) {
   std::lock_guard lock(g_limits_mutex);

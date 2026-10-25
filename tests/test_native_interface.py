@@ -17,7 +17,7 @@ class FakePipe:
             reply = self.ready if isinstance(self.ready, str) else ("pong ready" if self.ready else "pong waiting")
         elif request.startswith(("console ", "upgrade ")):
             reply = "queued"
-        elif request.startswith("limit "):
+        elif request.startswith(("limit ", "message ")):
             reply = "ok"
         elif request.startswith("event "):
             index = int(request.split()[1])
@@ -236,3 +236,9 @@ def test_limits_are_sent_as_is():
     pipe = FakePipe()
     assert attached(pipe).set_limits(["limit power Blink 1", "limit upgrade Twk_Upgrade_Armor 0"])
     assert pipe.sent == ["limit power Blink 1", "limit upgrade Twk_Upgrade_Armor 0"]
+
+
+def test_messages_are_sent_on_one_line():
+    pipe = FakePipe()
+    assert attached(pipe).show_message("Alice sent Progressive Blink\nto Bob")
+    assert pipe.sent == ["message Alice sent Progressive Blink to Bob"]

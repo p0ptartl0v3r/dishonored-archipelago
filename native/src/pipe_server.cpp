@@ -28,6 +28,10 @@ std::string handle(const std::string& request) {
     queue_game_request(request);
     return "queued";
   }
+  if (request.rfind("message ", 0) == 0) {
+    show_message(request.substr(8));
+    return "ok";
+  }
   if (request.rfind("limit ", 0) == 0) {
     // limit <power|upgrade> <name> <value>
     std::istringstream words(request.substr(6));

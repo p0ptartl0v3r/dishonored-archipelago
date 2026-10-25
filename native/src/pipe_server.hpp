@@ -13,6 +13,7 @@ namespace ap {
 //                                     (what the player may have; enables blocking and removal)
 //   event <n>         -> "event <n> <text>" | "none"   (n-th game event since start, from 0)
 //   mark <text>       -> "ok"         (writes a marker line to the log)
+//   message <text>    -> "ok"         (shows the text on screen for a few seconds)
 // Anything else       -> "error unknown request"
 void start_pipe_server();
 
