@@ -94,3 +94,8 @@ def test_equipment_allows_ammo_types_in_order():
     assert "limit ammo Arrow 0" in lines and "limit ammo Arrow_Sleep 0" in lines
     assert "limit item RewireTool 0" in lines
     assert "limit item RewireTool_AbsItm 1" in limits({"Rewire Tool": 1})
+
+
+def test_sword_needs_the_first_progressive_sword():
+    assert "limit equip Sword 0" in limits({})
+    assert "limit equip Sword 1" in limits({"Progressive Sword": 1})

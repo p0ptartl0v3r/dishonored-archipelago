@@ -98,6 +98,7 @@ struct EventNames {
   int32_t world_upgrade = -1;           // class DisUpgrade: an upgrade picked up in the world (DLC statues)
   int32_t player_pawn_tweaks = -1;      // class DisTweaks_PlayerPawn: holds the base bone charm capacity
   int32_t ranged_weapon = -1;           // class DishonoredWeapon_Ranged: pistol, crossbow (loaded magazine)
+  int32_t sword = -1;                   // class DishonoredWepSword
   int32_t pickup_base = -1;                // class DisPickup_Base
   int32_t abstract_item_pickup = -1;       // class DisAbstractItemPickup
   int32_t whale_bone_charm = -1;           // class DisWhaleBoneCharm
@@ -330,6 +331,11 @@ std::atomic<bool> g_limits_known = false;
 std::atomic<int32_t> g_bone_charm_base = -1;  // base capacity to set (-1: leave the game's)
 std::map<std::string, bool> g_ammo_allowed;   // randomized ammo type (kAmmoTypes name) -> received
 std::map<std::string, bool> g_item_allowed;   // randomized abstract item (RewireTool) -> received
+std::map<std::string, bool> g_equip_allowed;  // randomized equipment that can be held (Sword) -> received
+// The prologue's scripted fight hands Corvo a sword; it's allowed there (like Blink in
+// the Void) so the fight can't softlock. Set by mapchange; a save loaded mid-prologue
+// isn't recognised.
+std::atomic<bool> g_in_prologue = false;
 // The Void needs Blink to cross it, so script grants there go through; leaving the Void
 // (a mapchange) settles and removes them again unless received.
 std::atomic<bool> g_in_void = false;
@@ -359,7 +365,46 @@ bool blocked(const std::string& kind, const std::string& name) {
   if (kind == "upgrade") return upgrade_allowed(name) == false;
   if (kind == "ammo") return allowed_in(g_ammo_allowed, name) == false;
   if (kind == "item") return allowed_in(g_item_allowed, name) == false;
+  if (kind == "equip") return allowed_in(g_equip_allowed, name) == false;
   return false;
+}
+
+// Holding a sword not received yet: puts empty hands in its place with the pawn's
+// OnEquipItemType handler (borrowed default DisSeqAct_EquipItemType). The sword stays in
+// the inventory, so receiving the item later just lets Corvo draw it again.
+DWORD g_last_unequip = 0;
+
+void enforce_sword(ue3::UObject* pawn, ue3::UObject* inventory, DWORD now) {
+  if (g_in_prologue || !blocked("equip", "Sword") || now - g_last_unequip < 1000) return;
+  static ue3::UFunction* equip = ue3::find_object("Function DishonoredGame.DishonoredPawn.OnEquipItemType");
+  static ue3::UObject* action =
+      ue3::find_object("DisSeqAct_EquipItemType DishonoredGame.Default__DisSeqAct_EquipItemType");
+  static ue3::UObject* empty_hands = ue3::find_object("Class DishonoredGame.DishonoredItemEmpty");
+  if (equip == nullptr || action == nullptr || empty_hands == nullptr) return;
+  const auto slots = ue3::field<ue3::TArray<uint8_t>>(inventory, ue3::kInventorySlots);
+  for (uint8_t usage = 1; usage <= 2; ++usage) {  // EDisEquipUsage_Primary, _Secondary
+    const int32_t slot = ue3::field<int32_t>(inventory, ue3::kInventoryEquipUsage + usage * ue3::kEquipUsageSize);
+    if (slot < 0 || slot >= slots.count || slots.data == nullptr) continue;
+    auto* item = *reinterpret_cast<ue3::UObject**>(slots.data + slot * 0xC);
+    if (!ue3::is_a(item, g_names.sword)) continue;
+    g_last_unequip = now;
+    auto* fields = reinterpret_cast<uint8_t*>(action);
+    auto& type = *reinterpret_cast<ue3::UObject**>(fields + ue3::kEquipActionItemType);
+    auto& preferred = *(fields + ue3::kEquipActionUsage);
+    auto& flags = *reinterpret_cast<uint32_t*>(fields + ue3::kEquipActionFlags);
+    const auto saved_type = type;
+    const auto saved_usage = preferred;
+    const auto saved_flags = flags;
+    type = empty_hands;
+    preferred = usage;
+    flags = 1;  // m_bDoInstantly
+    ue3::UObject* params = action;
+    g_original(pawn, nullptr, equip, &params, nullptr);
+    type = saved_type;
+    preferred = saved_usage;
+    flags = saved_flags;
+    emit_event(std::format("unequip sword (hand {})", usage));
+  }
 }
 
 // Equipment not received yet: ammo of that type (and a magazine loaded with it) and
@@ -367,6 +412,7 @@ bool blocked(const std::string& kind, const std::string& name) {
 void enforce_equipment(ue3::UObject* pawn) {
   auto* inventory = ue3::field<ue3::UObject*>(pawn, ue3::kPawnInventory);
   if (inventory == nullptr) return;
+  enforce_sword(pawn, inventory, GetTickCount());
   const auto ammo = ue3::field<ue3::TArray<int32_t>>(inventory, ue3::kInventoryAmmo);
   for (int32_t i = 0; i < ammo.count && i < 12 && ammo.data != nullptr; ++i) {
     if (ammo.data[2 * i] > 0 && blocked("ammo", kAmmoTypes[i])) {
@@ -737,6 +783,10 @@ void dump_player_state(ue3::UObject* player_controller) {
     auto* required = *reinterpret_cast<ue3::UObject**>(items.data + i * 0xC + 4);
     log("inventory slot {}: {} (requires {})", i, ue3::full_name(item), ue3::object_name(required));
   }
+  for (int usage = 0; usage < 3; ++usage) {
+    log("hand {} (EDisEquipUsage) holds slot {}", usage,
+        ue3::field<int32_t>(inventory, ue3::kInventoryEquipUsage + usage * ue3::kEquipUsageSize));
+  }
   // One (count, capacity) pair per EeDisAmmoType.
   const auto ammo = ue3::field<ue3::TArray<int32_t>>(inventory, ue3::kInventoryAmmo);
   for (int32_t i = 0; i < ammo.count && ammo.data != nullptr; ++i) {
@@ -826,6 +876,7 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
     const std::string level = ue3::name_string(*static_cast<ue3::FName*>(params));
     emit_event("mapchange " + level);
     g_in_void = lower(level).find("outsiderdream") != std::string::npos;
+    g_in_prologue = lower(level) == "l_tower_p";
     if (level.find("MainMenu") != std::string::npos) {
       g_menu_exit_pending = false;
       if (!g_in_menu) {
@@ -912,6 +963,7 @@ void resolve_engine_objects() {
   g_names.world_upgrade = ue3::find_name_index("DisUpgrade");
   g_names.player_pawn_tweaks = ue3::find_name_index("DisTweaks_PlayerPawn");
   g_names.ranged_weapon = ue3::find_name_index("DishonoredWeapon_Ranged");
+  g_names.sword = ue3::find_name_index("DishonoredWepSword");
   g_names.pickup_base = ue3::find_name_index("DisPickup_Base");
   g_names.abstract_item_pickup = ue3::find_name_index("DisAbstractItemPickup");
   g_names.whale_bone_charm = ue3::find_name_index("DisWhaleBoneCharm");
@@ -1046,6 +1098,8 @@ bool set_limit(const std::string& kind, const std::string& name, int32_t value) 
     g_ammo_allowed[name] = value > 0;
   } else if (kind == "item") {
     g_item_allowed[name] = value > 0;
+  } else if (kind == "equip") {
+    g_equip_allowed[name] = value > 0;
   } else {
     return false;
   }

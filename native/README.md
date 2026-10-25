@@ -103,7 +103,10 @@ arrives). From then on the DLL:
 - keeps equipment not received at 0 (`limit ammo <type> <0|1>`, `limit item <name> <0|1>`):
   ammo of that type (`remove ammo ...`), a pistol/crossbow magazine loaded with it
   (`unload ...`) and collectables like the Rewire Tool (`remove item ...`); shop
-  purchases of them are refunded (untested)
+  purchases of them are refunded (confirmed in-game)
+- keeps a sword out of Corvo's hands until Progressive Sword arrives (`limit equip Sword`):
+  empty hands are equipped in its place through the pawn's `OnEquipItemType`
+  (`unequip sword ...`). Not in the prologue, whose scripted fight hands you one (untested)
 - sets the base bone charm capacity (`DisTweaks_PlayerPawn.m_MaxActivatedBoneCharmCount`,
   3 in the shipped game) from `limit bonecharms base <n>`, so base + granted capacity
   upgrades = Bone Charm Slot items received (`bone charm base ...`; confirmed in-game:
@@ -111,7 +114,8 @@ arrives). From then on the DLL:
 - if a purchase still goes through, refunds the coins: `refund ...`
 
 Confirmed in-game: shop blocking, statue disarming, base capacity, removal from the
-upgrade list, refunds, and lowering a power. Not yet seen: `blocked buy power` (runes).
+upgrade list, refunds, lowering a power, refusing rune purchases (`blocked buy power`),
+and holding unreceived ammo/Rewire Tools at 0.
 **But removing an upgrade doesn't undo its effect** (bone charm capacity stayed, even
 after a reload): the effect is an attribute modifier on the pawn, stored separately.
 `removemod <attribute> <modifier>` calls the pawn's `OnRemoveAttributeModifier` to find

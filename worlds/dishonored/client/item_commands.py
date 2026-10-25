@@ -134,7 +134,7 @@ ABSTRACT_ITEMS: dict[str, tuple[str, ...]] = {
 }
 
 # Items whose effect comes (at least partly) from the limits rather than a command.
-APPLIED_BY_LIMITS: set[str] = set(AMMO) | set(ABSTRACT_ITEMS) | {"Bone Charm Slot"}
+APPLIED_BY_LIMITS: set[str] = set(AMMO) | set(ABSTRACT_ITEMS) | {"Bone Charm Slot", "Progressive Sword"}
 
 BASE_BONE_CHARM_SLOTS = 3  # Corvo's slots without any capacity upgrade
 
@@ -164,6 +164,8 @@ def limits(received: Mapping[str, int]) -> list[str]:
         lines += [f"limit ammo {ammo} {int(i < received.get(item, 0))}" for i, ammo in enumerate(types)]
     for item, names in ABSTRACT_ITEMS.items():
         lines += [f"limit item {name} {int(received.get(item, 0) > 0)}" for name in names]
+    # The first Progressive Sword allows holding a sword at all.
+    lines.append(f"limit equip Sword {int(received.get('Progressive Sword', 0) > 0)}")
     return lines
 
 

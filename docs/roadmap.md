@@ -55,8 +55,8 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
 
 ### 4. Items
 - [x] Powers: granted automatically with confirmed names, re-applied after loads
-- [ ] Powers: stop buying them with runes before they're received (written: `limit`
-      requests + `PowerBuy` blocking; untested in-game)
+- [x] Powers: stop buying them with runes before they're received (`PowerBuy` is
+      refused; confirmed in-game. Its PowerId is lower case: "blink")
 - [ ] Upgrades (Piero's shop). The console cheats are stripped from the release build,
       so the DLL calls the player pawn's `OnGiveUpgrade` with a `UDisSeqAct_GiveUpgrade`
       (`upgrade <name>` request). Names found with `dump` and mapped in
@@ -68,10 +68,11 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
       first copies (DLL), and block buying the Piero ones before they're received
 - [ ] Equipment: bullets, bolts, sleep darts, grenades (+ explosive/incendiary/sticky),
       spring razors and the Rewire Tool are held at 0 until received (`limit ammo`,
-      `limit item`; written, untested). Still to do: the sword (no callable "remove
-      inventory item": `DisSeqAct_RemoveInventoryItem` is latent with no handler), and
-      refusing ammo purchases before they happen (learn the shop entry names from
-      `shop: buying entry ...`)
+      `limit item`; confirmed in-game). The sword: kept out of Corvo's hands with
+      `OnEquipItemType` (untested; there's no callable "remove inventory item").
+      Optional: refuse ammo purchases up front instead of refunding (shop entries:
+      Bolt_Ammo_twk, SleepDart_Ammo_twk, Bullets_Store_Ammo_twk,
+      SpringRazor_Ammo_WithItem_twk, Grenade_Ammo_WithItem_twk, RewireTool_twk)
 - [ ] Bone charm slots
 - [ ] Zone keys (hardest; may stay honor-system for a long time)
 - [x] Survive save reloads: the client re-applies every received item after each
