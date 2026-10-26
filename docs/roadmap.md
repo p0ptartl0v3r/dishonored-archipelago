@@ -163,7 +163,17 @@ Today they're only shown as received, nothing in the game checks them.
       (unknown for an unfinished profile). A mission started from it restores the loadout
       the player had when they first started that mission (Lady Boyle: no Wind Blast, Bend
       Time or Swarm; The Loyalists: all three, plus more upgrades). The client/DLL already
-      correct that to the received items after every load, so only the unlock question remains
+      correct that to the received items after every load, except bone charm capacity:
+      a snapshot (or any old save) owning unreceived capacity upgrades keeps their bonus,
+      because removing an upgrade doesn't undo its effect (see research/notes.md, Powers).
+      Snapshots made during an Archipelago run are safe (capacity purchases were blocked),
+      unless the profile is reused across seeds. Research before building this option:
+      (1) read the capacity bonus in effect (the attribute lives in a native map; look for
+      a readable effective value on the pawn) and lower the base to match (base 0 has
+      worked down to 1 already); or (2) cancel it with the cheat `AddMod
+      Attribute_MaxActivatedBoneCharmCountBonus <name> <type> -N`, if it survived the
+      release build like `AddPower` did. Decision 2026-10-26: keep the Manual's linear
+      logic until then
 - [x] Backyard bone charms were swapped (fixed 2026-10-26): Rat Infested Building is the vise,
       which destroys a static Ovrsr_NoPhysBoneCharm and spawns a loose Ovrsr_PhysBoneCharm
       (matched by name and position); Overseer Stolen is DisWhaleBoneCharm_0
