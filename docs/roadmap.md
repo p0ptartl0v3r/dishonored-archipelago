@@ -96,8 +96,12 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
       takes effect and do the same from the DLL
 - [x] Option for players without the DLC (`void_walkers_arsenal` off): 6 Bone Charm Slot
       items instead of 10 (the game caps them at 6 slots; the statue upgrades do nothing)
-- [x] Block the DLC statues: disarmed by pointing them at Corvo's Mask (confirmed): the game hands all four out at the
-      pub on the first night, and each adds a bone charm slot
+- [ ] Block the DLC statues (the game hands all four out at the pub on the first night,
+      and each adds a bone charm slot). Pointing them at Corvo's Mask worked at first but
+      broke saves (crash on load / on waking up: the DLC gift code tracks statues by
+      upgrade name), so statues are left alone again and swapped ones restored (2026-10-26,
+      untested). Next: compensate their bonus through the bone charm base instead (same
+      research as the mission-select item); until then, don't pick them up
 
 ### 5. Saves always match what was received
 - [x] Items received after a save come back when that save is loaded: the client

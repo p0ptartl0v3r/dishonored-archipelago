@@ -280,6 +280,15 @@ through `ProcessEvent`.
   pickup is native, so it can't be refused through ProcessEvent. In-game: `Destroy`
   returns false (placed in the level), `SetHidden` works, `SetLocation` doesn't move
   them, and a hidden, non-colliding statue can still be picked up.
+- **Don't change a statue's upgrade.** `DisTweaks_PlayerPawn.m_DLCPackInfo` lists each DLC
+  pack's statue by upgrade name (`Twk_Upgrade_StatueRat`, ...) with flags
+  `Spawned_DLC_Statue<n>` / `Got_DLC_Statue<n>` (likewise for its charms, book and coin
+  pouch). After the DLL pointed statues at `Twk_Upgrade_Mask`, a pub save made after
+  waking up crashed on load ("Assertion failed: i>=0 && (i<ArrayNum ...)", Array.h:596,
+  also without the DLL) and the game crashed ~12 s after waking (2026-10-25). The
+  autosave made on going to sleep still loaded. The swap is stored in saves.
+- UE3 crash reports land in `Documents\My Games\Dishonored\DishonoredGame\Logs`
+  (`UE3AutoReportDump*.txt` and a minidump per crash); Launch.log stays empty.
 - Equipment: holding unreceived ammo types and the Rewire Tool (`RewireTool_AbsItm`) at 0
   works, magazines included (`DishonoredWeapon_Ranged.m_LoadedAmmoInfo`; the grenade
   launcher is one too). Shop entries: Bolt_Ammo_twk, SleepDart_Ammo_twk,

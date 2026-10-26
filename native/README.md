@@ -99,11 +99,12 @@ arrives). From then on the DLL:
 - refuses buying a not-yet-received upgrade at a shop (`Req_BuyItem`; the entry is
   looked up in the shop's displayed list): `blocked buy upgrade ...`. The log line
   `shop: buying entry <n> = <item>` shows what each purchase was (confirmed in-game)
-- disarms randomized upgrades lying in the world (`DisUpgrade` actors: the DLC statues):
-  their upgrade is swapped for Corvo's Mask (always owned, no attributes), so picking
-  one up gives nothing, and they're hidden (`disarmed world upgrade ...`). They're placed
-  in the level: `Destroy` fails, `SetLocation` doesn't move them, and pickup ignores
-  collision (all seen in-game). Their items grant the upgrade anyway (confirmed in-game)
+- leaves the DLC statues (`DisUpgrade` actors at the pub) alone. Earlier builds swapped
+  their upgrade for Corvo's Mask and hid them; the game's DLC gift code tracks statues by
+  upgrade name, and saves made after that crashed on load or on waking up (2026-10-26).
+  Statues swapped that way (stored in saves) get their own upgrade back and are shown
+  again (`restored world upgrade ...`). Picking one up gives a bone charm slot that isn't
+  taken away yet (honor system until the capacity can be compensated)
 - keeps equipment not received at 0 (`limit ammo <type> <0|1>`, `limit item <name> <0|1>`):
   ammo of that type (`remove ammo ...`), a pistol/crossbow magazine loaded with it
   (`unload ...`) and collectables like the Rewire Tool (`remove item ...`); shop

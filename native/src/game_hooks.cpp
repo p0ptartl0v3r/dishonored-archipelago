@@ -602,12 +602,13 @@ std::vector<std::pair<std::string, int32_t>> power_levels(ue3::UObject* pawn) {
   return out;
 }
 
-// Upgrades lying in the world (the DLC statues at the pub) are picked up in native code,
-// so there's no call to refuse, and removing the upgrade afterwards leaves its effect.
-// So randomized ones are destroyed before they can be picked up: their items grant the
-// upgrade anyway. Scanned every 2 s.
+// Earlier builds "disarmed" the DLC statues at the pub by pointing their upgrade at Corvo's
+// Mask and hiding them. The game's DLC bookkeeping (DisTweaks_PlayerPawn.m_DLCPackInfo)
+// tracks the statues by upgrade name, and saves made after that crashed on load or on
+// waking up. Statues are now left alone, and those swapped earlier (stored that way in
+// saves) get their own upgrade back: matched by the statue's model, or by position for
+// the two seen in the user's pub. Scanned every 2 s.
 DWORD g_last_world_upgrade_scan = 0;
-std::unordered_set<ue3::UObject*> g_world_upgrades_destroyed;
 
 // The base bone charm capacity is a tweak value (3 in the shipped game). The client sets
 // it so that base + granted capacity upgrades = Bone Charm Slot items received.
@@ -623,35 +624,53 @@ void apply_bone_charm_base() {
   }
 }
 
-// Upgrades lying in the world (the DLC statues) are placed in the level: Destroy fails,
-// SetLocation doesn't move them, and picking one up ignores collision. So each randomized
-// one is pointed at Corvo's Mask (always owned, no attributes), which makes picking it up
-// give nothing, and hidden. Hiding repeats every scan in case a level script shows it again.
-void remove_world_upgrades(DWORD now) {
-  if (!g_limits_known || now - g_last_world_upgrade_scan < 2000) return;
+void restore_world_upgrades(DWORD now) {
+  if (now - g_last_world_upgrade_scan < 2000) return;
   g_last_world_upgrade_scan = now;
   apply_bone_charm_base();
   static ue3::UFunction* set_hidden = ue3::find_object("Function Engine.Actor.SetHidden");
-  static ue3::UObject* harmless = nullptr;
-  if (harmless == nullptr) {
-    const int32_t mask = ue3::find_name_index("Twk_Upgrade_Mask");
-    for (auto* upgrade : ue3::find_instances(g_names.upgrade_tweaks)) {
-      if (upgrade->name.index == mask) harmless = upgrade;
-    }
+  const int32_t mask_name = ue3::find_name_index("Twk_Upgrade_Mask");
+  ue3::UObject* mask = nullptr;
+  std::vector<ue3::UObject*> statues;
+  for (auto* upgrade : ue3::find_instances(g_names.upgrade_tweaks)) {
+    if (upgrade->name.index == mask_name) mask = upgrade;
+    if (ue3::object_name(upgrade).rfind("Twk_Upgrade_Statue", 0) == 0) statues.push_back(upgrade);
   }
-  if (set_hidden == nullptr || harmless == nullptr) return;
+  if (mask == nullptr || set_hidden == nullptr) return;
+  // Where the user's pub had its Whale and Rat statues when they were swapped.
+  const std::pair<const char*, ue3::FVector> known[] = {
+      {"Twk_Upgrade_StatueWhale", {-1377, -25, 1400}},
+      {"Twk_Upgrade_StatueRat", {-1214, -1331, 1495}},
+  };
   for (auto* actor : ue3::find_instances(g_names.world_upgrade)) {
     auto& tweaks = *reinterpret_cast<ue3::UObject**>(reinterpret_cast<uint8_t*>(actor) + ue3::kWorldUpgradeTweaks);
-    if (tweaks != harmless) {
-      const std::string upgrade = ue3::object_name(tweaks);
-      if (!upgrade_allowed(upgrade).has_value()) continue;  // not randomized: leave it
-      tweaks = harmless;
-      g_world_upgrades_destroyed.insert(actor);
-      emit_event(std::format("disarmed world upgrade {} {}", upgrade, location_of(actor)));
+    if (tweaks != mask) continue;
+    auto* component = ue3::field<ue3::UObject*>(actor, ue3::kWorldUpgradeMesh);
+    auto* model = component != nullptr ? ue3::field<ue3::UObject*>(component, ue3::kStaticMeshComponentMesh) : nullptr;
+    ue3::UObject* original = nullptr;
+    for (auto* statue : statues) {
+      if (model != nullptr && ue3::field<ue3::UObject*>(statue, ue3::kUpgradeMesh) == model) original = statue;
     }
-    if (!g_world_upgrades_destroyed.contains(actor)) continue;  // a real Mask pickup: leave it
-    uint32_t hidden = 1;
+    const auto at = ue3::field<ue3::FVector>(actor, ue3::kActorLocation);
+    for (const auto& [name, where] : known) {
+      const float dx = at.x - where.x, dy = at.y - where.y, dz = at.z - where.z;
+      if (original != nullptr || dx * dx + dy * dy + dz * dz > 150.0f * 150.0f) continue;
+      for (auto* statue : statues) {
+        if (ue3::object_name(statue) == name) original = statue;
+      }
+    }
+    if (original == nullptr) {
+      static std::unordered_set<ue3::UObject*> reported;
+      if (reported.insert(actor).second) {
+        log("world upgrade {} is Corvo's Mask (model {}) {}: not a known statue, left alone", ue3::path_name(actor),
+            ue3::object_name(model), location_of(actor));
+      }
+      continue;
+    }
+    tweaks = original;
+    uint32_t hidden = 0;
     g_original(actor, nullptr, set_hidden, &hidden, nullptr);
+    emit_event(std::format("restored world upgrade {} {}", ue3::object_name(original), location_of(actor)));
   }
 }
 
@@ -677,7 +696,10 @@ void enforce_limits(ue3::UObject* pawn, DWORD now) {
                                                                 ue3::kPlayerPawnUpgrades);
   for (int32_t i = 0; i < owned.count && owned.data != nullptr;) {
     const std::string name = ue3::object_name(owned.data[i]);
-    if (upgrade_allowed(name) == false) {
+    // DLC statues stay: removing one doesn't take its slot away, and the DLC gift code
+    // tracks them (see restore_world_upgrades).
+    const bool statue = name.rfind("Twk_Upgrade_Statue", 0) == 0;
+    if (upgrade_allowed(name) == false && !statue) {
       emit_event("remove upgrade " + name);
       for (int32_t j = i; j + 1 < owned.count; ++j) owned.data[j] = owned.data[j + 1];
       --owned.count;
@@ -782,7 +804,6 @@ void track_holdings(ue3::UObject* player_controller, bool settled, DWORD now) {
   if (!settled) {
     g_holdings.reset();
     g_active_powers_pawn = nullptr;  // loads free the old components; rescan once settled
-    g_world_upgrades_destroyed.clear();
   }
   if (pawn == nullptr || now - g_last_holdings_tick < 500) return;  // possessing: keep the baseline
   g_last_holdings_tick = now;
@@ -795,7 +816,7 @@ void track_holdings(ue3::UObject* player_controller, bool settled, DWORD now) {
     report_purchases(pawn, *g_holdings, current, where);
   }
   enforce_limits(pawn, now);
-  remove_world_upgrades(now);
+  restore_world_upgrades(now);
   g_holdings = read_holdings(pawn);  // after enforcement, so its removals aren't reported as changes
 }
 
@@ -1421,7 +1442,6 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
       else {
         g_holdings.reset();
         g_active_powers_pawn = nullptr;
-        g_world_upgrades_destroyed.clear();
       }
       g_cheats_ready = settled && ensure_cheat_manager(controller);
       if (g_cheats_ready && g_queue_pending) drain_queue(controller);

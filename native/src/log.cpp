@@ -9,12 +9,21 @@ namespace ap {
 namespace {
 std::mutex g_mutex;
 FILE* g_file = nullptr;
+
+// Keeps the previous session's log as <name>.prev.log (crashes end a session).
+FILE* open_fresh(const std::wstring& path) {
+  std::wstring previous = path;
+  const size_t dot = previous.rfind(L".log");
+  previous = dot == std::wstring::npos ? previous + L".prev" : previous.substr(0, dot) + L".prev.log";
+  MoveFileExW(path.c_str(), previous.c_str(), MOVEFILE_REPLACE_EXISTING);
+  return _wfopen(path.c_str(), L"w");
+}
 }  // namespace
 
 std::wstring log_init(const std::wstring& path) {
   std::lock_guard lock(g_mutex);
   if (g_file != nullptr) return path;
-  g_file = _wfopen(path.c_str(), L"w");
+  g_file = open_fresh(path);
   if (g_file != nullptr) return path;
 
   // Game folders under Program Files are often read-only.
@@ -23,7 +32,7 @@ std::wstring log_init(const std::wstring& path) {
   const std::wstring folder = std::wstring(local_app_data) + L"\\DishonoredArchipelago";
   CreateDirectoryW(folder.c_str(), nullptr);
   const std::wstring fallback = folder + L"\\archipelago_native.log";
-  g_file = _wfopen(fallback.c_str(), L"w");
+  g_file = open_fresh(fallback);
   return g_file != nullptr ? fallback : std::wstring{};
 }
 
