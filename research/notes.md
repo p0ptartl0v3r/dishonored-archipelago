@@ -345,3 +345,9 @@ through `ProcessEvent`.
 | Current map name | | | |
 | Loading flag | | | |
 | Rune count | | | |
+
+- Bone charm capacity = base (`m_MaxActivatedBoneCharmCount`) + the bonuses of owned capacity
+  upgrades, and the base may be negative: with 2 slots received and all four statues picked up,
+  base -2 kept 2 slots (2026-10-26). Saves are in `Steam\userdata\<id>\205100\remote`:
+  `DisMission<n>.sav` are the mission-start snapshots mission select loads, `DisAutoSave*` the autosaves.
+

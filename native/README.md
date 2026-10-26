@@ -120,7 +120,8 @@ arrives). From then on the DLL:
   `Attribute_MaxActivatedBoneCharmCountBonus` of every capacity upgrade owned, every 2 s
   (`bone charm base ... (n received, +b owned)`). So picking up a DLC statue or loading a
   save with upgrades not received doesn't add slots. Capacity upgrades are never taken off
-  the upgrade list (that never removed their effect). A base below 0 is untested
+  the upgrade list (that never removed their effect). Confirmed in-game, including a base
+  below 0 (-2 with four statues and 2 slots received)
 - if a purchase still goes through, refunds the coins: `refund ...`
 
 Confirmed in-game: shop blocking, statue disarming, base capacity, removal from the
