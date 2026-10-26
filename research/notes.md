@@ -351,3 +351,15 @@ through `ProcessEvent`.
   base -2 kept 2 slots (2026-10-26). Saves are in `Steam\userdata\<id>\205100\remote`:
   `DisMission<n>.sav` are the mission-start snapshots mission select loads, `DisAutoSave*` the autosaves.
 
+### House of Pleasure (2026-10-26)
+- Levels: `L_Streets2_P` (Distillery District), `L_Distillery2_P`, `L_Galvani2_P`, `L_ArtDealer_P`,
+  `L_Brothel_P` (+ `L_Brothel_HighChaos`). Galvani's offices reuse `L_Galvani1_Scripts` (its
+  travel prompts) plus `L_Galvani1_Strt2_Scripts` (this mission's pickups), so the same prompt
+  leads to a different Distillery District in each mission.
+- Paintings are valuables (`DisAbstractItemPickup` of `Coins_AbsItm`, 300 coins each). Looking
+  at one adds a journal entry (`AbsInv_ArtDealer_Painting06`, ...), which isn't the pickup.
+- The Art Dealer's safe opens without any event; its check is the rune inside.
+- Mission end: talking to Samuel removes every objective in one `DisSeqAct_RemoveObjective`
+  (all names in one word), then `additem ... fromStreets2_toHub ... ChapterLog_Hub_03`.
+- `Captain's Chair Hotel Bone Charm` is `L_Streets2_Script...DisWhaleBoneCharm_4`, this mission.
+

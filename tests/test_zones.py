@@ -34,3 +34,13 @@ def test_travel_prompts_lead_into_known_zones():
     bottle_street = "L_Distillery_Strt1Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_1#0"
     assert zone_key_for_travel(bottle_street) == "Distillery District (HOC) Zone Key"
     assert zone_key_for_travel("L_Unknown.DisSeqAct_DialogScriptedChoice_0#0") is None
+
+
+def test_galvanis_exits_depend_on_the_mission():
+    # Both missions' Galvani offices use the L_Galvani1_Scripts level script.
+    from dishonored.client.zones import zone_key_for_travel
+
+    exit_door = "L_Galvani1_Scripts.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_3#0"
+    assert zone_key_for_travel(exit_door, "L_Galvani1_P") == "Distillery District (HOC) Zone Key"
+    assert zone_key_for_travel(exit_door, "L_Galvani2_P") == "Distillery District (HoP) Zone Key"
+    assert zone_key_for_travel(exit_door) is None

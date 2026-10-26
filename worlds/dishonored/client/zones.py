@@ -45,11 +45,14 @@ LEVEL_PREFIX_ZONE_KEYS: list[tuple[str, str]] = [
 
 
 # Travel prompts ("Go to X?") the player chooses to take: "<choice action path>#<option>"
-# (the DLL's `travel` event) -> the level it loads (the `mapchange` that follows). The
-# client refuses those leading into a zone whose key hasn't been received. Story
-# transitions (cutscenes, mission ends) aren't prompts and are never refused.
-def _seq(package: str, choice: int, option: int = 0) -> str:
-    return f"{package}.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_{choice}#{option}"
+# (the DLL's `travel` event) -> the level it loads (the `mapchange` that follows, or the
+# prompt's text for doors only seen in `dump`). The client refuses those leading into a
+# zone whose key hasn't been received. Story transitions (cutscenes, mission ends) aren't
+# prompts and are never refused. A level script used by two missions (Galvani's offices)
+# has its prompts listed per area: "<area level>|<option>".
+def _seq(package: str, choice: int, option: int = 0, area: str = "") -> str:
+    key = f"{package}.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_{choice}#{option}"
+    return f"{area}|{key}" if area else key
 
 
 TRAVEL_PROMPTS: dict[str, str] = {
@@ -57,7 +60,7 @@ TRAVEL_PROMPTS: dict[str, str] = {
     _seq("L_Streets1_Script", 1): "L_Distillery_P",  # Go to Dunwall Whiskey Distillery
     _seq("L_Distillery_Strt1Script", 1): "L_Streets1_P",  # Go to Bottle Street
     _seq("L_Streets1_Script", 5): "L_Galvani1_P",  # Go to Dr. Galvani's Offices
-    _seq("L_Galvani1_Scripts", 4): "L_Streets1_P",  # Go to Clavering Blvd
+    _seq("L_Galvani1_Scripts", 4, area="L_Galvani1_P"): "L_Streets1_P",  # Go to Clavering Blvd
     _seq("L_Streets1_P", 0): "L_Ovrsr_P",  # Go to Holger Square
     _seq("L_Ovrsr_Script", 4): "L_Streets1_P",  # Go To Distillery District
     _seq("L_Ovrsr_Script", 0): "L_Ovrsr_Kennel_P",  # Go To Kennel
@@ -66,19 +69,44 @@ TRAVEL_PROMPTS: dict[str, str] = {
     _seq("L_Ovrsr_Back_Script", 4): "L_Ovrsr_P",  # Go to Holger Square
     _seq("L_Streets1_Script", 4): "L_Galvani1_P",  # Go to Dr. Galvani's Offices (2nd door)
     _seq("L_Streets1_Script", 6): "L_Galvani1_P",  # Go to Dr. Galvani's Offices (3rd door)
-    _seq("L_Galvani1_Scripts", 3): "L_Streets1_P",  # Go to Clavering Blvd
-    _seq("L_Galvani1_Scripts", 1): "L_Streets1_P",  # Go to Clavering Blvd
+    _seq("L_Galvani1_Scripts", 3, area="L_Galvani1_P"): "L_Streets1_P",  # Go to Clavering Blvd
+    _seq("L_Galvani1_Scripts", 1, area="L_Galvani1_P"): "L_Streets1_P",  # Go to Clavering Blvd
     _seq("L_Ovrsr_Script", 3): "L_Ovrsr_Kennel_P",  # Go To Kennel (2nd door)
     _seq("L_Ovrsr_Kennel_Script", 2): "L_Ovrsr_P",  # Go To Office of the High Overseer
     _seq("L_Ovrsr_Script", 1): "L_Ovrsr_Back_P",  # Go To Back Yard (2nd door)
     _seq("L_Ovrsr_Script", 9): "L_Ovrsr_Back_P",  # Go To Back Yard (3rd door; seen in dump only)
     _seq("L_Ovrsr_Back_Script", 5): "L_Ovrsr_P",  # Go to The Office of the High Overseer
+    # House of Pleasure (taken in play, or from `dump` with the destination from the text)
+    _seq("L_Streets2_Script", 1): "L_Distillery2_P",  # Go to Dunwall Whiskey Distillery
+    _seq("L_Distillery2_Script", 1): "L_Streets2_P",  # Go to Bottle Street
+    _seq("L_Streets2_Script", 2): "L_ArtDealer_P",  # Go to Art Dealer's Apartment
+    _seq("L_Streets2_Script", 3): "L_ArtDealer_P",  # Go to Art Dealer's Apartment
+    _seq("L_Streets2_Script", 7): "L_ArtDealer_P",  # Go to Art Dealer's Apartment (dump)
+    _seq("L_Streets2_Script", 8): "L_ArtDealer_P",  # Go to Art Dealer's Apartment (dump)
+    _seq("L_ArtDealer_Scripts", 0): "L_Streets2_P",  # Go to Clavering Blvd
+    _seq("L_ArtDealer_Scripts", 1): "L_Streets2_P",  # Go to Bottle Street
+    _seq("L_ArtDealer_Scripts", 2): "L_Streets2_P",  # Go to Clavering Blvd (dump)
+    _seq("L_ArtDealer_Scripts", 3): "L_Streets2_P",  # Go to Clavering Blvd (dump)
+    _seq("L_Streets2_Script", 4): "L_Galvani2_P",  # Go to Dr. Galvani's Offices.
+    _seq("L_Streets2_Script", 5): "L_Galvani2_P",  # Go to Dr. Galvani's Offices.
+    _seq("L_Streets2_Script", 6): "L_Galvani2_P",  # Go to Dr. Galvani's Offices. (dump)
+    _seq("L_Galvani1_Scripts", 1, area="L_Galvani2_P"): "L_Streets2_P",  # Go to Clavering Blvd
+    _seq("L_Galvani1_Scripts", 3, area="L_Galvani2_P"): "L_Streets2_P",  # Go to Clavering Blvd
+    _seq("L_Galvani1_Scripts", 4, area="L_Galvani2_P"): "L_Streets2_P",  # Go to Clavering Blvd (dump)
+    _seq("L_Streets2_Script", 10): "L_Brothel_P",  # Go to the Golden Cat
+    _seq("L_Streets2_Script", 11): "L_Brothel_P",  # Go to the Golden Cat (dump)
+    _seq("L_Brothel_Script", 5): "L_Streets2_P",  # Go To Distillery District
+    _seq("L_Brothel_Script", 2): "L_Streets2_P",  # Go to Clavering Blvd (dump)
+    _seq("L_Brothel_Script", 4): "L_Streets2_P",  # Go to Captain's Chair Hotel (dump)
 }
 
 
-def zone_key_for_travel(option: str) -> str | None:
-    """The zone key a travel prompt's option leads into, or None if unknown."""
+def zone_key_for_travel(option: str, areas: str = "") -> str | None:
+    """The zone key a travel prompt's option leads into, or None if unknown. ``option`` is a
+    table key, or a bare option with the comma-separated ``areas`` the player was in."""
     level = TRAVEL_PROMPTS.get(option)
+    for area in areas.split(","):
+        level = level or TRAVEL_PROMPTS.get(f"{area}|{option}")
     return zone_key_for_level(level) if level else None
 
 

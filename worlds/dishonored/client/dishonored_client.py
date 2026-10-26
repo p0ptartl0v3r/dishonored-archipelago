@@ -202,7 +202,7 @@ async def sync_with_game(ctx: DishonoredContext, game: GameInterface) -> None:
             ctx.leave_zone = None
 
     blocked = game.take_travel_blocked()
-    key = zone_key_for_travel(blocked) if blocked else None
+    key = zone_key_for_travel(*blocked) if blocked else None
     if key:
         logger.info(f"Travel refused: requires the {key}")
         ctx.game_messages.append(requires_key_line(key))

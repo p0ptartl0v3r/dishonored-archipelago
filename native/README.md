@@ -66,8 +66,8 @@ and `python tools/native_console.py "event 0"` (1, 2, ...) reads them directly.
 | `gain ammo <type> <old>-><new> at=x,y,z` / `lose ammo ...` | Ammo (`Bullet`, `Arrow`, `Arrow_Sleep`, ...) or elixirs (`HealthElixir`, `ManaElixir`) changed. Firing, drinking and picking up all show up |
 | `gain upgrade <name> 0->1 at=x,y,z` / `lose upgrade ...` | An upgrade was added (Piero, a script, or our own `upgrade` request) or removed |
 | `choice <i> "<text>" title "<title>" travel=<0\|1> by <node>` | The player confirmed a choice: a scripted choice (travel prompts, the wine, the still; `DisSeqAct_DialogScriptedChoice`) or dialogue. `travel=1`: that option changes the map (confirmed: "Go to Bottle Street") |
-| `travel <action path>#<index> "<text>"` | A travel option was picked. The destination isn't in the prompt (it's set in the next level's script, not loaded yet), so the client maps each option to the level it loads (`client/zones.py` `TRAVEL_PROMPTS`, from the `mapchange` that follows) |
-| `blocked travel <action path>#<index>` | A travel option was refused (`limit travel <option\|all> 0`): the prompt's stay option is picked instead, so it closes as if declined (confirmed in-game) |
+| `travel <action path>#<index> "<text>" from <areas>` | A travel option was picked (`<areas>` as in `area`). The destination isn't in the prompt (it's set in the next level's script, not loaded yet), so the client maps each option to the level it loads (`client/zones.py` `TRAVEL_PROMPTS`, from the `mapchange` that follows). Galvani's offices use one level script in two missions, so its prompts are listed per area: `<area>\|<option>` |
+| `blocked travel <action path>#<index> from <areas>` | A travel option was refused (`limit travel <option\|<area>\|<option>\|all> 0`): the prompt's stay option is picked instead, so it closes as if declined (confirmed in-game) |
 
 To turn an event into a check, add a pattern to the location's `detect` list
 in `worlds/dishonored/data/locations.json`. A pattern matches when **every word

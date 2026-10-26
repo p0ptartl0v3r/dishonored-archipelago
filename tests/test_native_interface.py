@@ -319,3 +319,50 @@ def test_leaving_the_area_is_reported():
     game.poll_checked_locations()
     assert game.take_zone_left()
     assert not game.take_zone_left()
+
+
+def test_real_events_from_house_of_pleasure():
+    """Event lines from a playthrough of the third mission (2026-10-26)."""
+    from dishonored import game_data
+
+    ids = game_data.load().location_name_to_id
+    game = NativeInterface()
+    streets = "pickup L_Streets2_Script.TheWorld.PersistentLevel."
+    distillery = "pickup L_Distillery2_Script.TheWorld.PersistentLevel."
+    dealer = "pickup L_ArtDealer_Scripts.TheWorld.PersistentLevel."
+    cat = "pickup L_Brothel_Script.TheWorld.PersistentLevel."
+    cases = {
+        streets + "DisWhaleBoneCharm_0 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=-5296,-660,4017":
+            "Distillery District: Apartment Bone Charm",
+        streets + "DisWhaleBoneCharm_1 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=-1373,4994,1868":
+            "Distillery District: Granny Rags Bone Charm",
+        streets + "DisWhaleBoneCharm_4 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=-1434,8922,3447":
+            "Distillery District: Captain's Chair Hotel Bone Charm",
+        distillery + "DisAbstractItemPickup_213 DisAbstractItemPickup BP_FlareBolt_AbsItm at=2059,-1040,1139":
+            "Old Dunwall Distillery: Incandescent Paste Blueprint",
+        distillery + "DisWhaleBoneCharm_0 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=529,-471,960":
+            "Old Dunwall Distillery: Weeper Containment Room Bone Charm",
+        "pickup L_Galvani1_Strt2_Scripts.TheWorld.PersistentLevel.DisAbstractItemPickup_32 DisAbstractItemPickup "
+        "Rune_AbsItm at=2341,-33,4785": "Dr Galvani's Offices: Galvani's Secret Room Rune",
+        # Paintings are valuables: they turn into 300 coins.
+        dealer + "DisAbstractItemPickup_6 DisAbstractItemPickup Coins_AbsItm at=-2342,-986,3971":
+            "Art Dealer's Apartment: Second Floor Painting",
+        dealer + "DisAbstractItemPickup_4 DisAbstractItemPickup Coins_AbsItm at=-1978,1338,4683":
+            "Art Dealer's Apartment: Third Floor Painting",
+        dealer + "DisAbstractItemPickup_5 DisAbstractItemPickup Rune_AbsItm at=-1635,-928,4786":
+            "Art Dealer's Apartment: Art Dealer's Safe",
+        dealer + "DisAbstractItemPickup_9 DisAbstractItemPickup Coins_AbsItm at=-1475,-929,4822":
+            "Art Dealer's Apartment: Inside Safe Painting",
+        cat + "DisAbstractItemPickup_17 DisAbstractItemPickup Rune_AbsItm at=39957,10780,4377":
+            "The Golden Cat Bathhouse: Opposite Golden Cat Rune",
+        cat + "DisAbstractItemPickup_60 DisAbstractItemPickup Rune_AbsItm at=35647,10644,5485":
+            "The Golden Cat Bathhouse: Courtesans Room Rune",
+        cat + "DisWhaleBoneCharm_0 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=35768,8763,5133":
+            "The Golden Cat Bathhouse: Stairwell Room Bone Charm",
+        cat + "DisAbstractItemPickup_20 DisAbstractItemPickup Rune_AbsItm at=35669,12837,4541":
+            "The Golden Cat Bathhouse: Golden Cat Second Floor Rune",
+        "additem DishonoredGameFull_P.TheWorld.PersistentLevel.Main_Sequence.fromStreets2_toHub."
+        "DisSeqAct_AddAbstractItem_1 ChapterLog_Hub_03": "House of Pleasure: Victory",
+    }
+    for event, location in cases.items():
+        assert game.match_event(event) == [ids[location]], event

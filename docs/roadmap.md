@@ -33,7 +33,8 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
 - [x] Call logging (`LogCalls=unique|filter`, F8 marker) for pickup research
 - [x] First in-game test: hook, engine tables, gameplay detection, console commands work
 - [x] Events for checks: pickups, map changes, scripted items, objectives
-- [ ] Fill `detect` for each location in locations.json (play and copy events)
+- [ ] Fill `detect` for each location in locations.json (play and copy events). Done and
+      confirmed from play: Intro, High Overseer Campbell, House of Pleasure (`tools/check_log.py`)
 
 ### 1. Look inside the game
 - [ ] Pick and record the game build you'll support
@@ -136,7 +137,8 @@ Today they're only shown as received, nothing in the game checks them.
       picks the "stay" option instead (refusal confirmed in-game with `limit travel all 0`).
       Each option is mapped to its destination level in `zones.py` `TRAVEL_PROMPTS` from
       play logs (`travel ...` then `mapchange ...`) and `dump` (lists every travel prompt
-      in the loaded levels). High Overseer Campbell: all 19 prompts mapped, refusal confirmed
+      in the loaded levels). High Overseer Campbell: all 19 prompts mapped, refusal confirmed.
+      House of Pleasure: 21 prompts mapped (2026-10-26; Galvani's exits keyed per area)
       for the Kennels. Other missions: run `dump` once per area
 - [x] Forced entries (story transitions, save loads, mission select, doors missing from
       the table) into keyless zones: the DLL reports `area <levels>` once settled; the client
@@ -225,6 +227,10 @@ Today they're only shown as received, nothing in the game checks them.
 - DeathLink (already an option; the client needs to detect and cause deaths)
 
 ## Possible issues in the Manual data
+
+- Fixed 2026-10-26: `Distillery District: Captain's Chair Hotel Bone Charm` (a House of
+  Pleasure location) was in the `Distillery District (HOC)` region, but it is picked up in
+  House of Pleasure's Distillery District. Moved to `Distillery District (HoP)`.
 
 These are things to check, not changes I made:
 

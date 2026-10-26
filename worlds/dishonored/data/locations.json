@@ -171,7 +171,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Galvani1_Strt2_Scripts.TheWorld.PersistentLevel.DisAbstractItemPickup_32"
+    ]
   },
   {
     "name": "Art Dealer's Apartment: Art Dealer's Safe",
@@ -179,7 +182,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": "|The Golden Cat Bathhouse Zone Key|"
+    "requires": "|The Golden Cat Bathhouse Zone Key|",
+    "detect": [
+      "pickup L_ArtDealer_Scripts.TheWorld.PersistentLevel.DisAbstractItemPickup_5"
+    ]
   },
   {
     "region": "The Golden Cat Bathhouse",
@@ -187,7 +193,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Brothel_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_17"
+    ]
   },
   {
     "region": "The Golden Cat Bathhouse",
@@ -195,7 +204,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Brothel_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_20"
+    ]
   },
   {
     "region": "The Golden Cat Bathhouse",
@@ -203,7 +215,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Brothel_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_60"
+    ]
   },
   {
     "name": "House of Pleasure: Victory",
@@ -211,7 +226,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": "|Art Dealer's Apartment Zone Key| AND |Old Dunwall Distillery (HoP) Zone Key| AND |Dr Galvani's Offices (HoP) Zone Key|"
+    "requires": "|Art Dealer's Apartment Zone Key| AND |Old Dunwall Distillery (HoP) Zone Key| AND |Dr Galvani's Offices (HoP) Zone Key|",
+    "detect": [
+      "additem ChapterLog_Hub_03"
+    ]
   },
   {
     "region": "Southside Gate",
@@ -480,7 +498,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_ArtDealer_Scripts.TheWorld.PersistentLevel.DisAbstractItemPickup_6"
+    ]
   },
   {
     "region": "Art Dealer's Apartment",
@@ -488,7 +509,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_ArtDealer_Scripts.TheWorld.PersistentLevel.DisAbstractItemPickup_4"
+    ]
   },
   {
     "region": "Art Dealer's Apartment",
@@ -496,7 +520,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": "|The Golden Cat Bathhouse Zone Key|"
+    "requires": "|The Golden Cat Bathhouse Zone Key|",
+    "detect": [
+      "pickup L_ArtDealer_Scripts.TheWorld.PersistentLevel.DisAbstractItemPickup_9"
+    ]
   },
   {
     "name": "North End: Sokolov's Safehouse Painting",
@@ -640,7 +667,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Distillery2_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_213"
+    ]
   },
   {
     "name": "Southside Gate: Folded Galvani Resin Blueprint",
@@ -727,7 +757,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Streets2_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Distillery District (HoP)",
@@ -735,15 +768,21 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Streets2_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_1"
+    ]
   },
   {
-    "region": "Distillery District (HOC)",
+    "region": "Distillery District (HoP)",
     "name": "Distillery District: Captain's Chair Hotel Bone Charm",
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Streets2_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_4"
+    ]
   },
   {
     "region": "The Golden Cat Bathhouse",
@@ -751,7 +790,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Brothel_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Old Dunwall Distillery (HoP)",
@@ -759,7 +801,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Distillery2_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Southside Gate",

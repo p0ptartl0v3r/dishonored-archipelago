@@ -1049,10 +1049,18 @@ std::string pickup_item_name(ue3::UObject* pickup) {
 }
 
 // Should this travel option be refused? Options are named "<choice action path>#<index>";
-// the client lists those leading into zones whose key hasn't been received. "all" (for
-// testing) refuses every travel option.
-bool travel_refused(const std::string& option) {
-  return allowed_in(g_travel_allowed, "all") == false || allowed_in(g_travel_allowed, lower(option)) == false;
+// the client lists those leading into zones whose key hasn't been received. Some level
+// scripts serve two missions (Galvani's offices), so an option can also be listed as
+// "<area>|<option>" for the area the player is in. "all" (for testing) refuses every one.
+bool travel_refused(const std::string& option, const std::string& areas) {
+  if (allowed_in(g_travel_allowed, "all") == false || allowed_in(g_travel_allowed, lower(option)) == false) return true;
+  size_t start = 0;
+  while (start <= areas.size()) {
+    const size_t end = (std::min)(areas.find(',', start), areas.size());
+    if (allowed_in(g_travel_allowed, lower(areas.substr(start, end - start) + "|" + option)) == false) return true;
+    start = end + 1;
+  }
+  return false;
 }
 
 // Called on the game thread for every ProcessEvent, before the function runs
@@ -1144,15 +1152,18 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
         // The prompt's path and the option say where it goes (the destination is in the
         // next level's script, which isn't loaded yet); the client maps them to zones.
         const std::string option = std::format("{}#{}", node, index);
-        emit_event(std::format("travel {} \"{}\"", option, text));
-        if (g_limits_known && travel_refused(option)) {
+        auto* controller = local_player_controller();
+        const std::string areas =
+            current_areas(controller ? ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn) : nullptr);
+        emit_event(std::format("travel {} \"{}\" from {}", option, text, areas));
+        if (g_limits_known && travel_refused(option, areas)) {
           // Pick the prompt's "stay" option instead: the prompt closes as if declined.
           int32_t stay = -1;
           for (int32_t i = 0; i < choices.count && stay < 0; ++i) {
             if (!travels(i)) stay = i;
           }
           if (stay >= 0) {
-            emit_event("blocked travel " + option);
+            emit_event(std::format("blocked travel {} from {}", option, areas));
             if (allowed_in(g_travel_allowed, "all") == false) {
               show_message("{FA8072}Travel refused (test: limit travel all 0)");
             }

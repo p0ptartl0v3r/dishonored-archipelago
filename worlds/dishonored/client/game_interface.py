@@ -77,8 +77,9 @@ class GameInterface(ABC):
         """Show a line at the top of the main menu (until a game is loaded). Return False to retry later."""
         return True
 
-    def take_travel_blocked(self) -> str | None:
-        """The travel prompt option ("<path>#<index>") the game last refused, once (None if none since)."""
+    def take_travel_blocked(self) -> tuple[str, str] | None:
+        """The travel prompt option ("<path>#<index>") the game last refused and the areas the
+        player was in, once (None if none since)."""
         return None
 
 
@@ -225,7 +226,7 @@ class NativeInterface(GameInterface):
         self._resync = False
         self._zone_entered: str | None = None
         self._zone_left = False
-        self._travel_blocked: str | None = None
+        self._travel_blocked: tuple[str, str] | None = None
         self._shown: set[tuple[str, int]] = set()  # manual unlocks already shown to the player
         data = load_game_data()
         # (event prefix, location id or None for the goal)
@@ -305,7 +306,8 @@ class NativeInterface(GameInterface):
                     zones = [level for level in text.split()[1].split(",") if zone_key_for_level(level)]
                     self._zone_entered = zones[0] if zones else None
                 if text.startswith("blocked travel "):
-                    self._travel_blocked = text.split()[2]
+                    words = text.split()  # blocked travel <option> from <areas>
+                    self._travel_blocked = (words[2], words[4] if len(words) > 4 else "")
                 if text == "gameplay":
                     # A save was loaded (or a new level started): the game may have
                     # forgotten items granted since that save, so grant them all again.
@@ -339,7 +341,7 @@ class NativeInterface(GameInterface):
         left, self._zone_left = self._zone_left, False
         return left
 
-    def take_travel_blocked(self) -> str | None:
+    def take_travel_blocked(self) -> tuple[str, str] | None:
         blocked, self._travel_blocked = self._travel_blocked, None
         return blocked
 
