@@ -180,7 +180,12 @@ Today they're only shown as received, nothing in the game checks them.
       worked down to 1 already); or (2) cancel it with the cheat `AddMod
       Attribute_MaxActivatedBoneCharmCountBonus <name> <type> -N`, if it survived the
       release build like `AddPower` did. Decision 2026-10-26: keep the Manual's linear
-      logic until then
+      logic until then.
+      Update 2026-10-26: capacity is solved (the base subtracts the bonus owned; tested from
+      mission select: The Loyalists' snapshot with both Piero upgrades ended at the 2 slots
+      received, base -1). In the same run every unreceived power, upgrade, ammo type and the
+      Rewire Tool were removed within a second. Still open: other removed upgrades may keep
+      their effect (e.g. Silent Running), and whether an unfinished profile lists every mission
 - [x] Backyard bone charms were swapped (fixed 2026-10-26): Rat Infested Building is the vise,
       which destroys a static Ovrsr_NoPhysBoneCharm and spawns a loose Ovrsr_PhysBoneCharm
       (matched by name and position); Overseer Stolen is DisWhaleBoneCharm_0
