@@ -158,7 +158,12 @@ Today they're only shown as received, nothing in the game checks them.
       started without reaching it in the story: find out which missions the main menu's
       mission select lists before the game is finished, and what gear a mission started from
       it gives (`DisGFxMoviePlayerMainMenu.OnMissionSelected(MissionIdx)` is native). If it
-      only lists missions reached, the DLL would have to unlock them
+      only lists missions reached, the DLL would have to unlock them.
+      Found 2026-10-26: on a profile that has finished the game, every mission is listed
+      (unknown for an unfinished profile). A mission started from it restores the loadout
+      the player had when they first started that mission (Lady Boyle: no Wind Blast, Bend
+      Time or Swarm; The Loyalists: all three, plus more upgrades). The client/DLL already
+      correct that to the received items after every load, so only the unlock question remains
 - [x] Backyard bone charms were swapped (fixed 2026-10-26): Rat Infested Building is the vise,
       which destroys a static Ovrsr_NoPhysBoneCharm and spawns a loose Ovrsr_PhysBoneCharm
       (matched by name and position); Overseer Stolen is DisWhaleBoneCharm_0
