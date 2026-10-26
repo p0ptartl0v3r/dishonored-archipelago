@@ -79,11 +79,10 @@ def test_extra_copies_never_exceed_the_maximum():
     assert "limit power Blink 2" in limits({"Progressive Blink": 5})
 
 
-def test_bone_charm_base_makes_the_total_match_the_items():
-    from dishonored.client.item_commands import bone_charm_base
-
-    assert [bone_charm_base(n) for n in range(11)] == [0, 1, 2, 3, 3, 4, 3, 3, 3, 3, 3]
-    assert "limit bonecharms base 1" in limits({"Bone Charm Slot": 1})
+def test_bone_charm_slots_are_sent_as_received():
+    # The DLL subtracts the bonus of the capacity upgrades actually owned.
+    assert "limit bonecharms slots 0" in limits({})
+    assert "limit bonecharms slots 4" in limits({"Bone Charm Slot": 4})
 
 
 def test_equipment_allows_ammo_types_in_order():

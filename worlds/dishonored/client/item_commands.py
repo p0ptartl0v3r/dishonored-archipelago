@@ -88,8 +88,10 @@ for _item, _name in _SECOND_TIER_UPGRADES.items():
 # Bone charm capacity: Corvo starts with 3 slots; Piero's two upgrades add 1 and 2,
 # and each DLC "Mystical ... Artifact" statue adds 1 (10 in total, one per Manual item).
 # Each entry is (slots once owned, upgrade). Copy N grants every upgrade that keeps the
-# total at or below N; the DLL then sets the base capacity (bone_charm_base) so the total
-# is exactly N, from 0 slots with no items up to 10.
+# total at or below N, so the journal shows them. The client sends N (`limit bonecharms
+# slots N`) and the DLL sets the base capacity to N minus the bonus of every capacity
+# upgrade actually owned, so the total is exactly N (0 to 10) even when the player picks
+# up a DLC statue or a save holds upgrades not received.
 BONE_CHARM_CAPACITY = [
     (4, "Twk_Upgrade_BoneCharms"),  # Bone Charm Capacity Upgrade 1
     (6, "Twk_Upgrade_BoneCharms2"),  # Bone Charm Capacity Upgrade 2 (requires 1)
@@ -138,16 +140,6 @@ ABSTRACT_ITEMS: dict[str, tuple[str, ...]] = {
 # Items whose effect comes (at least partly) from the limits rather than a command.
 APPLIED_BY_LIMITS: set[str] = set(AMMO) | set(ABSTRACT_ITEMS) | {"Bone Charm Slot", "Progressive Sword"}
 
-BASE_BONE_CHARM_SLOTS = 3  # Corvo's slots without any capacity upgrade
-
-
-def bone_charm_base(slots: int) -> int:
-    """Base capacity the DLL should set so that base + granted upgrades = ``slots``
-    (the Manual's one slot per item, starting from none)."""
-    granted = max((total for total, _ in BONE_CHARM_CAPACITY if total <= slots), default=BASE_BONE_CHARM_SLOTS)
-    return slots - (granted - BASE_BONE_CHARM_SLOTS)
-
-
 def limits(received: Mapping[str, int]) -> list[str]:
     """DLL "limit" requests: how far each randomized power and upgrade may go, given how
     many copies of each item have been received. The DLL blocks and removes anything beyond."""
@@ -161,7 +153,7 @@ def limits(received: Mapping[str, int]) -> list[str]:
         every = [r.removeprefix("upgrade ") for r in builder(99) if r.startswith("upgrade ")]
         allowed = {r.removeprefix("upgrade ") for r in builder(received.get(item, 0))}
         lines += [f"limit upgrade {name} {int(name in allowed)}" for name in every]
-    lines.append(f"limit bonecharms base {bone_charm_base(received.get('Bone Charm Slot', 0))}")
+    lines.append(f"limit bonecharms slots {received.get('Bone Charm Slot', 0)}")
     for item, types in AMMO.items():
         lines += [f"limit ammo {ammo} {int(i < received.get(item, 0))}" for i, ammo in enumerate(types)]
     for item, names in ABSTRACT_ITEMS.items():

@@ -334,7 +334,7 @@ std::mutex g_limits_mutex;
 std::map<std::string, int32_t> g_power_limits;  // lower-case power name -> highest allowed level
 std::map<std::string, bool> g_upgrade_allowed;  // randomized upgrade -> received
 std::atomic<bool> g_limits_known = false;
-std::atomic<int32_t> g_bone_charm_base = -1;  // base capacity to set (-1: leave the game's)
+std::atomic<int32_t> g_bone_charm_slots = -1;  // Bone Charm Slot items received (-1: leave the game's)
 std::map<std::string, bool> g_ammo_allowed;   // randomized ammo type (kAmmoTypes name) -> received
 std::map<std::string, bool> g_item_allowed;   // randomized abstract item (RewireTool) -> received
 std::map<std::string, bool> g_equip_allowed;  // randomized equipment that can be held (Sword) -> received
@@ -610,24 +610,46 @@ std::vector<std::pair<std::string, int32_t>> power_levels(ue3::UObject* pawn) {
 // the two seen in the user's pub. Scanned every 2 s.
 DWORD g_last_world_upgrade_scan = 0;
 
-// The base bone charm capacity is a tweak value (3 in the shipped game). The client sets
-// it so that base + granted capacity upgrades = Bone Charm Slot items received.
-void apply_bone_charm_base() {
-  const int32_t base = g_bone_charm_base;
-  if (base < 0) return;
+// Bone charm capacity = a base (a tweak value, 3 in the shipped game) + the bonus of each
+// owned capacity upgrade (Piero's two, the four DLC statues). An upgrade's effect stays even
+// if it's taken off the list, so capacity upgrades are never removed; instead the base is
+// set to (Bone Charm Slot items received) - (bonus owned), which keeps the total at what was
+// received whatever the player picked up or the save holds. May go below 0.
+float capacity_bonus(ue3::UObject* upgrade) {
+  static const int32_t attribute = ue3::find_name_index("Attribute_MaxActivatedBoneCharmCountBonus");
+  float bonus = 0;
+  const auto attributes = ue3::field<ue3::TArray<uint8_t>>(upgrade, ue3::kUpgradeAttributes);
+  for (int32_t i = 0; i < attributes.count && attributes.data != nullptr && attribute >= 0; ++i) {
+    if (reinterpret_cast<const ue3::FName*>(attributes.data + i * 0xC)->index == attribute) {
+      bonus += *reinterpret_cast<const float*>(attributes.data + i * 0xC + 8);
+    }
+  }
+  return bonus;
+}
+
+void apply_bone_charm_base(ue3::UObject* pawn) {
+  const int32_t slots = g_bone_charm_slots;
+  if (slots < 0 || pawn == nullptr) return;
+  const auto owned = ue3::field<ue3::TArray<ue3::UObject*>>(pawn, ue3::kPlayerPawnUpgrades);
+  float bonus = 0;
+  for (int32_t i = 0; i < owned.count && owned.data != nullptr; ++i) {
+    if (owned.data[i] != nullptr) bonus += capacity_bonus(owned.data[i]);
+  }
+  const int32_t base = slots - static_cast<int32_t>(bonus + 0.5f);
   for (auto* tweaks : ue3::find_instances_of_subclasses(g_names.player_pawn_tweaks)) {
     auto& value = *reinterpret_cast<int32_t*>(reinterpret_cast<uint8_t*>(tweaks) + ue3::kPawnTweaksBoneCharmBase);
     if (value != base) {
-      emit_event(std::format("bone charm base {} {}->{}", ue3::object_name(tweaks), value, base));
+      emit_event(std::format("bone charm base {} {}->{} ({} received, +{:g} owned)", ue3::object_name(tweaks), value,
+                             base, slots, bonus));
       value = base;
     }
   }
 }
 
-void restore_world_upgrades(DWORD now) {
+void restore_world_upgrades(ue3::UObject* pawn, DWORD now) {
   if (now - g_last_world_upgrade_scan < 2000) return;
   g_last_world_upgrade_scan = now;
-  apply_bone_charm_base();
+  apply_bone_charm_base(pawn);
   static ue3::UFunction* set_hidden = ue3::find_object("Function Engine.Actor.SetHidden");
   const int32_t mask_name = ue3::find_name_index("Twk_Upgrade_Mask");
   ue3::UObject* mask = nullptr;
@@ -696,10 +718,10 @@ void enforce_limits(ue3::UObject* pawn, DWORD now) {
                                                                 ue3::kPlayerPawnUpgrades);
   for (int32_t i = 0; i < owned.count && owned.data != nullptr;) {
     const std::string name = ue3::object_name(owned.data[i]);
-    // DLC statues stay: removing one doesn't take its slot away, and the DLC gift code
-    // tracks them (see restore_world_upgrades).
-    const bool statue = name.rfind("Twk_Upgrade_Statue", 0) == 0;
-    if (upgrade_allowed(name) == false && !statue) {
+    // Capacity upgrades stay: removing one doesn't take its slot away (the base makes up
+    // for it, see apply_bone_charm_base), and the DLC gift code tracks the statues.
+    const bool capacity = capacity_bonus(owned.data[i]) != 0;
+    if (upgrade_allowed(name) == false && !capacity) {
       emit_event("remove upgrade " + name);
       for (int32_t j = i; j + 1 < owned.count; ++j) owned.data[j] = owned.data[j + 1];
       --owned.count;
@@ -816,7 +838,7 @@ void track_holdings(ue3::UObject* player_controller, bool settled, DWORD now) {
     report_purchases(pawn, *g_holdings, current, where);
   }
   enforce_limits(pawn, now);
-  restore_world_upgrades(now);
+  restore_world_upgrades(pawn, now);
   g_holdings = read_holdings(pawn);  // after enforcement, so its removals aren't reported as changes
 }
 
@@ -1512,8 +1534,8 @@ bool set_limit(const std::string& kind, const std::string& name, int32_t value) 
     g_power_limits[lower(name)] = value;
   } else if (kind == "upgrade") {
     g_upgrade_allowed[name] = value > 0;
-  } else if (kind == "bonecharms" && name == "base") {
-    g_bone_charm_base = value;
+  } else if (kind == "bonecharms" && name == "slots") {
+    g_bone_charm_slots = value;
   } else if (kind == "ammo") {
     g_ammo_allowed[name] = value > 0;
   } else if (kind == "item") {

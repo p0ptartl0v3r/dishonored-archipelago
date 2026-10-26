@@ -100,8 +100,10 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
       and each adds a bone charm slot). Pointing them at Corvo's Mask worked at first but
       broke saves (crash on load / on waking up: the DLC gift code tracks statues by
       upgrade name), so statues are left alone again and swapped ones restored (2026-10-26,
-      untested). Next: compensate their bonus through the bone charm base instead (same
-      research as the mission-select item); until then, don't pick them up
+      confirmed working: they were restored). Their bonus is now cancelled through the
+      bone charm base (received slots minus the bonus of every capacity upgrade owned;
+      written 2026-10-26, untested). Also covers mission-select snapshots and old saves,
+      as long as the upgrade is still on the list
 
 ### 5. Saves always match what was received
 - [x] Items received after a save come back when that save is loaded: the client

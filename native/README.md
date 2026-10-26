@@ -116,9 +116,11 @@ arrives). From then on the DLL:
   happened and the gear isn't in the game's backup. Not in the prologue, whose scripted
   fight hands you one (confirmed in-game: unequip, take, and give back after /send)
 - sets the base bone charm capacity (`DisTweaks_PlayerPawn.m_MaxActivatedBoneCharmCount`,
-  3 in the shipped game) from `limit bonecharms base <n>`, so base + granted capacity
-  upgrades = Bone Charm Slot items received (`bone charm base ...`; confirmed in-game:
-  1 item = 1 slot)
+  3 in the shipped game) to `limit bonecharms slots <n>` (items received) minus the
+  `Attribute_MaxActivatedBoneCharmCountBonus` of every capacity upgrade owned, every 2 s
+  (`bone charm base ... (n received, +b owned)`). So picking up a DLC statue or loading a
+  save with upgrades not received doesn't add slots. Capacity upgrades are never taken off
+  the upgrade list (that never removed their effect). A base below 0 is untested
 - if a purchase still goes through, refunds the coins: `refund ...`
 
 Confirmed in-game: shop blocking, statue disarming, base capacity, removal from the
