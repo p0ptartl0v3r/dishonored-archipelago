@@ -223,6 +223,14 @@ Today they're only shown as received, nothing in the game checks them.
       with the scouted item (LocationScouts); point `m_StoreIconName` at an existing
       icon. A custom Archipelago icon would need a new image in the Scaleform UI files
 
+### Other languages and builds
+- [ ] Confirm another game language works (Steam: Properties -> Language): detection, grants,
+      blocking, zones and travel prompts all use internal names and paths, so they should;
+      only log text (choice/travel text, upgrade display names) is translated. Check that the
+      overlay draws non-ASCII Archipelago names (the engine's SmallFont may lack glyphs)
+- [ ] Other builds (GOG, Epic, older patches) may not match the ProcessEvent byte pattern or
+      the GNames/GObjects offsets; the log says so on startup
+
 ### Later
 - Knife of Dunwall / Brigmore Witches, Dunwall City Trials, "smooth intro"
   (these are mostly data plus options in the apworld)
