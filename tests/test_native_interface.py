@@ -366,3 +366,44 @@ def test_real_events_from_house_of_pleasure():
     }
     for event, location in cases.items():
         assert game.match_event(event) == [ids[location]], event
+
+
+def test_real_events_from_the_royal_physician():
+    """Event lines from a playthrough of the fourth mission (2026-10-26)."""
+    from dishonored import game_data
+
+    ids = game_data.load().location_name_to_id
+    game = NativeInterface()
+    gate = "pickup L_Bridge_Part1a_Script.TheWorld.PersistentLevel."
+    drawbridge = "pickup L_Bridge_Part1b_Script.TheWorld.PersistentLevel."
+    midrow = "pickup L_Bridge_Part1c_Script.TheWorld.PersistentLevel."
+    north = "pickup L_Bridge_Part2_Script.TheWorld.PersistentLevel."
+    cases = {
+        gate + "DisAbstractItemPickup_10 DisAbstractItemPickup BP_SilentRunning_AbsItm at=-3402,-5367,1404":
+            "Southside Gate: Folded Galvani Resin Blueprint",
+        gate + "DisAbstractItemPickup_40 DisAbstractItemPickup Rune_AbsItm at=-147,-1393,1357":
+            "Southside Gate: Apartment Rune",
+        gate + "DisWhaleBoneCharm_0 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=5459,-2131,897":
+            "Southside Gate: Past Metal Bridge Bone Charm",
+        drawbridge + "DisAbstractItemPickup_3 DisAbstractItemPickup Rune_AbsItm at=5656,-3343,1555":
+            "Drawbridge Control: Pratchett's Safe Rune",
+        drawbridge + "DisAbstractItemPickup_4 DisAbstractItemPickup Rune_AbsItm at=7659,-3805,1850":
+            "Drawbridge Control: Outsider Shrine Rune",
+        midrow + "DisAbstractItemPickup_77 DisAbstractItemPickup Rune_AbsItm at=29324,-4671,1577":
+            "Midrow Substation: Rune outside entry",
+        midrow + "DisWhaleBoneCharm_2 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=36183,-7161,437":
+            "Midrow Substation: Rat Infested Basement Bone Charm",
+        north + "DisWhaleBoneCharm_1 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=38398,-8123,1490":
+            "North End: Building By Entry Bone Charm",
+        north + "DisAbstractItemPickup_0 DisAbstractItemPickup Rune_AbsItm at=42205,-3271,3112":
+            "North End: Sokolov's Laboratory Rune",
+        north + "DisAbstractItemPickup_1 DisAbstractItemPickup Coins_AbsItm at=43793,-1809,677":
+            "North End: Sokolov's Safehouse Painting",
+        "additem DishonoredGameFull_P.TheWorld.PersistentLevel.Main_Sequence.fromBridge_toHub."
+        "DisSeqAct_AddAbstractItem_1 ChapterLog_Hub_04": "The Royal Physician: Victory",
+        # In the pub after the mission; spawned at runtime, so matched by position.
+        "pickup DishonoredGameFull_P.TheWorld.PersistentLevel.DisWhaleBoneCharm_5 DisWhaleBoneCharm "
+        "WhaleBoneCharm_01_twk at=-1886,2977,457": "Hound Pits Pub: Abandoned Apartment Bone Charm",
+    }
+    for event, location in cases.items():
+        assert game.match_event(event) == [ids[location]], event

@@ -363,3 +363,12 @@ through `ProcessEvent`.
   (all names in one word), then `additem ... fromStreets2_toHub ... ChapterLog_Hub_03`.
 - `Captain's Chair Hotel Bone Charm` is `L_Streets2_Script...DisWhaleBoneCharm_4`, this mission.
 
+### The Royal Physician (2026-10-26)
+- Four bridge levels: `L_Bridge_Part1a_P` (Southside Gate), `L_Bridge_Part1b_P` (Drawbridge
+  Control), `L_Bridge_Part1c_P` (Midrow Substation), `L_Bridge_Part2_P` (North End); scripts
+  `L_Bridge_Part1a_Script` etc. Mission end: `additem ... fromBridge_toHub ... ChapterLog_Hub_04`.
+- Sokolov's safehouse painting is a 300-coin valuable like the Art Dealer's.
+- "Hound Pits Pub: Abandoned Apartment Bone Charm" is in the pub after this mission
+  (`L_Pub_Night_P`), spawned at runtime (`DishonoredGameFull_P...DisWhaleBoneCharm_5`).
+- Folded Galvani Resin is `BP_SilentRunning_AbsItm`.
+

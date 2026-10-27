@@ -61,3 +61,12 @@ class TestNoStartingZoneKeys(DishonoredTestBase):
     def test_prison_key_is_shuffled(self) -> None:
         self.assertEqual(self.multiworld.precollected_items[self.player], [])
         self.assertEqual(_count_in_pool(self, "Dunwall Prison Zone Key"), 1)
+
+
+class TestSouthsideGateNeedsItsKey(DishonoredTestBase):
+    def test_southside_gate_zone_key_is_required(self) -> None:
+        # The Manual didn't require it; the in-game check enforces every zone's key.
+        self.collect_all_but(["Southside Gate Zone Key"])
+        self.assertFalse(self.can_reach_region("Southside Gate"))
+        self.collect_by_name("Southside Gate Zone Key")
+        self.assertTrue(self.can_reach_region("Southside Gate"))

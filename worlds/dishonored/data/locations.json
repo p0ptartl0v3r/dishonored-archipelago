@@ -237,7 +237,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part1a_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_40"
+    ]
   },
   {
     "region": "Drawbridge Control",
@@ -245,7 +248,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part1b_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_3"
+    ]
   },
   {
     "region": "Drawbridge Control",
@@ -253,7 +259,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part1b_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_4"
+    ]
   },
   {
     "name": "Midrow Substation: Rune outside entry",
@@ -261,7 +270,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part1c_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_77"
+    ]
   },
   {
     "name": "North End: Sokolov's Laboratory Rune",
@@ -269,7 +281,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part2_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_0"
+    ]
   },
   {
     "region": "North End",
@@ -277,7 +292,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "additem ChapterLog_Hub_04"
+    ]
   },
   {
     "region": "Boyle Mansion Exterior",
@@ -531,7 +549,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part2_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_1"
+    ]
   },
   {
     "name": "Dishonored (Mission): Corvo's Cell Key",
@@ -678,7 +699,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part1a_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_10"
+    ]
   },
   {
     "name": "Boyle Mansion Exterior: Spiked Grenade Housing Blueprint",
@@ -812,7 +836,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part1a_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Midrow Substation",
@@ -820,7 +847,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part1c_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_2"
+    ]
   },
   {
     "name": "North End: Building By Entry Bone Charm",
@@ -828,7 +858,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part2_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_1"
+    ]
   },
   {
     "name": "Hound Pits Pub: Abandoned Apartment Bone Charm",
@@ -836,7 +869,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup WhaleBoneCharm_01_twk near=-1886,2977,457"
+    ]
   },
   {
     "region": "Boyle Mansion Exterior",

@@ -2,9 +2,9 @@
 
 The DLL reports `mapchange <level>` when the player walks into another area; this
 table turns the level into the zone key that area needs. Confirmed in-game for the
-first two missions (research/notes.md); the rest are taken from the package names and
-only listed when the name is unambiguous. Unlisted levels (the bridge parts of The
-Royal Physician, parts of the Flooded District) never warn until they're confirmed.
+first four missions (research/notes.md); the rest are taken from the package names and
+only listed when the name is unambiguous. Unlisted levels (parts of the Flooded District)
+never warn until they're confirmed.
 No Archipelago imports here, so tests can load it standalone.
 """
 
@@ -21,12 +21,16 @@ LEVEL_ZONE_KEYS: dict[str, str] = {
     "l_ovrsr_p": "High Overseer's Office Zone Key",
     "l_ovrsr_kennel_p": "Kennels Zone Key",
     "l_ovrsr_back_p": "Backyard Zone Key",
-    # From the package names, not yet seen in play
     "l_streets2_p": "Distillery District (HoP) Zone Key",
     "l_distillery2_p": "Old Dunwall Distillery (HoP) Zone Key",
     "l_galvani2_p": "Dr Galvani's Offices (HoP) Zone Key",
     "l_artdealer_p": "Art Dealer's Apartment Zone Key",
     "l_brothel_p": "The Golden Cat Bathhouse Zone Key",
+    "l_bridge_part1a_p": "Southside Gate Zone Key",
+    "l_bridge_part1b_p": "Drawbridge Control Zone Key",
+    "l_bridge_part1c_p": "Midrow Substation Zone Key",
+    "l_bridge_part2_p": "North End Zone Key",
+    # From the package names, not yet seen in play
     "l_boyle_ext_p": "Lady Boyle's Last Party Exterior Zone Key",
     "l_boyle_int_p": "Boyle Mansion Interior Zone Key",
     "l_towerrtrn_yard_p": "Tower Exterior Zone Key",
@@ -98,6 +102,13 @@ TRAVEL_PROMPTS: dict[str, str] = {
     _seq("L_Brothel_Script", 5): "L_Streets2_P",  # Go To Distillery District
     _seq("L_Brothel_Script", 2): "L_Streets2_P",  # Go to Clavering Blvd (dump)
     _seq("L_Brothel_Script", 4): "L_Streets2_P",  # Go to Captain's Chair Hotel (dump)
+    # The Royal Physician (taken in play, or from `dump` with the destination from the text)
+    _seq("L_Bridge_Part1a_Script", 2): "L_Bridge_Part1b_P",  # Go to Drawbridge Way
+    _seq("L_Bridge_Part1b_Script", 1): "L_Bridge_Part1a_P",  # Go to Southside Gate (dump)
+    _seq("L_Bridge_Part1b_Script", 2): "L_Bridge_Part1c_P",  # Go to Midrow Substation
+    _seq("L_Bridge_Part1c_Script", 1): "L_Bridge_Part2_P",  # Go to North End
+    _seq("L_Bridge_Part1c_Script", 2): "L_Bridge_Part1b_P",  # Go to Drawbridge Way (dump)
+    _seq("L_Bridge_Part2_Script", 2): "L_Bridge_Part1c_P",  # Go to Midrow Substation (dump)
 }
 
 

@@ -44,3 +44,10 @@ def test_galvanis_exits_depend_on_the_mission():
     assert zone_key_for_travel(exit_door, "L_Galvani1_P") == "Distillery District (HOC) Zone Key"
     assert zone_key_for_travel(exit_door, "L_Galvani2_P") == "Distillery District (HoP) Zone Key"
     assert zone_key_for_travel(exit_door) is None
+
+
+def test_the_royal_physicians_bridge_areas():
+    assert zone_key_for_level("L_Bridge_Part1a_P") == "Southside Gate Zone Key"
+    assert zone_key_for_level("L_Bridge_Part1b_P") == "Drawbridge Control Zone Key"
+    assert zone_key_for_level("L_Bridge_Part1c_P") == "Midrow Substation Zone Key"
+    assert zone_key_for_level("L_Bridge_Part2_P") == "North End Zone Key"

@@ -34,7 +34,8 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
 - [x] First in-game test: hook, engine tables, gameplay detection, console commands work
 - [x] Events for checks: pickups, map changes, scripted items, objectives
 - [ ] Fill `detect` for each location in locations.json (play and copy events). Done and
-      confirmed from play: Intro, High Overseer Campbell, House of Pleasure (`tools/check_log.py`)
+      confirmed from play: Intro, High Overseer Campbell, House of Pleasure, The Royal Physician
+      (`tools/check_log.py`)
 
 ### 1. Look inside the game
 - [ ] Pick and record the game build you'll support
@@ -138,7 +139,8 @@ Today they're only shown as received, nothing in the game checks them.
       Each option is mapped to its destination level in `zones.py` `TRAVEL_PROMPTS` from
       play logs (`travel ...` then `mapchange ...`) and `dump` (lists every travel prompt
       in the loaded levels). High Overseer Campbell: all 19 prompts mapped, refusal confirmed.
-      House of Pleasure: 21 prompts mapped (2026-10-26; Galvani's exits keyed per area)
+      House of Pleasure: 21 prompts mapped (2026-10-26; Galvani's exits keyed per area).
+      The Royal Physician: 6 prompts, its four bridge areas mapped to their keys
       for the Kennels. Other missions: run `dump` once per area
 - [x] Forced entries (story transitions, save loads, mission select, doors missing from
       the table) into keyless zones: the DLL reports `area <levels>` once settled; the client
@@ -234,9 +236,9 @@ Today they're only shown as received, nothing in the game checks them.
 
 These are things to check, not changes I made:
 
-- The `Southside Gate` region requires the HoP Distillery, Galvani and Art Dealer
-  keys, but not `Southside Gate Zone Key`. So that key is marked progression but
-  nothing needs it.
+- Fixed 2026-10-26: the `Southside Gate` region required the HoP Distillery, Galvani and
+  Art Dealer keys but not `Southside Gate Zone Key`, so nothing needed that key. Now that the
+  game enforces every zone's key, it's required too (stricter, so no seed gets harder).
 - `Kennels Zone Key` exists as an item but has no matching region.
 - The goal location is the only one marked `"victory": true`. Mission victories
   such as `High Overseer Campbell: Victory` are normal checks.

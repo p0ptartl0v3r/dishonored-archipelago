@@ -20,12 +20,12 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480083,The Golden Cat Bathhouse: Golden Cat Second Floor Rune,Rune,House of Pleasure,The Golden Cat Bathhouse,pickup,L_Brothel_Script...DisAbstractItemPickup_20,
 219480084,The Golden Cat Bathhouse: Courtesans Room Rune,Rune,House of Pleasure,The Golden Cat Bathhouse,pickup,L_Brothel_Script...DisAbstractItemPickup_60,
 219480085,House of Pleasure: Victory,Mission,House of Pleasure,The Golden Cat Bathhouse,additem,ChapterLog_Hub_03,written as Samuel takes Corvo back to the pub (fromStreets2_toHub)
-219480086,Southside Gate: Apartment Rune,Rune,The Royal Physician,Southside Gate,,,
-219480087,Drawbridge Control: Pratchett's Safe Rune,Rune,The Royal Physician,Drawbridge Control,,,
-219480088,Drawbridge Control: Outsider Shrine Rune,Rune,The Royal Physician,Drawbridge Control,,,
-219480089,Midrow Substation: Rune outside entry,Rune,The Royal Physician,Midrow Substation,,,
-219480090,North End: Sokolov's Laboratory Rune,Rune,The Royal Physician,North End,,,
-219480091,The Royal Physician: Victory,Mission,The Royal Physician,North End,,,
+219480086,Southside Gate: Apartment Rune,Rune,The Royal Physician,Southside Gate,pickup,L_Bridge_Part1a_Script...DisAbstractItemPickup_40,
+219480087,Drawbridge Control: Pratchett's Safe Rune,Rune,The Royal Physician,Drawbridge Control,pickup,L_Bridge_Part1b_Script...DisAbstractItemPickup_3,
+219480088,Drawbridge Control: Outsider Shrine Rune,Rune,The Royal Physician,Drawbridge Control,pickup,L_Bridge_Part1b_Script...DisAbstractItemPickup_4,
+219480089,Midrow Substation: Rune outside entry,Rune,The Royal Physician,Midrow Substation,pickup,L_Bridge_Part1c_Script...DisAbstractItemPickup_77,
+219480090,North End: Sokolov's Laboratory Rune,Rune,The Royal Physician,North End,pickup,L_Bridge_Part2_Script...DisAbstractItemPickup_0,
+219480091,The Royal Physician: Victory,Mission,The Royal Physician,North End,additem,ChapterLog_Hub_04,written as Corvo is taken back to the pub (fromBridge_toHub)
 219480092,Boyle Mansion Exterior: Outsider Shrine Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
 219480093,Boyle Mansion Exterior: Waterway Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
 219480094,Boyle Mansion Interior: Underground Vault Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,,,
@@ -53,7 +53,7 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480116,Art Dealer's Apartment: Second Floor Painting,Painting,House of Pleasure,Art Dealer's Apartment,pickup,L_ArtDealer_Scripts...DisAbstractItemPickup_6,a valuable: turns into 300 coins
 219480117,Art Dealer's Apartment: Third Floor Painting,Painting,House of Pleasure,Art Dealer's Apartment,pickup,L_ArtDealer_Scripts...DisAbstractItemPickup_4,a valuable: turns into 300 coins
 219480118,Art Dealer's Apartment: Inside Safe Painting,Painting,House of Pleasure,Art Dealer's Apartment,pickup,L_ArtDealer_Scripts...DisAbstractItemPickup_9,a valuable: turns into 300 coins
-219480119,North End: Sokolov's Safehouse Painting,Painting,The Royal Physician,North End,,,
+219480119,North End: Sokolov's Safehouse Painting,Painting,The Royal Physician,North End,pickup,L_Bridge_Part2_Script...DisAbstractItemPickup_1,a valuable: turns into 300 coins
 219480120,Dishonored (Mission): Corvo's Cell Key,Other,Intro,Dunwall Prison,pickup,L_Prison_Script...DisKey_Base_1,key from the bread tray
 219480121,Prologue: Get Framed,Other,Intro,Prologue,mapchange,L_Prison_P,arriving in Coldridge after the assassination
 219480122,Dishonored (Mission): Folding Blade and Crossbow,Other,Intro,Dunwall Sewers,grant,Twk_Inv_CrossbowCorvo (and Twk_Inv_SwordCorvo) by Corvo_SpecialGear,cutscene after the note to the Lord Protector
@@ -68,7 +68,7 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480131,Distillery District: Griff's Shop Sokolov's Formula Blueprint,Blueprint,High Overseer Campbell,Distillery District (HOC),buy,BP_HealthPotion_AbsItm (200 coins),bought at Griff's shop; its pickup is spawned
 219480132,Backyard: Bonded Galvani Weave Blueprint,Blueprint,High Overseer Campbell,Backyard,pickup,L_Ovrsr_Back_Script...DisAbstractItemPickup_65 BP_ArmorIncrease_AbsItm,
 219480133,Old Dunwall Distillery: Incandescent Paste Blueprint,Blueprint,House of Pleasure,Old Dunwall Distillery (HoP),pickup,L_Distillery2_Script...DisAbstractItemPickup_213,BP_FlareBolt_AbsItm (incendiary bolts)
-219480134,Southside Gate: Folded Galvani Resin Blueprint,Blueprint,The Royal Physician,Southside Gate,,,
+219480134,Southside Gate: Folded Galvani Resin Blueprint,Blueprint,The Royal Physician,Southside Gate,pickup,L_Bridge_Part1a_Script...DisAbstractItemPickup_10,BP_SilentRunning_AbsItm
 219480135,Boyle Mansion Exterior: Spiked Grenade Housing Blueprint,Blueprint,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
 219480136,Tower Interior: Small-scale Combustion Refinement Blueprint,Blueprint,Return to the Tower,Tower Interior,,,
 219480137,Distillery District: Bridge End Bone Charm,Bone Charm,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisWhaleBoneCharm_0,"behind the gate where guards unload bodies (seen twice as (load), at 642,-10745,2985)"
@@ -81,10 +81,10 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480144,Distillery District: Captain's Chair Hotel Bone Charm,Bone Charm,House of Pleasure,Distillery District (HoP),pickup,L_Streets2_Script...DisWhaleBoneCharm_4,picked up in House of Pleasure's Distillery District; the Manual had it in the HOC region (moved 2026-10-26)
 219480145,The Golden Cat Bathhouse: Stairwell Room Bone Charm,Bone Charm,House of Pleasure,The Golden Cat Bathhouse,pickup,L_Brothel_Script...DisWhaleBoneCharm_0,
 219480146,Old Dunwall Distillery: Weeper Containment Room Bone Charm,Bone Charm,House of Pleasure,Old Dunwall Distillery (HoP),pickup,L_Distillery2_Script...DisWhaleBoneCharm_0,
-219480147,Southside Gate: Past Metal Bridge Bone Charm,Bone Charm,The Royal Physician,Southside Gate,,,
-219480148,Midrow Substation: Rat Infested Basement Bone Charm,Bone Charm,The Royal Physician,Midrow Substation,,,
-219480149,North End: Building By Entry Bone Charm,Bone Charm,The Royal Physician,North End,,,
-219480150,Hound Pits Pub: Abandoned Apartment Bone Charm,Bone Charm,The Royal Physician,North End,,,
+219480147,Southside Gate: Past Metal Bridge Bone Charm,Bone Charm,The Royal Physician,Southside Gate,pickup,L_Bridge_Part1a_Script...DisWhaleBoneCharm_0,
+219480148,Midrow Substation: Rat Infested Basement Bone Charm,Bone Charm,The Royal Physician,Midrow Substation,pickup,L_Bridge_Part1c_Script...DisWhaleBoneCharm_2,
+219480149,North End: Building By Entry Bone Charm,Bone Charm,The Royal Physician,North End,pickup,L_Bridge_Part2_Script...DisWhaleBoneCharm_1,
+219480150,Hound Pits Pub: Abandoned Apartment Bone Charm,Bone Charm,The Royal Physician,North End,pickup,DishonoredGameFull_P...DisWhaleBoneCharm_5 (spawned),"in the pub after this mission (L_Pub_Night_P); spawned at runtime, so matched by position"
 219480151,Boyle Mansion Exterior: Outsider's Shrine Room Bone Charm,Bone Charm,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
 219480152,Boyle Mansion Exterior: Building by Mansion Bone Charm,Bone Charm,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
 219480153,Tower Exterior: Waterlock Bone Charm,Bone Charm,Return to the Tower,Tower Exterior,,,
