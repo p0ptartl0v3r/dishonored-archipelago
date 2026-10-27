@@ -160,9 +160,6 @@ def limits(received: Mapping[str, int]) -> list[str]:
         lines += [f"limit item {name} {int(received.get(item, 0) > 0)}" for name in names]
     # The first Progressive Sword allows holding a sword at all.
     lines.append(f"limit equip Sword {int(received.get('Progressive Sword', 0) > 0)}")
-    # Corvo's Pistol allows holding a pistol (bullets come from Progressive Bullets).
-    pistol = received.get("Corvo's Pistol", 0)
-    lines.append(f"limit equip Pistol {int(pistol > 0)}")
     # Travel prompts into zones whose key hasn't been received are refused.
     for option in TRAVEL_PROMPTS:
         key = zone_key_for_travel(option)
