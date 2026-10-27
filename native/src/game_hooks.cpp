@@ -102,6 +102,8 @@ struct EventNames {
   int32_t ranged_weapon = -1;           // class DishonoredWeapon_Ranged: pistol, crossbow (loaded magazine)
   int32_t sword = -1;                   // class DishonoredWepSword
   int32_t sword_tweaks = -1;            // class DisTweaks_WepSword (Twk_Inv_SwordCorvo)
+  int32_t pistol = -1;                  // class DishonoredWepPistol
+  int32_t pistol_tweaks = -1;           // class DisTweaks_WepPistol
   int32_t player_choice_confirm = -1;   // DisGFxMoviePlayerHUD.OnPlayerChoiceConfirm(Index): travel prompts, dialogue
   int32_t post_render = -1;             // HUD.PostRender: the HUD draws a frame (Canvas valid)
   int32_t hud = -1;                     // class HUD
@@ -378,16 +380,31 @@ bool blocked(const std::string& kind, const std::string& name) {
   return false;
 }
 
-// A sword not received yet. Unequipping alone isn't enough (attacking or blocking draws
-// it again), so it's taken out of the inventory: first empty hands are equipped in its
-// place with the pawn's OnEquipItemType (borrowed default DisSeqAct_EquipItemType, its
-// "Apply" input marked), then, once no hand holds it, its slot is cleared. An empty sword
-// slot is a normal state (Coldridge before the City Watch sword, the Flooded District).
-// When Progressive Sword arrives, Corvo's sword is given back through OnAddInventoryItem,
-// provided the sewer gear cutscene has happened (PrsnSewer_Weapons note) and the game
-// isn't holding the gear in its backup (Flooded District capture).
-DWORD g_last_sword_action = 0;
-DWORD g_last_sword_grant = 0;
+// A weapon not received yet (the sword, the pistol). Unequipping alone isn't enough
+// (attacking or blocking draws the sword again), so it's taken out of the inventory: first
+// empty hands are equipped in its place with the pawn's OnEquipItemType (borrowed default
+// DisSeqAct_EquipItemType, its "Apply" input marked), then, once no hand holds it, its
+// slot is cleared. An empty weapon slot is a normal state (Coldridge before the City Watch
+// gear, the Flooded District). When the item arrives, the weapon is given back through
+// OnAddInventoryItem, unless the game is holding the gear in its backup (Flooded District
+// capture). Never in the prologue, whose scripted fight hands Corvo a sword and a pistol.
+struct HeldWeapon {
+  const char* limit;          // `limit equip <name>`
+  int32_t* weapon_class;      // g_names entry of the weapon's class
+  int32_t* tweaks_class;      // g_names entry of its tweaks' class
+  size_t tweaks_offset;       // the weapon's own tweaks field
+  const char* default_tweaks; // given back when the taken one isn't known (game restarted)
+  const char* given_after;    // abstract item the story must have given first ("" = none)
+  DWORD last_action = 0;
+  DWORD last_grant = 0;
+  ue3::UObject* taken = nullptr;  // the tweaks of the weapon taken away
+};
+HeldWeapon g_held_weapons[] = {
+    // Corvo's sword arrives in the sewer gear cutscene (PrsnSewer_Weapons); not before it.
+    {"Sword", &g_names.sword, &g_names.sword_tweaks, ue3::kSwordTweaks, "Twk_Inv_SwordCorvo", "PrsnSewer_Weapons"},
+    // The pistol is a normal pickup (Coldridge); given back as soon as it's received.
+    {"Pistol", &g_names.pistol, &g_names.pistol_tweaks, ue3::kPistolTweaks, nullptr, ""},
+};
 
 ue3::UObject* tweak_named(int32_t class_name_index, const char* name) {
   const int32_t wanted = ue3::find_name_index(name);
@@ -429,24 +446,37 @@ void unequip_hand(ue3::UObject* pawn, uint8_t usage) {
   if (apply) *apply = saved_apply;
 }
 
-void give_sword(ue3::UObject* pawn) {
+// Which tweaks to give back: the weapon taken this session, else a known name, else (the
+// pistol, whose own name isn't known yet) one whose name mentions Corvo or the player.
+ue3::UObject* weapon_to_give(HeldWeapon& weapon) {
+  if (weapon.taken != nullptr) return weapon.taken;
+  if (weapon.default_tweaks != nullptr) return tweak_named(*weapon.tweaks_class, weapon.default_tweaks);
+  ue3::UObject* fallback = nullptr;
+  for (auto* tweak : ue3::find_instances_of_subclasses(*weapon.tweaks_class)) {
+    const std::string name = ue3::object_name(tweak);
+    if (name.find("Corvo") != std::string::npos) return tweak;
+    if (fallback == nullptr && name.find("Player") != std::string::npos) fallback = tweak;
+  }
+  return fallback;
+}
+
+void give_weapon(ue3::UObject* pawn, HeldWeapon& weapon) {
   static ue3::UFunction* add = ue3::find_object("Function DishonoredGame.DishonoredPawn.OnAddInventoryItem");
   static ue3::UObject* action =
       ue3::find_object("DisSeqAct_AddInventoryItem DishonoredGame.Default__DisSeqAct_AddInventoryItem");
-  static ue3::UObject* sword = tweak_named(g_names.sword_tweaks, "Twk_Inv_SwordCorvo");
-  if (sword == nullptr) sword = tweak_named(g_names.sword_tweaks, "Twk_Inv_SwordCorvo");  // may load later
-  if (add == nullptr || action == nullptr || sword == nullptr) {
-    log("WARNING: can't give the sword back (OnAddInventoryItem {}, Twk_Inv_SwordCorvo {})",
-        add != nullptr && action != nullptr, sword != nullptr);
+  ue3::UObject* tweaks = weapon_to_give(weapon);
+  if (add == nullptr || action == nullptr || tweaks == nullptr) {
+    log("WARNING: can't give the {} back (OnAddInventoryItem {}, tweaks {})", weapon.limit,
+        add != nullptr && action != nullptr, tweaks != nullptr);
     return;
   }
   auto& item = *reinterpret_cast<ue3::UObject**>(reinterpret_cast<uint8_t*>(action) + ue3::kAddInventoryActionItem);
   const auto saved = item;
-  item = sword;
+  item = tweaks;
   ue3::UObject* params = action;
   g_original(pawn, nullptr, add, &params, nullptr);
   item = saved;
-  emit_event("give sword Twk_Inv_SwordCorvo");
+  emit_event(std::format("give {} {}", lower(weapon.limit), ue3::object_name(tweaks)));
 }
 
 bool has_abstract_item(ue3::UObject* inventory, const std::string& name) {
@@ -460,41 +490,44 @@ bool has_abstract_item(ue3::UObject* inventory, const std::string& name) {
   return false;
 }
 
-void enforce_sword(ue3::UObject* pawn, ue3::UObject* inventory, DWORD now) {
-  const auto allowed = allowed_in(g_equip_allowed, "Sword");
-  if (g_in_prologue || !allowed || now - g_last_sword_action < 1000) return;
+void enforce_weapon(ue3::UObject* pawn, ue3::UObject* inventory, HeldWeapon& weapon, DWORD now) {
+  const auto allowed = allowed_in(g_equip_allowed, weapon.limit);
+  if (g_in_prologue || !allowed || now - weapon.last_action < 1000) return;
   const auto slots = ue3::field<ue3::TArray<uint8_t>>(inventory, ue3::kInventorySlots);
   if (slots.data == nullptr) return;
   auto item_in = [&](int32_t slot) { return *reinterpret_cast<ue3::UObject**>(slots.data + slot * 0xC); };
   auto hand_slot = [&](int usage) {
     return ue3::field<int32_t>(inventory, ue3::kInventoryEquipUsage + usage * ue3::kEquipUsageSize);
   };
-  int32_t sword_slot = -1;
+  int32_t weapon_slot = -1;
   for (int32_t i = 0; i < slots.count; ++i) {
-    if (ue3::is_a(item_in(i), g_names.sword)) sword_slot = i;
+    if (ue3::is_a(item_in(i), *weapon.weapon_class)) weapon_slot = i;
   }
+  const std::string name = lower(weapon.limit);
   if (*allowed) {
     const bool backed_up = ue3::field<uint32_t>(inventory, ue3::kInventoryFlags) & 2;  // m_bBackupIsValid
-    if (sword_slot < 0 && !backed_up && has_abstract_item(inventory, "PrsnSewer_Weapons") &&
-        now - g_last_sword_grant >= 10000) {  // one try every 10 s
-      g_last_sword_grant = now;
-      give_sword(pawn);
+    const bool story_ready = weapon.given_after[0] == 0 || has_abstract_item(inventory, weapon.given_after);
+    if (weapon_slot < 0 && !backed_up && story_ready && now - weapon.last_grant >= 10000) {  // one try every 10 s
+      weapon.last_grant = now;
+      give_weapon(pawn, weapon);
     }
     return;
   }
-  if (sword_slot < 0) return;
-  g_last_sword_action = now;
+  if (weapon_slot < 0) return;
+  weapon.last_action = now;
   bool held = false;
   for (uint8_t usage = 1; usage <= 2; ++usage) {  // EDisEquipUsage_Primary, _Secondary
-    if (hand_slot(usage) == sword_slot) {
+    if (hand_slot(usage) == weapon_slot) {
       held = true;
       unequip_hand(pawn, usage);
-      emit_event(std::format("unequip sword (hand {})", usage));
+      emit_event(std::format("unequip {} (hand {})", name, usage));
     }
   }
   if (held) return;  // take it out next time, once it's no longer in a hand
-  emit_event(std::format("take sword {} from slot {}", ue3::object_name(item_in(sword_slot)), sword_slot));
-  *reinterpret_cast<ue3::UObject**>(slots.data + sword_slot * 0xC) = nullptr;
+  if (auto* tweaks = ue3::field<ue3::UObject*>(item_in(weapon_slot), weapon.tweaks_offset)) weapon.taken = tweaks;
+  emit_event(std::format("take {} {} from slot {} ({})", name, ue3::object_name(item_in(weapon_slot)), weapon_slot,
+                         ue3::object_name(weapon.taken)));
+  *reinterpret_cast<ue3::UObject**>(slots.data + weapon_slot * 0xC) = nullptr;
 }
 
 // Equipment not received yet: ammo of that type (and a magazine loaded with it) and
@@ -502,7 +535,7 @@ void enforce_sword(ue3::UObject* pawn, ue3::UObject* inventory, DWORD now) {
 void enforce_equipment(ue3::UObject* pawn) {
   auto* inventory = ue3::field<ue3::UObject*>(pawn, ue3::kPawnInventory);
   if (inventory == nullptr) return;
-  enforce_sword(pawn, inventory, GetTickCount());
+  for (auto& weapon : g_held_weapons) enforce_weapon(pawn, inventory, weapon, GetTickCount());
   const auto ammo = ue3::field<ue3::TArray<int32_t>>(inventory, ue3::kInventoryAmmo);
   for (int32_t i = 0; i < ammo.count && i < 12 && ammo.data != nullptr; ++i) {
     if (ammo.data[2 * i] > 0 && blocked("ammo", kAmmoTypes[i])) {
@@ -925,6 +958,12 @@ void dump_player_state(ue3::UObject* player_controller) {
   }
   log("bone charm slots:{}", slots);
   for (const auto& [name, level] : power_levels(pawn)) log("power {} level {}", name, level);
+  // Weapon definitions loaded now: which one to give back for Corvo's Pistol / sword.
+  for (const auto& weapon : g_held_weapons) {
+    for (auto* tweak : ue3::find_instances_of_subclasses(*weapon.tweaks_class)) {
+      log("{} tweaks {}", lower(weapon.limit), ue3::path_name(tweak));
+    }
+  }
   // Every travel prompt in the loaded level scripts, for mapping them to zones
   // (client/zones.py TRAVEL_PROMPTS) without walking through each door.
   static const int32_t scripted_choice = ue3::find_name_index("DisSeqAct_DialogScriptedChoice");
@@ -1232,6 +1271,8 @@ void resolve_engine_objects() {
   g_names.ranged_weapon = ue3::find_name_index("DishonoredWeapon_Ranged");
   g_names.sword = ue3::find_name_index("DishonoredWepSword");
   g_names.sword_tweaks = ue3::find_name_index("DisTweaks_WepSword");
+  g_names.pistol = ue3::find_name_index("DishonoredWepPistol");
+  g_names.pistol_tweaks = ue3::find_name_index("DisTweaks_WepPistol");
   g_names.post_render = ue3::find_name_index("PostRender");
   g_names.player_choice_confirm = ue3::find_name_index("OnPlayerChoiceConfirm");
   g_names.hud = ue3::find_name_index("HUD");

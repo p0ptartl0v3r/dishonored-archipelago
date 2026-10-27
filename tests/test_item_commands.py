@@ -98,6 +98,8 @@ def test_equipment_allows_ammo_types_in_order():
 def test_sword_needs_the_first_progressive_sword():
     assert "limit equip Sword 0" in limits({})
     assert "limit equip Sword 1" in limits({"Progressive Sword": 1})
+    assert "limit equip Pistol 0" in limits({})
+    assert "limit equip Pistol 1" in limits({"Corvo's Pistol": 1})
 
 
 def test_travel_prompts_are_refused_until_their_zone_key_arrives():

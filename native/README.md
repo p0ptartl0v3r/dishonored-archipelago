@@ -109,6 +109,10 @@ arrives). From then on the DLL:
   ammo of that type (`remove ammo ...`), a pistol/crossbow magazine loaded with it
   (`unload ...`) and collectables like the Rewire Tool (`remove item ...`); shop
   purchases of them are refunded (confirmed in-game)
+- does the same for the pistol until Corvo's Pistol arrives (`limit equip Pistol`;
+  `unequip pistol`, `take pistol ... (<tweaks>)`, `give pistol <tweaks>`), except that it's
+  given back right away (no cutscene condition): the pistol taken this session, else a
+  `DisTweaks_WepPistol` named after Corvo or the player (`dump` lists them). Untested
 - takes a sword away until Progressive Sword arrives (`limit equip Sword`): empty hands
   are equipped in its place (`OnEquipItemType`, "Apply" input marked; `unequip sword`),
   then its inventory slot is cleared (`take sword ...`). Once received, Corvo's sword is
