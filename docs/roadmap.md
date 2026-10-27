@@ -232,7 +232,8 @@ Today they're only shown as received, nothing in the game checks them.
 
 - Fixed 2026-10-26: `Distillery District: Captain's Chair Hotel Bone Charm` (a House of
   Pleasure location) was in the `Distillery District (HOC)` region, but it is picked up in
-  House of Pleasure's Distillery District. Moved to `Distillery District (HoP)`.
+  House of Pleasure's Distillery District. Moved to `Distillery District (HoP)`, and it needs
+  the HoP Galvani's and Old Distillery keys: Slackjaw gives the hotel key after his jobs.
 
 These are things to check, not changes I made:
 

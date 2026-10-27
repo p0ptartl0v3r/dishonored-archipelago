@@ -803,7 +803,7 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": [],
+    "requires": "|Dr Galvani's Offices (HoP) Zone Key| AND |Old Dunwall Distillery (HoP) Zone Key|",
     "detect": [
       "pickup L_Streets2_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_4"
     ]

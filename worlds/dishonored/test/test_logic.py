@@ -70,3 +70,13 @@ class TestSouthsideGateNeedsItsKey(DishonoredTestBase):
         self.assertFalse(self.can_reach_region("Southside Gate"))
         self.collect_by_name("Southside Gate Zone Key")
         self.assertTrue(self.can_reach_region("Southside Gate"))
+
+
+class TestCaptainsChairHotelCharm(DishonoredTestBase):
+    def test_needs_slackjaws_jobs(self) -> None:
+        # Slackjaw hands over the hotel key after his jobs at Galvani's and the Old Distillery.
+        location = "Distillery District: Captain's Chair Hotel Bone Charm"
+        self.collect_all_but(["Dr Galvani's Offices (HoP) Zone Key"])
+        self.assertFalse(self.can_reach_location(location))
+        self.collect_by_name("Dr Galvani's Offices (HoP) Zone Key")
+        self.assertTrue(self.can_reach_location(location))

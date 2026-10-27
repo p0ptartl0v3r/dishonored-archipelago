@@ -372,3 +372,10 @@ through `ProcessEvent`.
   (`L_Pub_Night_P`), spawned at runtime (`DishonoredGameFull_P...DisWhaleBoneCharm_5`).
 - Folded Galvani Resin is `BP_SilentRunning_AbsItm`.
 
+### Item meanings: read the Manual's PDF (`manual/Dishonored_Archipelago_Documentation.pdf`)
+- "Corvo's Pistol" is the *Corvo's Pistol Upgrade* from Piero's shop (`Twk_Upgrade_Pistol`),
+  not the pistol: Corvo always has a pistol. Progressive Bullets 1 = buy and use bullets,
+  2 = explosive bullets. (A build that took the pistol away was reverted, 2026-10-26.)
+- Progressive Sword 1 = use the sword at all, 2 = Sword Crossing. Sleep Darts 2 = the Combat
+  Sleep Darts upgrade. Every upgrade item = permission to buy it at Piero's (we grant it).
+
