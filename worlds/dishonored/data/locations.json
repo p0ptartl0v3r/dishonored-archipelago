@@ -369,7 +369,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_TowerRtrn_Yard_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_47"
+    ]
   },
   {
     "region": "Tower Interior",
@@ -377,7 +380,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_TowerRtrn_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_6"
+    ]
   },
   {
     "name": "Return to the Tower: Bedroom Rune",
@@ -385,7 +391,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_TowerRtrn_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_28"
+    ]
   },
   {
     "region": "Tower Exterior",
@@ -393,7 +402,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": "|Tower Interior Zone Key|"
+    "requires": "|Tower Interior Zone Key|",
+    "detect": [
+      "pickup L_TowerRtrn_Yard_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_6"
+    ]
   },
   {
     "region": "Greaves Refinery",
@@ -650,7 +662,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_TowerRtrn_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_8"
+    ]
   },
   {
     "region": "Rudshore Waterfront",
@@ -750,7 +765,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_TowerRtrn_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_3"
+    ]
   },
   {
     "region": "Distillery District (HOC)",
@@ -934,7 +952,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": "|Progressive Blink:2|"
+    "requires": "|Progressive Blink:2|",
+    "detect": [
+      "pickup L_TowerRtrn_Yard_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Tower Interior",
@@ -942,7 +963,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_TowerRtrn_Int_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Rudshore Waterfront",

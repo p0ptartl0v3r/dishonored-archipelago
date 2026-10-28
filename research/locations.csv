@@ -32,10 +32,10 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480095,The Pub: Spare a Boyle Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,L_Pub_FromBoyle_Script...DisAbstractItemPickup_0,"in the pub after this mission (L_Pub_Morning_P), next to a note"
 219480096,The Pub: Find Emily Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,grant,L_Pub_FromBoyle_Script...DisSeqAct_GivePickup_0,"in the pub after this mission; the rune spawns where Emily hid, so matched by the script action that gives it"
 219480097,The Pub: Reward for a duel with Shaw Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,grant,L_Pub_FromBoyle_Script...DisSeqAct_GivePickup_2,"in the pub after this mission; the rune is spawned, so matched by the script action that gives it"
-219480098,Return to the Tower: Bunkhouse Rune,Rune,Return to the Tower,Tower Exterior,,,
-219480099,Return to the Tower: Torture Chamber Shrine Rune,Rune,Return to the Tower,Tower Interior,,,
-219480100,Return to the Tower: Bedroom Rune,Rune,Return to the Tower,Tower Interior,,,
-219480101,Return to the Tower: Safehouse Rune,Rune,Return to the Tower,Tower Exterior,,,
+219480098,Return to the Tower: Bunkhouse Rune,Rune,Return to the Tower,Tower Exterior,pickup,L_TowerRtrn_Yard_Script...DisAbstractItemPickup_47,
+219480099,Return to the Tower: Torture Chamber Shrine Rune,Rune,Return to the Tower,Tower Interior,pickup,L_TowerRtrn_Int_Script...DisAbstractItemPickup_6,
+219480100,Return to the Tower: Bedroom Rune,Rune,Return to the Tower,Tower Interior,pickup,L_TowerRtrn_Int_Script...DisAbstractItemPickup_28,
+219480101,Return to the Tower: Safehouse Rune,Rune,Return to the Tower,Tower Exterior,pickup,L_TowerRtrn_Yard_Script...DisAbstractItemPickup_6,"on the rooftop, reached from the interior"
 219480102,The Flooded District: Refinery Rune,Rune,The Flooded District,Greaves Refinery,,,
 219480103,The Flooded District: Sewer Exit Rune,Rune,The Flooded District,Central Rudshore,,,
 219480104,The Flooded District: Rudshore Gate Rooftop Rune,Rune,The Flooded District,Rudshore Gate,,,
@@ -60,7 +60,7 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480123,Dishonored (Mission): Open Jelly's Safe,Other,Intro,Dunwall Sewers,pickup,"L_PrsnSewer_Script...DisAbstractItemPickup_79 (valuable, 50 coins) or DisElixirHealth_1","the safe's two items, near 6560,4390,3430; same in two runs"
 219480124,Boyle Mansion Interior: Bedroom Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,L_Boyle_Int_Script...DisAbstractItemPickup_67/_68/_69,"a valuable: turns into 300 coins. One per sister's bedroom; the script removes the other two (again while loading on every return), so loads never count"
 219480125,Boyle Mansion Interior: Display Room Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,L_Boyle_Int_Script...DisAbstractItemPickup_66,a valuable: turns into 300 coins
-219480126,Tower Interior: Piano Room Painting,Painting,Return to the Tower,Tower Interior,,,
+219480126,Tower Interior: Piano Room Painting,Painting,Return to the Tower,Tower Interior,pickup,L_TowerRtrn_Int_Script...DisAbstractItemPickup_8,a valuable: turns into 300 coins
 219480127,Rudshore Waterfront: Weeper Room Painting,Painting,The Flooded District,Rudshore Waterfront,,,
 219480128,Central Rudshore: Daud's Base Exit Painting,Painting,The Flooded District,Central Rudshore,,,
 219480129,Old Dunwall Sewers: Granny Rags Painting,Painting,The Flooded District,Old Dunwall Sewers,,,
@@ -70,7 +70,7 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480133,Old Dunwall Distillery: Incandescent Paste Blueprint,Blueprint,House of Pleasure,Old Dunwall Distillery (HoP),pickup,L_Distillery2_Script...DisAbstractItemPickup_213,BP_FlareBolt_AbsItm (incendiary bolts)
 219480134,Southside Gate: Folded Galvani Resin Blueprint,Blueprint,The Royal Physician,Southside Gate,pickup,L_Bridge_Part1a_Script...DisAbstractItemPickup_10,BP_SilentRunning_AbsItm
 219480135,Boyle Mansion Exterior: Spiked Grenade Housing Blueprint,Blueprint,Lady Boyle's Last Party,Boyle Mansion Exterior,pickup,L_BoyleStreet_Ext_Script...DisAbstractItemPickup_66,BP_StickyGrenade_AbsItm
-219480136,Tower Interior: Small-scale Combustion Refinement Blueprint,Blueprint,Return to the Tower,Tower Interior,,,
+219480136,Tower Interior: Small-scale Combustion Refinement Blueprint,Blueprint,Return to the Tower,Tower Interior,pickup,L_TowerRtrn_Int_Script...DisAbstractItemPickup_3,BP_ExpBullets_AbsItm
 219480137,Distillery District: Bridge End Bone Charm,Bone Charm,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisWhaleBoneCharm_0,"behind the gate where guards unload bodies (seen twice as (load), at 642,-10745,2985)"
 219480138,Distillery District: Griff's Building Bone Charm,Bone Charm,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisWhaleBoneCharm_1,2nd floor of the building where Griff is saved
 219480139,Old Dunwall Distillery: Rafter Bone Charm,Bone Charm,High Overseer Campbell,Old Dunwall Distillery (HOC),pickup,L_Distillery_Strt1Script...DisWhaleBoneCharm_1,
@@ -87,8 +87,8 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480150,Hound Pits Pub: Abandoned Apartment Bone Charm,Bone Charm,The Royal Physician,North End,pickup,DishonoredGameFull_P...DisWhaleBoneCharm_5 (spawned),"in the pub after this mission (L_Pub_Night_P); spawned at runtime, so matched by position"
 219480151,Boyle Mansion Exterior: Outsider's Shrine Room Bone Charm,Bone Charm,Lady Boyle's Last Party,Boyle Mansion Exterior,pickup,L_Boyle_Ext_Audio...DisWhaleBoneCharm_0,placed in the level's audio package
 219480152,Boyle Mansion Exterior: Building by Mansion Bone Charm,Bone Charm,Lady Boyle's Last Party,Boyle Mansion Exterior,pickup,L_BoyleStreet_Ext_Script...DisWhaleBoneCharm_1,
-219480153,Tower Exterior: Waterlock Bone Charm,Bone Charm,Return to the Tower,Tower Exterior,,,
-219480154,Tower Interior: Jessamine's Secret Room Bone Charm,Bone Charm,Return to the Tower,Tower Interior,,,
+219480153,Tower Exterior: Waterlock Bone Charm,Bone Charm,Return to the Tower,Tower Exterior,pickup,L_TowerRtrn_Yard_Script...DisWhaleBoneCharm_0,
+219480154,Tower Interior: Jessamine's Secret Room Bone Charm,Bone Charm,Return to the Tower,Tower Interior,pickup,L_TowerRtrn_Int_Script...DisWhaleBoneCharm_0,next to the Empress's journal (AG_Tower_Empress)
 219480155,Rudshore Waterfront: End of Street Bone Charm,Bone Charm,The Flooded District,Rudshore Waterfront,,,
 219480156,Greaves Refinery: Back of Tower Bone Charm,Bone Charm,The Flooded District,Greaves Refinery,,,
 219480157,Central Rudshore: Wolfhound Guarded Bone Charm,Bone Charm,The Flooded District,Central Rudshore,,,

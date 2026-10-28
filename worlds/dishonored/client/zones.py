@@ -32,9 +32,9 @@ LEVEL_ZONE_KEYS: dict[str, str] = {
     "l_bridge_part2_p": "North End Zone Key",
     "l_boyle_ext_p": "Lady Boyle's Last Party Exterior Zone Key",
     "l_boyle_int_p": "Boyle Mansion Interior Zone Key",
-    # From the package names, not yet seen in play
-    "l_towerrtrn_yard_p": "Tower Exterior Zone Key",
+    "l_towerrtrn_yard_p": "Tower Exterior Zone Key",  # the rooftop is part of it too
     "l_towerrtrn_int_p": "Tower Interior Zone Key",
+    # From the package names, not yet seen in play
     "l_flooded_frefinery_p": "Greaves Refinery Zone Key",
     "l_flooded_fgate_p": "Rudshore Gate Zone Key",
     "l_pub_assault_p": "Hound Pits Pub (The Loyalists) Zone Key",
@@ -113,6 +113,17 @@ TRAVEL_PROMPTS: dict[str, str] = {
     _seq("L_Boyle_Ext_P", 4): "L_Boyle_Int_P",  # Go to Boyle Mansion Foyer
     _seq("L_Boyle_Ext_P", 0): "L_Boyle_Int_P",  # Go to Boyle Mansion Cellars
     _seq("L_Boyle_Int_P", 1): "L_Boyle_Ext_P",  # Go to the Sewers
+    _seq("L_Boyle_Int_P", 2): "L_Boyle_Ext_P",  # Go to Boyle Gardens
+    _seq("L_Boyle_Ext_P", 5): "L_Boyle_Int_P",  # Go to Mansion Second Floor (Forbidden)
+    # Return to the Tower (from `dump` in both areas; 5 and 2 taken in play)
+    _seq("L_TowerRtrn_Yard_Script", 3): "L_TowerRtrn_Int_P",  # Go to Dunwall Tower Interior
+    _seq("L_TowerRtrn_Yard_Script", 5): "L_TowerRtrn_Int_P",  # Go to Dunwall Tower Interior
+    _seq("L_TowerRtrn_Yard_Script", 6): "L_TowerRtrn_Int_P",  # Go to Dunwall Tower Interior
+    _seq("L_TowerRtrn_Yard_Script", 7): "L_TowerRtrn_Int_P",  # Go to Dunwall Tower Interior
+    _seq("L_TowerRtrn_Int_Script", 0): "L_TowerRtrn_Yard_P",  # Go to Dunwall Tower Exterior
+    _seq("L_TowerRtrn_Int_Script", 7): "L_TowerRtrn_Yard_P",  # Go to Dunwall Tower Exterior
+    _seq("L_TowerRtrn_Int_Script", 8): "L_TowerRtrn_Yard_P",  # Go to Dunwall Tower Exterior
+    _seq("L_TowerRtrn_Int_Script", 5): "L_TowerRtrn_Yard_P",  # Go to Dunwall Tower Rooftop
 }
 
 

@@ -58,3 +58,10 @@ def test_boyle_mansion_doors():
     assert zone_key_for_travel(f"L_Boyle_Ext_P.{choice}4#0") == "Boyle Mansion Interior Zone Key"
     assert zone_key_for_travel(f"L_Boyle_Ext_P.{choice}0#0") == "Boyle Mansion Interior Zone Key"
     assert zone_key_for_travel(f"L_Boyle_Int_P.{choice}1#0") == "Lady Boyle's Last Party Exterior Zone Key"
+
+
+def test_tower_doors():
+    choice = "TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_"
+    assert zone_key_for_travel(f"L_TowerRtrn_Yard_Script.{choice}5#0") == "Tower Interior Zone Key"
+    # The rooftop is in the exterior level.
+    assert zone_key_for_travel(f"L_TowerRtrn_Int_Script.{choice}5#0") == "Tower Exterior Zone Key"

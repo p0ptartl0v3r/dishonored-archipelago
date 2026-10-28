@@ -392,6 +392,15 @@ through `ProcessEvent`.
   matched by the action that gives them: `grant pickup Rune_twk by
   L_Pub_FromBoyle_Script...DisSeqAct_GivePickup_0` (Emily) and `_2` (duel), same in two runs.
 
+### Return to the Tower (2026-10-27)
+- Levels `L_TowerRtrn_Yard_P` (grounds, and the rooftop) and `L_TowerRtrn_Int_P`; pickups in
+  `L_TowerRtrn_Yard_Script` / `L_TowerRtrn_Int_Script`. Travel prompts from `dump`: the yard's
+  `DialogScriptedChoice_3/5/6/7` go inside; the interior's `0/7/8` go to the exterior and `5`
+  to the rooftop (which loads `L_TowerRtrn_Yard_P`, so it needs the Tower Exterior key).
+- Mapped from the marks without a list: the Safehouse Rune is the yard rune on the rooftop
+  (`_6`), the Bunkhouse Rune the other one (`_47`). Small-scale Combustion Refinement is
+  `BP_ExpBullets_AbsItm`. Victory not seen yet (the log ended after "Yes, Samuel").
+
 ### Item meanings: read the Manual's PDF (`manual/Dishonored_Archipelago_Documentation.pdf`)
 - "Corvo's Pistol" is the *Corvo's Pistol Upgrade* from Piero's shop (`Twk_Upgrade_Pistol`),
   not the pistol: Corvo always has a pistol. Progressive Bullets 1 = buy and use bullets,

@@ -461,3 +461,33 @@ def test_real_events_from_lady_boyles_last_party():
                             "at=3798,-2044,1189 (far)") == []
     assert game.match_event(interior + "DisAbstractItemPickup_69 DisAbstractItemPickup Coins_AbsItm "
                             "at=3798,-2044,1189 (load)") == []
+
+
+def test_real_events_from_return_to_the_tower():
+    """Event lines from a playthrough of the sixth mission (2026-10-27)."""
+    from dishonored import game_data
+
+    ids = game_data.load().location_name_to_id
+    game = NativeInterface()
+    yard = "pickup L_TowerRtrn_Yard_Script.TheWorld.PersistentLevel."
+    inside = "pickup L_TowerRtrn_Int_Script.TheWorld.PersistentLevel."
+    cases = {
+        yard + "DisWhaleBoneCharm_0 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=9803,23910,1362":
+            "Tower Exterior: Waterlock Bone Charm",
+        yard + "DisAbstractItemPickup_47 DisAbstractItemPickup Rune_AbsItm at=17976,27923,2945":
+            "Return to the Tower: Bunkhouse Rune",
+        inside + "DisAbstractItemPickup_6 DisAbstractItemPickup Rune_AbsItm at=-2972,10343,3910":
+            "Return to the Tower: Torture Chamber Shrine Rune",
+        inside + "DisAbstractItemPickup_3 DisAbstractItemPickup BP_ExpBullets_AbsItm at=-5842,7727,6005":
+            "Tower Interior: Small-scale Combustion Refinement Blueprint",
+        inside + "DisWhaleBoneCharm_0 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=-1895,9146,6219":
+            "Tower Interior: Jessamine's Secret Room Bone Charm",
+        inside + "DisAbstractItemPickup_28 DisAbstractItemPickup Rune_AbsItm at=-8128,7214,6000":
+            "Return to the Tower: Bedroom Rune",
+        inside + "DisAbstractItemPickup_8 DisAbstractItemPickup Coins_AbsItm at=-8649,5938,5957":
+            "Tower Interior: Piano Room Painting",
+        yard + "DisAbstractItemPickup_6 DisAbstractItemPickup Rune_AbsItm at=29621,23988,6733":
+            "Return to the Tower: Safehouse Rune",
+    }
+    for event, location in cases.items():
+        assert game.match_event(event) == [ids[location]], event
