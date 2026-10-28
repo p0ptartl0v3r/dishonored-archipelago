@@ -399,7 +399,8 @@ through `ProcessEvent`.
   to the rooftop (which loads `L_TowerRtrn_Yard_P`, so it needs the Tower Exterior key).
 - Mapped from the marks without a list: the Safehouse Rune is the yard rune on the rooftop
   (`_6`), the Bunkhouse Rune the other one (`_47`). Small-scale Combustion Refinement is
-  `BP_ExpBullets_AbsItm`. Victory not seen yet (the log ended after "Yes, Samuel").
+  `BP_ExpBullets_AbsItm`. Mission end: `additem ... fromTowerReturn_toHub ... ChapterLog_Hub_06`
+  as the boat reaches the pub (`L_Pub_Dusk_P`, `L_Pub_FromTwrReturn_Script`).
 
 ### Item meanings: read the Manual's PDF (`manual/Dishonored_Archipelago_Documentation.pdf`)
 - "Corvo's Pistol" is the *Corvo's Pistol Upgrade* from Piero's shop (`Twk_Upgrade_Pistol`),

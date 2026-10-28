@@ -44,7 +44,7 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480107,The Loyalists: Piero's Workshop Rune,Rune,The Loyalists,Hound Pits Pub (The Loyalists),,,
 219480108,The Light at the End: Drainage Rune,Rune,The Light at the End,Kingsparrow Fort,,,
 219480109,Lady Boyle's Last Party: Victory,Mission,Lady Boyle's Last Party,Boyle Mansion Interior,additem,ChapterLog_Hub_05,written as Corvo is taken back to the pub (fromBoyle_toHub)
-219480110,Return to the Tower: Victory,Mission,Return to the Tower,Tower Interior,,,
+219480110,Return to the Tower: Victory,Mission,Return to the Tower,Tower Interior,additem,ChapterLog_Hub_06,written as the boat reaches the pub (fromTowerReturn_toHub)
 219480111,The Flooded District: Victory,Mission,The Flooded District,Old Dunwall Sewers,,,
 219480112,The Loyalists: Victory,Mission,The Loyalists,Hound Pits Pub (The Loyalists),,,
 219480113,The Void: Receive the Mark,Other,Intro,The Void,grant,OnAddPower Blink 1,the Outsider gives Blink with the mark

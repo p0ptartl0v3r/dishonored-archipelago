@@ -480,7 +480,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "additem ChapterLog_Hub_06"
+    ]
   },
   {
     "region": "Old Dunwall Sewers",

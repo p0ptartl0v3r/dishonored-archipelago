@@ -488,6 +488,8 @@ def test_real_events_from_return_to_the_tower():
             "Tower Interior: Piano Room Painting",
         yard + "DisAbstractItemPickup_6 DisAbstractItemPickup Rune_AbsItm at=29621,23988,6733":
             "Return to the Tower: Safehouse Rune",
+        "additem DishonoredGameFull_P.TheWorld.PersistentLevel.Main_Sequence.fromTowerReturn_toHub."
+        "DisSeqAct_AddAbstractItem_1 ChapterLog_Hub_06": "Return to the Tower: Victory",
     }
     for event, location in cases.items():
         assert game.match_event(event) == [ids[location]], event
