@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from dishonored.client.zones import LEVEL_PREFIX_ZONE_KEYS, LEVEL_ZONE_KEYS, zone_key_for_level
+from dishonored.client.zones import LEVEL_PREFIX_ZONE_KEYS, LEVEL_ZONE_KEYS, zone_key_for_level, zone_key_for_travel
 
 ITEMS = Path(__file__).resolve().parent.parent / "worlds" / "dishonored" / "data" / "items.json"
 
@@ -51,3 +51,10 @@ def test_the_royal_physicians_bridge_areas():
     assert zone_key_for_level("L_Bridge_Part1b_P") == "Drawbridge Control Zone Key"
     assert zone_key_for_level("L_Bridge_Part1c_P") == "Midrow Substation Zone Key"
     assert zone_key_for_level("L_Bridge_Part2_P") == "North End Zone Key"
+
+
+def test_boyle_mansion_doors():
+    choice = "TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_"
+    assert zone_key_for_travel(f"L_Boyle_Ext_P.{choice}4#0") == "Boyle Mansion Interior Zone Key"
+    assert zone_key_for_travel(f"L_Boyle_Ext_P.{choice}0#0") == "Boyle Mansion Interior Zone Key"
+    assert zone_key_for_travel(f"L_Boyle_Int_P.{choice}1#0") == "Lady Boyle's Last Party Exterior Zone Key"

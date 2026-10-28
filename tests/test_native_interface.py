@@ -407,3 +407,48 @@ def test_real_events_from_the_royal_physician():
     }
     for event, location in cases.items():
         assert game.match_event(event) == [ids[location]], event
+
+
+def test_real_events_from_lady_boyles_last_party():
+    """Event lines from a playthrough of the fifth mission (2026-10-27)."""
+    from dishonored import game_data
+
+    ids = game_data.load().location_name_to_id
+    game = NativeInterface()
+    ext = "pickup L_Boyle_Ext_Script.TheWorld.PersistentLevel."
+    street = "pickup L_BoyleStreet_Ext_Script.TheWorld.PersistentLevel."
+    interior = "pickup L_Boyle_Int_Script.TheWorld.PersistentLevel."
+    spawned = "pickup DishonoredGameFull_P.TheWorld.PersistentLevel."
+    cases = {
+        "pickup L_Boyle_Ext_Audio.TheWorld.PersistentLevel.DisWhaleBoneCharm_0 DisWhaleBoneCharm "
+        "WhaleBoneCharm_01_twk at=-12155,-3173,511": "Boyle Mansion Exterior: Outsider's Shrine Room Bone Charm",
+        ext + "DisAbstractItemPickup_0 DisAbstractItemPickup Rune_AbsItm at=-11705,-2588,541":
+            "Boyle Mansion Exterior: Outsider Shrine Rune",
+        street + "DisAbstractItemPickup_68 DisAbstractItemPickup Rune_AbsItm at=-6768,-9050,-2565":
+            "Boyle Mansion Exterior: Waterway Rune",
+        street + "DisWhaleBoneCharm_1 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=-3503,1967,311":
+            "Boyle Mansion Exterior: Building by Mansion Bone Charm",
+        street + "DisAbstractItemPickup_66 DisAbstractItemPickup BP_StickyGrenade_AbsItm at=-1573,-3975,-731":
+            "Boyle Mansion Exterior: Spiked Grenade Housing Blueprint",
+        interior + "DisAbstractItemPickup_66 DisAbstractItemPickup Coins_AbsItm at=1550,-463,993":
+            "Boyle Mansion Interior: Display Room Painting",
+        interior + "DisAbstractItemPickup_69 DisAbstractItemPickup Coins_AbsItm at=3770,-1992,1364":
+            "Boyle Mansion Interior: Bedroom Painting",
+        interior + "DisAbstractItemPickup_1 DisAbstractItemPickup Rune_AbsItm at=-831,-360,-1094":
+            "Boyle Mansion Interior: Underground Vault Rune",
+        "additem DishonoredGameFull_P.TheWorld.PersistentLevel.Main_Sequence.fromBoyle_toHub."
+        "DisSeqAct_AddAbstractItem_1 ChapterLog_Hub_05": "Lady Boyle's Last Party: Victory",
+        # In the pub after the mission.
+        "pickup L_Pub_FromBoyle_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_0 DisAbstractItemPickup "
+        "Rune_AbsItm at=-1285,-1208,1426": "The Pub: Spare a Boyle Rune",
+        spawned + "DisAbstractItemPickup_154 DisAbstractItemPickup Rune_AbsItm at=-2684,-375,1439":
+            "The Pub: Find Emily Rune",
+        spawned + "DisAbstractItemPickup_155 DisAbstractItemPickup Rune_AbsItm at=-3426,-1465,427":
+            "The Pub: Reward for a duel with Shaw Rune",
+    }
+    for event, location in cases.items():
+        assert game.match_event(event) == [ids[location]], event
+    # 5 s after entering the mansion its script destroyed the bedroom painting from across the
+    # house (the variant not used); the DLL tags that "(far)" and it must not count.
+    assert game.match_event(interior + "DisAbstractItemPickup_69 DisAbstractItemPickup Coins_AbsItm "
+                            "at=3798,-2044,1189 (far)") == []

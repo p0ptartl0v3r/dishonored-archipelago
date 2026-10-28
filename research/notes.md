@@ -372,6 +372,23 @@ through `ProcessEvent`.
   (`L_Pub_Night_P`), spawned at runtime (`DishonoredGameFull_P...DisWhaleBoneCharm_5`).
 - Folded Galvani Resin is `BP_SilentRunning_AbsItm`.
 
+### Lady Boyle's Last Party (2026-10-27)
+- Levels `L_Boyle_Ext_P` (streets and grounds) and `L_Boyle_Int_P` (mansion); pickups in
+  `L_Boyle_Ext_Script`, `L_BoyleStreet_Ext_Script`, `L_Boyle_Int_Script`, and the shrine bone
+  charm in `L_Boyle_Ext_Audio`. The travel prompts are in the `_P` packages themselves
+  (`L_Boyle_Ext_P...DialogScriptedChoice_4` foyer, `_0` cellars; `L_Boyle_Int_P..._1` sewers).
+  Mission end: `additem ... fromBoyle_toHub ... ChapterLog_Hub_05`.
+- About 5 s after the mansion loads, its script destroys pickups it doesn't use (another
+  bedroom's painting `_68`/`_69`, two keys) thousands of units from the player; the exterior
+  does the same. These looked like pickups, so the DLL now tags a pickup destroyed more than
+  1000 units from the player `(far)` and the client ignores it (real pickups: at most ~270).
+  The bedroom painting's actor name may differ by which Boyle sister is the target: if a later
+  run misses it, add the other number.
+- The three "The Pub:" runes are in the pub afterwards (`L_Pub_Morning_P`): Spare a Boyle is
+  placed (`L_Pub_FromBoyle_Script...DisAbstractItemPickup_0`, next to a note); Find Emily and
+  the duel reward are spawned (`DishonoredGameFull_P`), matched by position. Later missions'
+  pub rewards could spawn on the same spots: check for collisions when mapping them.
+
 ### Item meanings: read the Manual's PDF (`manual/Dishonored_Archipelago_Documentation.pdf`)
 - "Corvo's Pistol" is the *Corvo's Pistol Upgrade* from Piero's shop (`Twk_Upgrade_Pistol`),
   not the pistol: Corvo always has a pistol. Progressive Bullets 1 = buy and use bullets,

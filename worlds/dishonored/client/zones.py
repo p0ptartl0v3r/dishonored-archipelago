@@ -2,7 +2,7 @@
 
 The DLL reports `mapchange <level>` when the player walks into another area; this
 table turns the level into the zone key that area needs. Confirmed in-game for the
-first four missions (research/notes.md); the rest are taken from the package names and
+first five missions (research/notes.md); the rest are taken from the package names and
 only listed when the name is unambiguous. Unlisted levels (parts of the Flooded District)
 never warn until they're confirmed.
 No Archipelago imports here, so tests can load it standalone.
@@ -30,9 +30,9 @@ LEVEL_ZONE_KEYS: dict[str, str] = {
     "l_bridge_part1b_p": "Drawbridge Control Zone Key",
     "l_bridge_part1c_p": "Midrow Substation Zone Key",
     "l_bridge_part2_p": "North End Zone Key",
-    # From the package names, not yet seen in play
     "l_boyle_ext_p": "Lady Boyle's Last Party Exterior Zone Key",
     "l_boyle_int_p": "Boyle Mansion Interior Zone Key",
+    # From the package names, not yet seen in play
     "l_towerrtrn_yard_p": "Tower Exterior Zone Key",
     "l_towerrtrn_int_p": "Tower Interior Zone Key",
     "l_flooded_frefinery_p": "Greaves Refinery Zone Key",
@@ -109,6 +109,10 @@ TRAVEL_PROMPTS: dict[str, str] = {
     _seq("L_Bridge_Part1c_Script", 1): "L_Bridge_Part2_P",  # Go to North End
     _seq("L_Bridge_Part1c_Script", 2): "L_Bridge_Part1b_P",  # Go to Drawbridge Way (dump)
     _seq("L_Bridge_Part2_Script", 2): "L_Bridge_Part1c_P",  # Go to Midrow Substation (dump)
+    # Lady Boyle's Last Party (taken in play; no dump yet, so other doors may be missing)
+    _seq("L_Boyle_Ext_P", 4): "L_Boyle_Int_P",  # Go to Boyle Mansion Foyer
+    _seq("L_Boyle_Ext_P", 0): "L_Boyle_Int_P",  # Go to Boyle Mansion Cellars
+    _seq("L_Boyle_Int_P", 1): "L_Boyle_Ext_P",  # Go to the Sewers
 }
 
 

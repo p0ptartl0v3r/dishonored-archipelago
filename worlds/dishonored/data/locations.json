@@ -303,7 +303,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Boyle_Ext_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_0"
+    ]
   },
   {
     "name": "Boyle Mansion Exterior: Waterway Rune",
@@ -311,7 +314,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_BoyleStreet_Ext_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_68"
+    ]
   },
   {
     "name": "Boyle Mansion Interior: Underground Vault Rune",
@@ -319,7 +325,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Boyle_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_1"
+    ]
   },
   {
     "name": "The Pub: Spare a Boyle Rune",
@@ -327,7 +336,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Pub_FromBoyle_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_0"
+    ]
   },
   {
     "name": "The Pub: Find Emily Rune",
@@ -335,7 +347,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup Rune_AbsItm near=-2684,-375,1439"
+    ]
   },
   {
     "name": "The Pub: Reward for a duel with Shaw Rune",
@@ -343,7 +358,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": "|Progressive Bullets| OR |Progressive Crossbow Bolts| OR |Progressive Sleep Darts|"
+    "requires": "|Progressive Bullets| OR |Progressive Crossbow Bolts| OR |Progressive Sleep Darts|",
+    "detect": [
+      "pickup Rune_AbsItm near=-3426,-1465,427"
+    ]
   },
   {
     "region": "Tower Exterior",
@@ -439,7 +457,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "additem ChapterLog_Hub_05"
+    ]
   },
   {
     "region": "Tower Interior",
@@ -605,7 +626,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Boyle_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_69"
+    ]
   },
   {
     "name": "Boyle Mansion Interior: Display Room Painting",
@@ -613,7 +637,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Boyle_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_66"
+    ]
   },
   {
     "region": "Tower Interior",
@@ -710,7 +737,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_BoyleStreet_Ext_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_66"
+    ]
   },
   {
     "name": "Tower Interior: Small-scale Combustion Refinement Blueprint",
@@ -880,7 +910,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Boyle_Ext_Audio.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Boyle Mansion Exterior",
@@ -888,7 +921,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_BoyleStreet_Ext_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_1"
+    ]
   },
   {
     "name": "Tower Exterior: Waterlock Bone Charm",

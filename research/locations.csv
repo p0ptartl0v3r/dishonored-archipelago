@@ -26,12 +26,12 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480089,Midrow Substation: Rune outside entry,Rune,The Royal Physician,Midrow Substation,pickup,L_Bridge_Part1c_Script...DisAbstractItemPickup_77,
 219480090,North End: Sokolov's Laboratory Rune,Rune,The Royal Physician,North End,pickup,L_Bridge_Part2_Script...DisAbstractItemPickup_0,
 219480091,The Royal Physician: Victory,Mission,The Royal Physician,North End,additem,ChapterLog_Hub_04,written as Corvo is taken back to the pub (fromBridge_toHub)
-219480092,Boyle Mansion Exterior: Outsider Shrine Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
-219480093,Boyle Mansion Exterior: Waterway Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
-219480094,Boyle Mansion Interior: Underground Vault Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,,,
-219480095,The Pub: Spare a Boyle Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,,,
-219480096,The Pub: Find Emily Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,,,
-219480097,The Pub: Reward for a duel with Shaw Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,,,
+219480092,Boyle Mansion Exterior: Outsider Shrine Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Exterior,pickup,L_Boyle_Ext_Script...DisAbstractItemPickup_0,
+219480093,Boyle Mansion Exterior: Waterway Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Exterior,pickup,L_BoyleStreet_Ext_Script...DisAbstractItemPickup_68,
+219480094,Boyle Mansion Interior: Underground Vault Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,L_Boyle_Int_Script...DisAbstractItemPickup_1,
+219480095,The Pub: Spare a Boyle Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,L_Pub_FromBoyle_Script...DisAbstractItemPickup_0,"in the pub after this mission (L_Pub_Morning_P), next to a note"
+219480096,The Pub: Find Emily Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,DishonoredGameFull_P...DisAbstractItemPickup_154 (spawned),"in the pub after this mission; spawned at runtime, so matched by position"
+219480097,The Pub: Reward for a duel with Shaw Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,DishonoredGameFull_P...DisAbstractItemPickup_155 (spawned),"in the pub after this mission; spawned at runtime, so matched by position"
 219480098,Return to the Tower: Bunkhouse Rune,Rune,Return to the Tower,Tower Exterior,,,
 219480099,Return to the Tower: Torture Chamber Shrine Rune,Rune,Return to the Tower,Tower Interior,,,
 219480100,Return to the Tower: Bedroom Rune,Rune,Return to the Tower,Tower Interior,,,
@@ -43,7 +43,7 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480106,The Flooded District: Survivor Camp Rune,Rune,The Flooded District,Old Dunwall Sewers,,,
 219480107,The Loyalists: Piero's Workshop Rune,Rune,The Loyalists,Hound Pits Pub (The Loyalists),,,
 219480108,The Light at the End: Drainage Rune,Rune,The Light at the End,Kingsparrow Fort,,,
-219480109,Lady Boyle's Last Party: Victory,Mission,Lady Boyle's Last Party,Boyle Mansion Interior,,,
+219480109,Lady Boyle's Last Party: Victory,Mission,Lady Boyle's Last Party,Boyle Mansion Interior,additem,ChapterLog_Hub_05,written as Corvo is taken back to the pub (fromBoyle_toHub)
 219480110,Return to the Tower: Victory,Mission,Return to the Tower,Tower Interior,,,
 219480111,The Flooded District: Victory,Mission,The Flooded District,Old Dunwall Sewers,,,
 219480112,The Loyalists: Victory,Mission,The Loyalists,Hound Pits Pub (The Loyalists),,,
@@ -58,8 +58,8 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480121,Prologue: Get Framed,Other,Intro,Prologue,mapchange,L_Prison_P,arriving in Coldridge after the assassination
 219480122,Dishonored (Mission): Folding Blade and Crossbow,Other,Intro,Dunwall Sewers,grant,Twk_Inv_CrossbowCorvo (and Twk_Inv_SwordCorvo) by Corvo_SpecialGear,cutscene after the note to the Lord Protector
 219480123,Dishonored (Mission): Open Jelly's Safe,Other,Intro,Dunwall Sewers,pickup,"L_PrsnSewer_Script...DisAbstractItemPickup_79 (valuable, 50 coins) or DisElixirHealth_1","the safe's two items, near 6560,4390,3430; same in two runs"
-219480124,Boyle Mansion Interior: Bedroom Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,,,
-219480125,Boyle Mansion Interior: Display Room Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,,,
+219480124,Boyle Mansion Interior: Bedroom Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,L_Boyle_Int_Script...DisAbstractItemPickup_69,a valuable: turns into 300 coins
+219480125,Boyle Mansion Interior: Display Room Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,L_Boyle_Int_Script...DisAbstractItemPickup_66,a valuable: turns into 300 coins
 219480126,Tower Interior: Piano Room Painting,Painting,Return to the Tower,Tower Interior,,,
 219480127,Rudshore Waterfront: Weeper Room Painting,Painting,The Flooded District,Rudshore Waterfront,,,
 219480128,Central Rudshore: Daud's Base Exit Painting,Painting,The Flooded District,Central Rudshore,,,
@@ -69,7 +69,7 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480132,Backyard: Bonded Galvani Weave Blueprint,Blueprint,High Overseer Campbell,Backyard,pickup,L_Ovrsr_Back_Script...DisAbstractItemPickup_65 BP_ArmorIncrease_AbsItm,
 219480133,Old Dunwall Distillery: Incandescent Paste Blueprint,Blueprint,House of Pleasure,Old Dunwall Distillery (HoP),pickup,L_Distillery2_Script...DisAbstractItemPickup_213,BP_FlareBolt_AbsItm (incendiary bolts)
 219480134,Southside Gate: Folded Galvani Resin Blueprint,Blueprint,The Royal Physician,Southside Gate,pickup,L_Bridge_Part1a_Script...DisAbstractItemPickup_10,BP_SilentRunning_AbsItm
-219480135,Boyle Mansion Exterior: Spiked Grenade Housing Blueprint,Blueprint,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
+219480135,Boyle Mansion Exterior: Spiked Grenade Housing Blueprint,Blueprint,Lady Boyle's Last Party,Boyle Mansion Exterior,pickup,L_BoyleStreet_Ext_Script...DisAbstractItemPickup_66,BP_StickyGrenade_AbsItm
 219480136,Tower Interior: Small-scale Combustion Refinement Blueprint,Blueprint,Return to the Tower,Tower Interior,,,
 219480137,Distillery District: Bridge End Bone Charm,Bone Charm,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisWhaleBoneCharm_0,"behind the gate where guards unload bodies (seen twice as (load), at 642,-10745,2985)"
 219480138,Distillery District: Griff's Building Bone Charm,Bone Charm,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisWhaleBoneCharm_1,2nd floor of the building where Griff is saved
@@ -85,8 +85,8 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480148,Midrow Substation: Rat Infested Basement Bone Charm,Bone Charm,The Royal Physician,Midrow Substation,pickup,L_Bridge_Part1c_Script...DisWhaleBoneCharm_2,
 219480149,North End: Building By Entry Bone Charm,Bone Charm,The Royal Physician,North End,pickup,L_Bridge_Part2_Script...DisWhaleBoneCharm_1,
 219480150,Hound Pits Pub: Abandoned Apartment Bone Charm,Bone Charm,The Royal Physician,North End,pickup,DishonoredGameFull_P...DisWhaleBoneCharm_5 (spawned),"in the pub after this mission (L_Pub_Night_P); spawned at runtime, so matched by position"
-219480151,Boyle Mansion Exterior: Outsider's Shrine Room Bone Charm,Bone Charm,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
-219480152,Boyle Mansion Exterior: Building by Mansion Bone Charm,Bone Charm,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
+219480151,Boyle Mansion Exterior: Outsider's Shrine Room Bone Charm,Bone Charm,Lady Boyle's Last Party,Boyle Mansion Exterior,pickup,L_Boyle_Ext_Audio...DisWhaleBoneCharm_0,placed in the level's audio package
+219480152,Boyle Mansion Exterior: Building by Mansion Bone Charm,Bone Charm,Lady Boyle's Last Party,Boyle Mansion Exterior,pickup,L_BoyleStreet_Ext_Script...DisWhaleBoneCharm_1,
 219480153,Tower Exterior: Waterlock Bone Charm,Bone Charm,Return to the Tower,Tower Exterior,,,
 219480154,Tower Interior: Jessamine's Secret Room Bone Charm,Bone Charm,Return to the Tower,Tower Interior,,,
 219480155,Rudshore Waterfront: End of Street Bone Charm,Bone Charm,The Flooded District,Rudshore Waterfront,,,

@@ -78,6 +78,8 @@ ue3::UObject* g_menu_pawn = nullptr;
 // A loaded save restores its own state for a moment after the pawn appears and would
 // overwrite anything granted earlier, so commands wait this long after gameplay starts.
 constexpr DWORD kSettleMs = 3000;
+// A pickup destroyed farther than this from the player wasn't picked up by them.
+constexpr float kPickupReach = 1000.0f;
 thread_local bool g_inside_hook_work = false;
 
 // Names (FName indices) of the functions that signal check-relevant events.
@@ -1074,8 +1076,22 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
     // Pickups spawned at runtime (rewards, drops) live in the persistent level and get
     // numbered in spawn order, so their names aren't stable; the position is.
     const auto at = ue3::field<ue3::FVector>(self, ue3::kActorLocation);
+    // Mission scripts also destroy pickups they don't use (Boyle's mansion removes the
+    // other variants' paintings and keys): those are far from the player. Real pickups
+    // have been within ~300 units.
+    bool distant = false;
+    if (!during_load) {
+      auto* controller = local_player_controller();
+      auto* pawn = controller ? ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn) : nullptr;
+      if (pawn != nullptr) {
+        const auto me = ue3::field<ue3::FVector>(pawn, ue3::kActorLocation);
+        const float dx = at.x - me.x, dy = at.y - me.y, dz = at.z - me.z;
+        distant = dx * dx + dy * dy + dz * dz > kPickupReach * kPickupReach;
+      }
+    }
     emit_event(std::format("pickup {} {} {} at={:.0f},{:.0f},{:.0f}{}", ue3::path_name(self), ue3::class_name(self),
-                           pickup_item_name(self), at.x, at.y, at.z, during_load ? " (load)" : ""));
+                           pickup_item_name(self), at.x, at.y, at.z,
+                           during_load ? " (load)" : distant ? " (far)" : ""));
   } else if (name == g_names.client_prepare_map_change) {
     const std::string level = ue3::name_string(*static_cast<ue3::FName*>(params));
     emit_event("mapchange " + level);
