@@ -349,7 +349,7 @@
     ],
     "requires": [],
     "detect": [
-      "pickup Rune_AbsItm near=-2684,-375,1439"
+      "grant pickup Rune_twk by L_Pub_FromBoyle_Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_GivePickup_0"
     ]
   },
   {
@@ -360,7 +360,7 @@
     ],
     "requires": "|Progressive Bullets| OR |Progressive Crossbow Bolts| OR |Progressive Sleep Darts|",
     "detect": [
-      "pickup Rune_AbsItm near=-3426,-1465,427"
+      "grant pickup Rune_twk by L_Pub_FromBoyle_Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_GivePickup_2"
     ]
   },
   {
@@ -628,7 +628,9 @@
     ],
     "requires": [],
     "detect": [
-      "pickup L_Boyle_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_69"
+      "pickup L_Boyle_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_67 !(load)",
+      "pickup L_Boyle_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_68 !(load)",
+      "pickup L_Boyle_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_69 !(load)"
     ]
   },
   {

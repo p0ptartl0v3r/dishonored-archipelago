@@ -441,14 +441,23 @@ def test_real_events_from_lady_boyles_last_party():
         # In the pub after the mission.
         "pickup L_Pub_FromBoyle_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_0 DisAbstractItemPickup "
         "Rune_AbsItm at=-1285,-1208,1426": "The Pub: Spare a Boyle Rune",
-        spawned + "DisAbstractItemPickup_154 DisAbstractItemPickup Rune_AbsItm at=-2684,-375,1439":
-            "The Pub: Find Emily Rune",
-        spawned + "DisAbstractItemPickup_155 DisAbstractItemPickup Rune_AbsItm at=-3426,-1465,427":
-            "The Pub: Reward for a duel with Shaw Rune",
+        # The rewards spawn where Emily hid (another run: at=-37,2258,116), so the action counts.
+        "grant pickup Rune_twk by L_Pub_FromBoyle_Script.TheWorld.PersistentLevel.Main_Sequence."
+        "DisSeqAct_GivePickup_0": "The Pub: Find Emily Rune",
+        "grant pickup Rune_twk by L_Pub_FromBoyle_Script.TheWorld.PersistentLevel.Main_Sequence."
+        "DisSeqAct_GivePickup_2": "The Pub: Reward for a duel with Shaw Rune",
+        # Second run: another sister's bedroom.
+        interior + "DisAbstractItemPickup_68 DisAbstractItemPickup Coins_AbsItm at=2396,3939,1071":
+            "Boyle Mansion Interior: Bedroom Painting",
     }
     for event, location in cases.items():
         assert game.match_event(event) == [ids[location]], event
-    # 5 s after entering the mansion its script destroyed the bedroom painting from across the
-    # house (the variant not used); the DLL tags that "(far)" and it must not count.
+    assert game.match_event(spawned + "DisAbstractItemPickup_154 DisAbstractItemPickup Rune_AbsItm "
+                            "at=-2684,-375,1439") == []
+    # 5 s after entering the mansion its script destroys the other bedrooms' paintings from across
+    # the house: the DLL tags that "(far)". Coming back in, the save removes them again while
+    # loading. Neither counts.
     assert game.match_event(interior + "DisAbstractItemPickup_69 DisAbstractItemPickup Coins_AbsItm "
                             "at=3798,-2044,1189 (far)") == []
+    assert game.match_event(interior + "DisAbstractItemPickup_69 DisAbstractItemPickup Coins_AbsItm "
+                            "at=3798,-2044,1189 (load)") == []

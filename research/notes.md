@@ -382,12 +382,15 @@ through `ProcessEvent`.
   bedroom's painting `_68`/`_69`, two keys) thousands of units from the player; the exterior
   does the same. These looked like pickups, so the DLL now tags a pickup destroyed more than
   1000 units from the player `(far)` and the client ignores it (real pickups: at most ~270).
-  The bedroom painting's actor name may differ by which Boyle sister is the target: if a later
-  run misses it, add the other number.
+  There are three bedroom paintings (`L_Boyle_Int_Script` `_67`, `_68`, `_69`, one per sister)
+  and the script keeps one. Coming back into the mansion, the save removes the other two again
+  *while loading*, like collected pickups, so the Bedroom Painting matches any of the three but
+  never a `(load)` event (detect word `!(load)`).
 - The three "The Pub:" runes are in the pub afterwards (`L_Pub_Morning_P`): Spare a Boyle is
-  placed (`L_Pub_FromBoyle_Script...DisAbstractItemPickup_0`, next to a note); Find Emily and
-  the duel reward are spawned (`DishonoredGameFull_P`), matched by position. Later missions'
-  pub rewards could spawn on the same spots: check for collisions when mapping them.
+  placed (`L_Pub_FromBoyle_Script...DisAbstractItemPickup_0`, next to a note). Find Emily's rune
+  spawns where Emily hid (a different spot each run) and the duel's is spawned too; both are
+  matched by the action that gives them: `grant pickup Rune_twk by
+  L_Pub_FromBoyle_Script...DisSeqAct_GivePickup_0` (Emily) and `_2` (duel), same in two runs.
 
 ### Item meanings: read the Manual's PDF (`manual/Dishonored_Archipelago_Documentation.pdf`)
 - "Corvo's Pistol" is the *Corvo's Pistol Upgrade* from Piero's shop (`Twk_Upgrade_Pistol`),

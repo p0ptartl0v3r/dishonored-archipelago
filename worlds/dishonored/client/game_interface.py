@@ -192,14 +192,18 @@ def event_matches(pattern: str, event: str) -> bool:
     Words compare exactly, so "DisAbstractItemPickup_12" never matches "..._120".
     A "near=x,y,z" word matches an event's "at=x,y,z" within NEAR_DISTANCE, for
     pickups spawned at runtime whose names aren't stable. Pickups the DLL tags "(far)"
-    were destroyed by a script away from the player and never match.
+    were destroyed by a script away from the player and never match. A "!word" must
+    not be in the event ("!(load)" for pickups a script may also remove).
     """
     words = event.split()
     if "(far)" in words:
         return False
     position = next((_position(w) for w in words if w.startswith("at=")), None)
     for token in pattern.split():
-        if token.startswith("near="):
+        if token.startswith("!"):
+            if token[1:] in words:
+                return False
+        elif token.startswith("near="):
             target = _position(token)
             if position is None or target is None:
                 return False

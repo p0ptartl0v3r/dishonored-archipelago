@@ -30,8 +30,8 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480093,Boyle Mansion Exterior: Waterway Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Exterior,pickup,L_BoyleStreet_Ext_Script...DisAbstractItemPickup_68,
 219480094,Boyle Mansion Interior: Underground Vault Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,L_Boyle_Int_Script...DisAbstractItemPickup_1,
 219480095,The Pub: Spare a Boyle Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,L_Pub_FromBoyle_Script...DisAbstractItemPickup_0,"in the pub after this mission (L_Pub_Morning_P), next to a note"
-219480096,The Pub: Find Emily Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,DishonoredGameFull_P...DisAbstractItemPickup_154 (spawned),"in the pub after this mission; spawned at runtime, so matched by position"
-219480097,The Pub: Reward for a duel with Shaw Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,DishonoredGameFull_P...DisAbstractItemPickup_155 (spawned),"in the pub after this mission; spawned at runtime, so matched by position"
+219480096,The Pub: Find Emily Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,grant,L_Pub_FromBoyle_Script...DisSeqAct_GivePickup_0,"in the pub after this mission; the rune spawns where Emily hid, so matched by the script action that gives it"
+219480097,The Pub: Reward for a duel with Shaw Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,grant,L_Pub_FromBoyle_Script...DisSeqAct_GivePickup_2,"in the pub after this mission; the rune is spawned, so matched by the script action that gives it"
 219480098,Return to the Tower: Bunkhouse Rune,Rune,Return to the Tower,Tower Exterior,,,
 219480099,Return to the Tower: Torture Chamber Shrine Rune,Rune,Return to the Tower,Tower Interior,,,
 219480100,Return to the Tower: Bedroom Rune,Rune,Return to the Tower,Tower Interior,,,
@@ -58,7 +58,7 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480121,Prologue: Get Framed,Other,Intro,Prologue,mapchange,L_Prison_P,arriving in Coldridge after the assassination
 219480122,Dishonored (Mission): Folding Blade and Crossbow,Other,Intro,Dunwall Sewers,grant,Twk_Inv_CrossbowCorvo (and Twk_Inv_SwordCorvo) by Corvo_SpecialGear,cutscene after the note to the Lord Protector
 219480123,Dishonored (Mission): Open Jelly's Safe,Other,Intro,Dunwall Sewers,pickup,"L_PrsnSewer_Script...DisAbstractItemPickup_79 (valuable, 50 coins) or DisElixirHealth_1","the safe's two items, near 6560,4390,3430; same in two runs"
-219480124,Boyle Mansion Interior: Bedroom Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,L_Boyle_Int_Script...DisAbstractItemPickup_69,a valuable: turns into 300 coins
+219480124,Boyle Mansion Interior: Bedroom Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,L_Boyle_Int_Script...DisAbstractItemPickup_67/_68/_69,"a valuable: turns into 300 coins. One per sister's bedroom; the script removes the other two (again while loading on every return), so loads never count"
 219480125,Boyle Mansion Interior: Display Room Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,L_Boyle_Int_Script...DisAbstractItemPickup_66,a valuable: turns into 300 coins
 219480126,Tower Interior: Piano Room Painting,Painting,Return to the Tower,Tower Interior,,,
 219480127,Rudshore Waterfront: Weeper Room Painting,Painting,The Flooded District,Rudshore Waterfront,,,
