@@ -65,3 +65,11 @@ def test_tower_doors():
     assert zone_key_for_travel(f"L_TowerRtrn_Yard_Script.{choice}5#0") == "Tower Interior Zone Key"
     # The rooftop is in the exterior level.
     assert zone_key_for_travel(f"L_TowerRtrn_Int_Script.{choice}5#0") == "Tower Exterior Zone Key"
+
+
+def test_flooded_district_doors():
+    choice = "TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_"
+    # Taken without the key on 2026-10-29: the safety net sent the player to the menu instead.
+    assert zone_key_for_travel(f"L_Flooded_FAssassins_P.{choice}1#0") == "Rudshore Gate Zone Key"
+    assert zone_key_for_travel(f"L_Flooded_FStreets_P.{choice}4#0") == "Central Rudshore Zone Key"
+    assert zone_key_for_level("L_Flooded_FIntro_P") is None

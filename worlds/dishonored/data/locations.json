@@ -413,7 +413,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Flooded_FRefinery_PickUps.TheWorld.PersistentLevel.DisAbstractItemPickup_81"
+    ]
   },
   {
     "region": "Central Rudshore",
@@ -421,7 +424,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Flooded_FAssassins_PickUps.TheWorld.PersistentLevel.DisAbstractItemPickup_23"
+    ]
   },
   {
     "region": "Rudshore Gate",
@@ -676,7 +682,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Flooded_FStreets_PickUps.TheWorld.PersistentLevel.DisAbstractItemPickup_12"
+    ]
   },
   {
     "name": "Central Rudshore: Daud's Base Exit Painting",
@@ -684,7 +693,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Flooded_FAssassins_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_168"
+    ]
   },
   {
     "region": "Old Dunwall Sewers",
@@ -977,7 +989,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Flooded_FStreets_PickUps.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Greaves Refinery",
@@ -985,7 +1000,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Flooded_FRefinery_PickUps.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Central Rudshore",
@@ -993,7 +1011,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Flooded_FAssassins_PickUps.TheWorld.PersistentLevel.DisWhaleBoneCharm_1"
+    ]
   },
   {
     "region": "Central Rudshore",
@@ -1001,7 +1022,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "grant pickup WhaleBoneCharm_01_twk by L_Flooded_FAssassins_Script.TheWorld.PersistentLevel.Main_Sequence.Daud_Behavior.DisSeqAct_GivePickup_1"
+    ]
   },
   {
     "region": "Rudshore Gate",
@@ -1041,6 +1065,9 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "objective DisSeqAct_CompleteObjective Flooded_Gear"
+    ]
   }
 ]

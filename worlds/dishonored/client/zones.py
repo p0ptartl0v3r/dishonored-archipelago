@@ -34,9 +34,12 @@ LEVEL_ZONE_KEYS: dict[str, str] = {
     "l_boyle_int_p": "Boyle Mansion Interior Zone Key",
     "l_towerrtrn_yard_p": "Tower Exterior Zone Key",  # the rooftop is part of it too
     "l_towerrtrn_int_p": "Tower Interior Zone Key",
-    # From the package names, not yet seen in play
+    # The Flooded District; L_Flooded_FIntro_P (where Corvo wakes) has no key of its own
+    "l_flooded_fstreets_p": "Rudshore Waterfront Zone Key",
     "l_flooded_frefinery_p": "Greaves Refinery Zone Key",
+    "l_flooded_fassassins_p": "Central Rudshore Zone Key",  # Daud's base
     "l_flooded_fgate_p": "Rudshore Gate Zone Key",
+    # From the package names, not yet seen in play
     "l_pub_assault_p": "Hound Pits Pub (The Loyalists) Zone Key",
 }
 
@@ -124,6 +127,15 @@ TRAVEL_PROMPTS: dict[str, str] = {
     _seq("L_TowerRtrn_Int_Script", 7): "L_TowerRtrn_Yard_P",  # Go to Dunwall Tower Exterior
     _seq("L_TowerRtrn_Int_Script", 8): "L_TowerRtrn_Yard_P",  # Go to Dunwall Tower Exterior
     _seq("L_TowerRtrn_Int_Script", 5): "L_TowerRtrn_Yard_P",  # Go to Dunwall Tower Rooftop
+    # The Flooded District (from `dump` in each area)
+    _seq("L_Flooded_FStreets_P", 1): "L_Flooded_FRefinery_P",  # Go to the Greaves Refinery
+    _seq("L_Flooded_FStreets_P", 5): "L_Flooded_FRefinery_P",  # Go to the Greaves Refinery
+    _seq("L_Flooded_FStreets_P", 4): "L_Flooded_FAssassins_P",  # Go to Central Rudshore
+    _seq("L_Flooded_FRefinery_P", 2): "L_Flooded_FStreets_P",  # Go to the Rudshore Waterfront Upper Level
+    _seq("L_Flooded_FRefinery_P", 3): "L_Flooded_FStreets_P",  # Go to the Rudshore Waterfront Street Level
+    _seq("L_Flooded_FAssassins_P", 1): "L_Flooded_FGate_P",  # Go to the Gateward Tunnel
+    _seq("L_Flooded_FAssassins_P", 3): "L_Flooded_FStreets_P",  # Go to Rudshore Market (destination a guess)
+    _seq("L_Flooded_FGate_P", 0): "L_Flooded_FAssassins_P",  # Go to Daud's Base
 }
 
 

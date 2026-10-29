@@ -493,3 +493,39 @@ def test_real_events_from_return_to_the_tower():
     }
     for event, location in cases.items():
         assert game.match_event(event) == [ids[location]], event
+
+
+def test_real_events_from_the_flooded_district():
+    """Event lines from a playthrough of the seventh mission, up to Rudshore Gate (2026-10-29)."""
+    from dishonored import game_data
+
+    ids = game_data.load().location_name_to_id
+    game = NativeInterface()
+    streets = "pickup L_Flooded_FStreets_PickUps.TheWorld.PersistentLevel."
+    refinery = "pickup L_Flooded_FRefinery_PickUps.TheWorld.PersistentLevel."
+    base = "pickup L_Flooded_FAssassins_PickUps.TheWorld.PersistentLevel."
+    cases = {
+        streets + "DisWhaleBoneCharm_0 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=-7268,5393,1779":
+            "Rudshore Waterfront: End of Street Bone Charm",
+        streets + "DisAbstractItemPickup_12 DisAbstractItemPickup Coins_AbsItm at=-9115,2267,1895":
+            "Rudshore Waterfront: Weeper Room Painting",
+        refinery + "DisAbstractItemPickup_81 DisAbstractItemPickup Rune_AbsItm at=4894,2166,67":
+            "The Flooded District: Refinery Rune",
+        refinery + "DisWhaleBoneCharm_0 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=4186,7373,2062":
+            "Greaves Refinery: Back of Tower Bone Charm",
+        "objective L_Flooded_FRefinery_P.TheWorld.PersistentLevel.Main_Sequence.Objectives_Manager."
+        "DisSeqAct_CompleteObjective_0 DisSeqAct_CompleteObjective Flooded_Gear": "Greaves Refinery: Retrieve your Gear",
+        base + "DisWhaleBoneCharm_1 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=-3587,5671,508":
+            "Central Rudshore: Wolfhound Guarded Bone Charm",
+        "grant pickup WhaleBoneCharm_01_twk by L_Flooded_FAssassins_Script.TheWorld.PersistentLevel.Main_Sequence."
+        "Daud_Behavior.DisSeqAct_GivePickup_1": "Central Rudshore: Daud's Bone Charm",
+        "pickup L_Flooded_FAssassins_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_168 DisAbstractItemPickup "
+        "Coins_AbsItm at=-2634,-38,285": "Central Rudshore: Daud's Base Exit Painting",
+        base + "DisAbstractItemPickup_23 DisAbstractItemPickup Rune_AbsItm at=-1838,-1019,-972":
+            "The Flooded District: Sewer Exit Rune",
+    }
+    for event, location in cases.items():
+        assert game.match_event(event) == [ids[location]], event
+    # Same number in the other package of the same level.
+    assert game.match_event(base.replace("_PickUps", "_Script") + "DisAbstractItemPickup_23 "
+                            "DisAbstractItemPickup Coins_AbsItm at=0,0,0") == []
