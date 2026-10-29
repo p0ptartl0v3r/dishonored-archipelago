@@ -73,3 +73,6 @@ def test_flooded_district_doors():
     assert zone_key_for_travel(f"L_Flooded_FAssassins_P.{choice}1#0") == "Rudshore Gate Zone Key"
     assert zone_key_for_travel(f"L_Flooded_FStreets_P.{choice}4#0") == "Central Rudshore Zone Key"
     assert zone_key_for_level("L_Flooded_FIntro_P") is None
+    assert zone_key_for_travel(f"L_Flooded_FGate_P.{choice}1#0") == "Old Dunwall Sewers Zone Key"
+    # The mission's last prompt is never refused: its Victory needs no pub key.
+    assert zone_key_for_travel(f"L_Streetsewer_Script.{choice}4#0") is None

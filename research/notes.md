@@ -402,7 +402,7 @@ through `ProcessEvent`.
   `BP_ExpBullets_AbsItm`. Mission end: `additem ... fromTowerReturn_toHub ... ChapterLog_Hub_06`
   as the boat reaches the pub (`L_Pub_Dusk_P`, `L_Pub_FromTwrReturn_Script`).
 
-### The Flooded District (2026-10-29, up to Rudshore Gate)
+### The Flooded District (2026-10-29)
 - Levels: `L_Flooded_FIntro_P` (where Corvo wakes; no zone of its own), `L_Flooded_FStreets_P`
   (Rudshore Waterfront), `L_Flooded_FRefinery_P` (Greaves Refinery), `L_Flooded_FAssassins_P`
   (Central Rudshore: Daud's base), `L_Flooded_FGate_P` (Rudshore Gate). Pickups are in
@@ -411,7 +411,14 @@ through `ProcessEvent`.
 - Retrieve your Gear = `objective ... CompleteObjective Flooded_Gear`; the game then gives back
   every item and journal entry at once (one `gain item` line each). The sword stayed away until
   then (the DLL didn't give it back early).
-- Daud's Bone Charm is handed over by `L_Flooded_FAssassins_Script...Daud_Behavior.DisSeqAct_GivePickup_1`.
+- Daud's Bone Charm is handed over by `L_Flooded_FAssassins_Script...Daud_Behavior.DisSeqAct_GivePickup_1`,
+  the same action whether Daud is killed or spared (both seen).
+- `L_Streetsewer_P` is the Old Dunwall Sewers (pickups in `L_Streetsewer_Script` and
+  `L_Streetsewer_Block`), reached from Rudshore Gate's "Go to the Old Port District Outskirts".
+  Granny's shrine rune is spawned (`DishonoredGameFull_P`) as `Strt3Obj_HelpGranny` completes,
+  matched by position. Mission end: "Go to Hound Pits Pub" (`L_Streetsewer_Script` choice 4),
+  then `additem ... L_Pub_FromFlooded_Script ... ChapterLog_Loyalists` in `L_Pub_Assault_P`.
+  That prompt isn't refused (the Victory needs no pub key).
 
 ### Item meanings: read the Manual's PDF (`manual/Dishonored_Archipelago_Documentation.pdf`)
 - "Corvo's Pistol" is the *Corvo's Pistol Upgrade* from Piero's shop (`Twk_Upgrade_Pistol`),

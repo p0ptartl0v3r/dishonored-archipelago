@@ -38,14 +38,14 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480101,Return to the Tower: Safehouse Rune,Rune,Return to the Tower,Tower Exterior,pickup,L_TowerRtrn_Yard_Script...DisAbstractItemPickup_6,"on the rooftop, reached from the interior"
 219480102,The Flooded District: Refinery Rune,Rune,The Flooded District,Greaves Refinery,pickup,L_Flooded_FRefinery_PickUps...DisAbstractItemPickup_81,
 219480103,The Flooded District: Sewer Exit Rune,Rune,The Flooded District,Central Rudshore,pickup,L_Flooded_FAssassins_PickUps...DisAbstractItemPickup_23,
-219480104,The Flooded District: Rudshore Gate Rooftop Rune,Rune,The Flooded District,Rudshore Gate,,,
-219480105,The Flooded District: Granny's Outsider Shrine Rune,Rune,The Flooded District,Old Dunwall Sewers,,,
-219480106,The Flooded District: Survivor Camp Rune,Rune,The Flooded District,Old Dunwall Sewers,,,
+219480104,The Flooded District: Rudshore Gate Rooftop Rune,Rune,The Flooded District,Rudshore Gate,pickup,L_Flooded_FGate_PickUps...DisAbstractItemPickup_3,
+219480105,The Flooded District: Granny's Outsider Shrine Rune,Rune,The Flooded District,Old Dunwall Sewers,pickup,DishonoredGameFull_P...DisAbstractItemPickup_213 (spawned),"spawned at runtime, so matched by position; taken as Strt3Obj_HelpGranny completes"
+219480106,The Flooded District: Survivor Camp Rune,Rune,The Flooded District,Old Dunwall Sewers,pickup,L_Streetsewer_Script...DisAbstractItemPickup_16,
 219480107,The Loyalists: Piero's Workshop Rune,Rune,The Loyalists,Hound Pits Pub (The Loyalists),,,
 219480108,The Light at the End: Drainage Rune,Rune,The Light at the End,Kingsparrow Fort,,,
 219480109,Lady Boyle's Last Party: Victory,Mission,Lady Boyle's Last Party,Boyle Mansion Interior,additem,ChapterLog_Hub_05,written as Corvo is taken back to the pub (fromBoyle_toHub)
 219480110,Return to the Tower: Victory,Mission,Return to the Tower,Tower Interior,additem,ChapterLog_Hub_06,written as the boat reaches the pub (fromTowerReturn_toHub)
-219480111,The Flooded District: Victory,Mission,The Flooded District,Old Dunwall Sewers,,,
+219480111,The Flooded District: Victory,Mission,The Flooded District,Old Dunwall Sewers,additem,ChapterLog_Loyalists,"written on arriving at the pub (L_Pub_FromFlooded_Script), after the Go to Hound Pits Pub prompt"
 219480112,The Loyalists: Victory,Mission,The Loyalists,Hound Pits Pub (The Loyalists),,,
 219480113,The Void: Receive the Mark,Other,Intro,The Void,grant,OnAddPower Blink 1,the Outsider gives Blink with the mark
 219480114,Dishonored (Mission): Clockwork Explosive,Other,Intro,Dunwall Prison,pickup,L_Prison_Script...DisAbstractItemPickup_0 ExplosiveDevice_AbsItm,
@@ -63,7 +63,7 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480126,Tower Interior: Piano Room Painting,Painting,Return to the Tower,Tower Interior,pickup,L_TowerRtrn_Int_Script...DisAbstractItemPickup_8,a valuable: turns into 300 coins
 219480127,Rudshore Waterfront: Weeper Room Painting,Painting,The Flooded District,Rudshore Waterfront,pickup,L_Flooded_FStreets_PickUps...DisAbstractItemPickup_12,a valuable: turns into 300 coins
 219480128,Central Rudshore: Daud's Base Exit Painting,Painting,The Flooded District,Central Rudshore,pickup,L_Flooded_FAssassins_Script...DisAbstractItemPickup_168,a valuable: turns into 300 coins
-219480129,Old Dunwall Sewers: Granny Rags Painting,Painting,The Flooded District,Old Dunwall Sewers,,,
+219480129,Old Dunwall Sewers: Granny Rags Painting,Painting,The Flooded District,Old Dunwall Sewers,pickup,L_Streetsewer_Script...DisAbstractItemPickup_10,a valuable: turns into 300 coins
 219480130,Distillery District: Griff's Shop Lens Magnification Blueprint,Blueprint,High Overseer Campbell,Distillery District (HOC),buy,BP_SpyglassZoom_AbsItm (200 coins),bought at Griff's shop; its pickup is spawned
 219480131,Distillery District: Griff's Shop Sokolov's Formula Blueprint,Blueprint,High Overseer Campbell,Distillery District (HOC),buy,BP_HealthPotion_AbsItm (200 coins),bought at Griff's shop; its pickup is spawned
 219480132,Backyard: Bonded Galvani Weave Blueprint,Blueprint,High Overseer Campbell,Backyard,pickup,L_Ovrsr_Back_Script...DisAbstractItemPickup_65 BP_ArmorIncrease_AbsItm,
@@ -93,8 +93,8 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480156,Greaves Refinery: Back of Tower Bone Charm,Bone Charm,The Flooded District,Greaves Refinery,pickup,L_Flooded_FRefinery_PickUps...DisWhaleBoneCharm_0,
 219480157,Central Rudshore: Wolfhound Guarded Bone Charm,Bone Charm,The Flooded District,Central Rudshore,pickup,L_Flooded_FAssassins_PickUps...DisWhaleBoneCharm_1,
 219480158,Central Rudshore: Daud's Bone Charm,Bone Charm,The Flooded District,Central Rudshore,grant,L_Flooded_FAssassins_Script...Daud_Behavior.DisSeqAct_GivePickup_1,given by Daud's script (spawns DishonoredGameFull_P...DisWhaleBoneCharm_2)
-219480159,Rudshore Gate: Zone Entry Bone Charm,Bone Charm,The Flooded District,Rudshore Gate,,,
-219480160,Old Dunwall Sewers: Collapsed Building Bone Charm,Bone Charm,The Flooded District,Old Dunwall Sewers,,,
-219480161,Old Dunwall Sewers: Safe Bone Charm,Bone Charm,The Flooded District,Old Dunwall Sewers,,,
-219480162,Old Dunwall Sewers: Past Survivor's Camp Bone Charm,Bone Charm,The Flooded District,Old Dunwall Sewers,,,
+219480159,Rudshore Gate: Zone Entry Bone Charm,Bone Charm,The Flooded District,Rudshore Gate,pickup,L_Flooded_FGate_Script...DisWhaleBoneCharm_0,
+219480160,Old Dunwall Sewers: Collapsed Building Bone Charm,Bone Charm,The Flooded District,Old Dunwall Sewers,pickup,L_Streetsewer_Script...DisWhaleBoneCharm_1,
+219480161,Old Dunwall Sewers: Safe Bone Charm,Bone Charm,The Flooded District,Old Dunwall Sewers,pickup,L_Streetsewer_Script...DisWhaleBoneCharm_0,
+219480162,Old Dunwall Sewers: Past Survivor's Camp Bone Charm,Bone Charm,The Flooded District,Old Dunwall Sewers,pickup,L_Streetsewer_Block...DisWhaleBoneCharm_1,
 219480163,Greaves Refinery: Retrieve your Gear,Other,The Flooded District,Greaves Refinery,objective,Flooded_Gear,completing the objective; the game then gives back every item and journal entry at once

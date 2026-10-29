@@ -504,6 +504,7 @@ def test_real_events_from_the_flooded_district():
     streets = "pickup L_Flooded_FStreets_PickUps.TheWorld.PersistentLevel."
     refinery = "pickup L_Flooded_FRefinery_PickUps.TheWorld.PersistentLevel."
     base = "pickup L_Flooded_FAssassins_PickUps.TheWorld.PersistentLevel."
+    sewer = "pickup L_Streetsewer_Script.TheWorld.PersistentLevel."
     cases = {
         streets + "DisWhaleBoneCharm_0 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=-7268,5393,1779":
             "Rudshore Waterfront: End of Street Bone Charm",
@@ -523,6 +524,24 @@ def test_real_events_from_the_flooded_district():
         "Coins_AbsItm at=-2634,-38,285": "Central Rudshore: Daud's Base Exit Painting",
         base + "DisAbstractItemPickup_23 DisAbstractItemPickup Rune_AbsItm at=-1838,-1019,-972":
             "The Flooded District: Sewer Exit Rune",
+        "pickup L_Flooded_FGate_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0 DisWhaleBoneCharm "
+        "WhaleBoneCharm_01_twk at=7043,2867,-1196": "Rudshore Gate: Zone Entry Bone Charm",
+        "pickup L_Flooded_FGate_PickUps.TheWorld.PersistentLevel.DisAbstractItemPickup_3 DisAbstractItemPickup "
+        "Rune_AbsItm at=-3801,4372,2995": "The Flooded District: Rudshore Gate Rooftop Rune",
+        sewer + "DisWhaleBoneCharm_1 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=404,4683,1877":
+            "Old Dunwall Sewers: Collapsed Building Bone Charm",
+        sewer + "DisWhaleBoneCharm_0 DisWhaleBoneCharm WhaleBoneCharm_01_twk at=-3865,250,-60":
+            "Old Dunwall Sewers: Safe Bone Charm",
+        sewer + "DisAbstractItemPickup_10 DisAbstractItemPickup Coins_AbsItm at=-8938,6391,571":
+            "Old Dunwall Sewers: Granny Rags Painting",
+        "pickup DishonoredGameFull_P.TheWorld.PersistentLevel.DisAbstractItemPickup_213 DisAbstractItemPickup "
+        "Rune_AbsItm at=-6778,4192,1167": "The Flooded District: Granny's Outsider Shrine Rune",
+        sewer + "DisAbstractItemPickup_16 DisAbstractItemPickup Rune_AbsItm at=6778,-3466,-924":
+            "The Flooded District: Survivor Camp Rune",
+        "pickup L_Streetsewer_Block.TheWorld.PersistentLevel.DisWhaleBoneCharm_1 DisWhaleBoneCharm "
+        "WhaleBoneCharm_01_twk at=5691,1057,-871": "Old Dunwall Sewers: Past Survivor's Camp Bone Charm",
+        "additem L_Pub_FromFlooded_Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_AddAbstractItem_1 "
+        "ChapterLog_Loyalists": "The Flooded District: Victory",
     }
     for event, location in cases.items():
         assert game.match_event(event) == [ids[location]], event

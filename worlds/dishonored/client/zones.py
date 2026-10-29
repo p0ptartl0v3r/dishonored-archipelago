@@ -39,6 +39,7 @@ LEVEL_ZONE_KEYS: dict[str, str] = {
     "l_flooded_frefinery_p": "Greaves Refinery Zone Key",
     "l_flooded_fassassins_p": "Central Rudshore Zone Key",  # Daud's base
     "l_flooded_fgate_p": "Rudshore Gate Zone Key",
+    "l_streetsewer_p": "Old Dunwall Sewers Zone Key",
     # From the package names, not yet seen in play
     "l_pub_assault_p": "Hound Pits Pub (The Loyalists) Zone Key",
 }
@@ -136,6 +137,10 @@ TRAVEL_PROMPTS: dict[str, str] = {
     _seq("L_Flooded_FAssassins_P", 1): "L_Flooded_FGate_P",  # Go to the Gateward Tunnel
     _seq("L_Flooded_FAssassins_P", 3): "L_Flooded_FStreets_P",  # Go to Rudshore Market (destination a guess)
     _seq("L_Flooded_FGate_P", 0): "L_Flooded_FAssassins_P",  # Go to Daud's Base
+    _seq("L_Flooded_FGate_P", 1): "L_Streetsewer_P",  # Go to the Old Port District Outskirts
+    _seq("L_Streetsewer_Script", 1): "L_Flooded_FGate_P",  # Go to Rudshore Gate
+    # Not listed: L_Streetsewer_Script #4 "Go to Hound Pits Pub" ends the mission, and its
+    # Victory doesn't need the pub's key (the pub's own safety net applies after it).
 }
 
 
