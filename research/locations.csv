@@ -41,12 +41,12 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480104,The Flooded District: Rudshore Gate Rooftop Rune,Rune,The Flooded District,Rudshore Gate,pickup,L_Flooded_FGate_PickUps...DisAbstractItemPickup_3,
 219480105,The Flooded District: Granny's Outsider Shrine Rune,Rune,The Flooded District,Old Dunwall Sewers,pickup,DishonoredGameFull_P...DisAbstractItemPickup_213 (spawned),"spawned at runtime, so matched by position; taken as Strt3Obj_HelpGranny completes"
 219480106,The Flooded District: Survivor Camp Rune,Rune,The Flooded District,Old Dunwall Sewers,pickup,L_Streetsewer_Script...DisAbstractItemPickup_16,
-219480107,The Loyalists: Piero's Workshop Rune,Rune,The Loyalists,Hound Pits Pub (The Loyalists),,,
+219480107,The Loyalists: Piero's Workshop Rune,Rune,The Loyalists,Hound Pits Pub (The Loyalists),pickup,L_Pub_FromFlooded_Script...DisAbstractItemPickup_217,
 219480108,The Light at the End: Drainage Rune,Rune,The Light at the End,Kingsparrow Fort,,,
 219480109,Lady Boyle's Last Party: Victory,Mission,Lady Boyle's Last Party,Boyle Mansion Interior,additem,ChapterLog_Hub_05,written as Corvo is taken back to the pub (fromBoyle_toHub)
 219480110,Return to the Tower: Victory,Mission,Return to the Tower,Tower Interior,additem,ChapterLog_Hub_06,written as the boat reaches the pub (fromTowerReturn_toHub)
 219480111,The Flooded District: Victory,Mission,The Flooded District,Old Dunwall Sewers,additem,ChapterLog_Loyalists,"written on arriving at the pub (L_Pub_FromFlooded_Script), after the Go to Hound Pits Pub prompt"
-219480112,The Loyalists: Victory,Mission,The Loyalists,Hound Pits Pub (The Loyalists),,,
+219480112,The Loyalists: Victory,Mission,The Loyalists,Hound Pits Pub (The Loyalists),additem,ChapterLog_Lighthouse,written as the boat reaches Kingsparrow Island (L_Isl_Script_Slave)
 219480113,The Void: Receive the Mark,Other,Intro,The Void,grant,OnAddPower Blink 1,the Outsider gives Blink with the mark
 219480114,Dishonored (Mission): Clockwork Explosive,Other,Intro,Dunwall Prison,pickup,L_Prison_Script...DisAbstractItemPickup_0 ExplosiveDevice_AbsItm,
 219480115,High Overseer's Office: Campbell's Secret Room Painting,Painting,High Overseer Campbell,High Overseer's Office,pickup,L_Ovrsr_Script...DisAbstractItemPickup_29,a valuable worth 300 coins (paintings turn into coins)

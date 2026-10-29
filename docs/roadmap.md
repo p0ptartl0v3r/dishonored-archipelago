@@ -249,5 +249,8 @@ These are things to check, not changes I made:
   Art Dealer keys but not `Southside Gate Zone Key`, so nothing needed that key. Now that the
   game enforces every zone's key, it's required too (stricter, so no seed gets harder).
 - `Kennels Zone Key` exists as an item but has no matching region.
+- Piero's Enhanced Arc Pylon blueprint (`BP_Piero_ArcPylon_AbsItm`, The Loyalists, from the
+  `Pub07_ArcPylon` objective) isn't a location although the other blueprints are. Probably on
+  purpose (it's for the non-lethal ending); a possible extra location, with greenranger's say.
 - The goal location is the only one marked `"victory": true`. Mission victories
   such as `High Overseer Campbell: Victory` are normal checks.

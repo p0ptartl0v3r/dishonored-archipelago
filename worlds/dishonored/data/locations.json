@@ -468,7 +468,10 @@
     "category": [
       "The Loyalists"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Pub_FromFlooded_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_217"
+    ]
   },
   {
     "region": "Kingsparrow Fort",
@@ -517,7 +520,10 @@
     "category": [
       "The Loyalists"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "additem ChapterLog_Lighthouse"
+    ]
   },
   {
     "region": "Burrows Lighthouse",

@@ -542,6 +542,11 @@ def test_real_events_from_the_flooded_district():
         "WhaleBoneCharm_01_twk at=5691,1057,-871": "Old Dunwall Sewers: Past Survivor's Camp Bone Charm",
         "additem L_Pub_FromFlooded_Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_AddAbstractItem_1 "
         "ChapterLog_Loyalists": "The Flooded District: Victory",
+        # The Loyalists (2026-10-29)
+        "pickup L_Pub_FromFlooded_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_217 DisAbstractItemPickup "
+        "Rune_AbsItm at=-1445,-3269,402": "The Loyalists: Piero's Workshop Rune",
+        "additem L_Isl_Script_Slave.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_AddAbstractItem_1 "
+        "ChapterLog_Lighthouse": "The Loyalists: Victory",
     }
     for event, location in cases.items():
         assert game.match_event(event) == [ids[location]], event

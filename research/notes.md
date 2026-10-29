@@ -420,6 +420,13 @@ through `ProcessEvent`.
   then `additem ... L_Pub_FromFlooded_Script ... ChapterLog_Loyalists` in `L_Pub_Assault_P`.
   That prompt isn't refused (the Victory needs no pub key).
 
+### The Loyalists (2026-10-29)
+- All in `L_Pub_Assault_P`, pickups in `L_Pub_FromFlooded_Script`. Piero's Workshop Rune is
+  `DisAbstractItemPickup_217`; the Enhanced Arc Pylon blueprint (`_216`,
+  `BP_Piero_ArcPylon_AbsItm`) isn't a location. The boat to Kingsparrow is a story transition
+  (no prompt); mission end: `additem L_Isl_Script_Slave ... ChapterLog_Lighthouse` as it lands
+  (`L_Isl_LowChaos_P`).
+
 ### Item meanings: read the Manual's PDF (`manual/Dishonored_Archipelago_Documentation.pdf`)
 - "Corvo's Pistol" is the *Corvo's Pistol Upgrade* from Piero's shop (`Twk_Upgrade_Pistol`),
   not the pistol: Corvo always has a pistol. Progressive Bullets 1 = buy and use bullets,
