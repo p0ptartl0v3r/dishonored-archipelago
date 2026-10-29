@@ -47,8 +47,9 @@ LEVEL_ZONE_KEYS: dict[str, str] = {
 # Levels with variants (time of day, chaos level).
 LEVEL_PREFIX_ZONE_KEYS: list[tuple[str, str]] = [
     ("l_pub_", "Hound Pits Pub Zone Key"),  # L_Pub_Morning_P, _Day_P, _Dusk_P, _Night_P
-    ("l_isl_", "Kingsparrow Fort Zone Key"),  # L_Isl_LowChaos_P / _HighChaos_P
-    ("l_lighth_", "Burrows Lighthouse Zone Key"),
+    ("l_isl_", "Kingsparrow Fort Zone Key"),  # L_Isl_LowChaos_P (seen) / _HighChaos_P
+    ("l_lighth_", "Burrows Lighthouse Zone Key"),  # L_LightH_LowChaos_P (seen)
+    # L_Out_P (the ending) isn't a zone.
 ]
 
 
@@ -141,6 +142,8 @@ TRAVEL_PROMPTS: dict[str, str] = {
     _seq("L_Streetsewer_Script", 1): "L_Flooded_FGate_P",  # Go to Rudshore Gate
     # Not listed: L_Streetsewer_Script #4 "Go to Hound Pits Pub" ends the mission, and its
     # Victory doesn't need the pub's key (the pub's own safety net applies after it).
+    # The Light at the End (taken in play)
+    _seq("L_Isl_Script_Slave", 0): "L_LightH_LowChaos_P",  # Go to Burrows Lighthouse
 }
 
 

@@ -76,3 +76,10 @@ def test_flooded_district_doors():
     assert zone_key_for_travel(f"L_Flooded_FGate_P.{choice}1#0") == "Old Dunwall Sewers Zone Key"
     # The mission's last prompt is never refused: its Victory needs no pub key.
     assert zone_key_for_travel(f"L_Streetsewer_Script.{choice}4#0") is None
+
+
+def test_the_light_at_the_end():
+    choice = "TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_"
+    assert zone_key_for_level("L_Isl_LowChaos_P") == "Kingsparrow Fort Zone Key"
+    assert zone_key_for_travel(f"L_Isl_Script_Slave.{choice}0#0") == "Burrows Lighthouse Zone Key"
+    assert zone_key_for_level("L_Out_P") is None

@@ -51,9 +51,15 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- GameInter
 - [ ] Implement `poll_goal_reached`
 
 ### 3. Pickups
-- [ ] Find a way to tell *which* rune, bone charm, painting or blueprint was taken.
-      Counting isn't enough, so this probably needs a hook (see `native/`)
-- [ ] Fill in `game_object` for every row of `research/locations.csv`
+- [x] Find a way to tell *which* rune, bone charm, painting or blueprint was taken
+      (the DLL's `pickup`/`grant`/`objective`/`additem` events)
+- [x] Fill in `game_object` for every row of `research/locations.csv`: all 100 locations have
+      detect patterns, each seen in play (2026-10-29, one low-chaos playthrough)
+- [ ] High chaos: Kingsparrow and the lighthouse load `_HighChaos_P` levels, and other
+      missions have chaos variants (`L_Brothel_HighChaos`): replay those to confirm the
+      same names match, or add theirs
+- [ ] Choices not taken: e.g. sparing Boyle vs not, other Boyle sister bedrooms (all three
+      paintings are listed), Emily's hiding spots (matched by the grant, so any spot)
 
 ### 4. Items
 - [x] Powers: granted automatically with confirmed names, re-applied after loads

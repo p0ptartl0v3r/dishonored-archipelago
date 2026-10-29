@@ -479,7 +479,10 @@
     "category": [
       "The Light at the End"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Isl_Script_Slave.TheWorld.PersistentLevel.DisAbstractItemPickup_30"
+    ]
   },
   {
     "region": "Boyle Mansion Interior",
@@ -532,7 +535,10 @@
     "category": [
       "The Light at the End"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "mapchange L_Out_P"
+    ]
   },
   {
     "name": "The Void: Receive the Mark",

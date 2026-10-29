@@ -547,9 +547,15 @@ def test_real_events_from_the_flooded_district():
         "Rune_AbsItm at=-1445,-3269,402": "The Loyalists: Piero's Workshop Rune",
         "additem L_Isl_Script_Slave.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_AddAbstractItem_1 "
         "ChapterLog_Lighthouse": "The Loyalists: Victory",
+        # The Light at the End (2026-10-29)
+        "pickup L_Isl_Script_Slave.TheWorld.PersistentLevel.DisAbstractItemPickup_30 DisAbstractItemPickup "
+        "Rune_AbsItm at=1676,-9496,2061": "The Light at the End: Drainage Rune",
     }
     for event, location in cases.items():
         assert game.match_event(event) == [ids[location]], event
+    # The ending level loading is the goal (no location id).
+    assert game.match_event("mapchange L_Out_P") == [None]
+    assert game.match_event("mapchange L_Out_EnvSamAlive") == []
     # Same number in the other package of the same level.
     assert game.match_event(base.replace("_PickUps", "_Script") + "DisAbstractItemPickup_23 "
                             "DisAbstractItemPickup Coins_AbsItm at=0,0,0") == []

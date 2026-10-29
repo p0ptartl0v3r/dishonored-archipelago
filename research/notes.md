@@ -427,6 +427,15 @@ through `ProcessEvent`.
   (no prompt); mission end: `additem L_Isl_Script_Slave ... ChapterLog_Lighthouse` as it lands
   (`L_Isl_LowChaos_P`).
 
+### The Light at the End (2026-10-29, low chaos)
+- `L_Isl_LowChaos_P` (Kingsparrow Fort, script `L_Isl_Script_Slave`), then the player-taken
+  prompt "Go to Burrows Lighthouse" (`L_Isl_Script_Slave` choice 0) to `L_LightH_LowChaos_P`
+  (script `L_LightH_Script_Slave`). The ending loads `L_Out_P` plus `L_Out_Env*` sublevels
+  chosen by what happened (`L_Out_EnvSamAlive`, ...): `mapchange L_Out_P` is the goal.
+- Drainage Rune is `L_Isl_Script_Slave...DisAbstractItemPickup_30`. High chaos loads
+  `_HighChaos_P` levels; whether their pickups and prompts share these names is unchecked.
+- With this, all 100 locations have detect patterns (every mission played at least once).
+
 ### Item meanings: read the Manual's PDF (`manual/Dishonored_Archipelago_Documentation.pdf`)
 - "Corvo's Pistol" is the *Corvo's Pistol Upgrade* from Piero's shop (`Twk_Upgrade_Pistol`),
   not the pistol: Corvo always has a pistol. Progressive Bullets 1 = buy and use bullets,
