@@ -1,10 +1,9 @@
 """Which zone key each streaming level needs.
 
-The DLL reports `mapchange <level>` when the player walks into another area; this
-table turns the level into the zone key that area needs. Confirmed in-game for the
-first five missions (research/notes.md); the rest are taken from the package names and
-only listed when the name is unambiguous. Unlisted levels (parts of the Flooded District)
-never warn until they're confirmed.
+The DLL reports `area <levels>` once the player has settled after a load or transition;
+this table turns a level into the zone key that area needs. Every level was seen in one
+low-chaos playthrough (research/notes.md); high-chaos variants rely on the prefixes below.
+Unlisted levels (the Flooded District's intro, the ending) never warn.
 No Archipelago imports here, so tests can load it standalone.
 """
 
@@ -40,11 +39,10 @@ LEVEL_ZONE_KEYS: dict[str, str] = {
     "l_flooded_fassassins_p": "Central Rudshore Zone Key",  # Daud's base
     "l_flooded_fgate_p": "Rudshore Gate Zone Key",
     "l_streetsewer_p": "Old Dunwall Sewers Zone Key",
-    # From the package names, not yet seen in play
     "l_pub_assault_p": "Hound Pits Pub (The Loyalists) Zone Key",
 }
 
-# Levels with variants (time of day, chaos level).
+# Levels with variants (time of day, chaos level). Exact names above take precedence.
 LEVEL_PREFIX_ZONE_KEYS: list[tuple[str, str]] = [
     ("l_pub_", "Hound Pits Pub Zone Key"),  # L_Pub_Morning_P, _Day_P, _Dusk_P, _Night_P
     ("l_isl_", "Kingsparrow Fort Zone Key"),  # L_Isl_LowChaos_P (seen) / _HighChaos_P

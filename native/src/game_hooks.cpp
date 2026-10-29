@@ -987,8 +987,8 @@ bool run_request(ue3::UObject* player_controller, const std::string& request) {
   if (request.rfind("removemod ", 0) == 0) return remove_attribute_modifier(player_controller, request.substr(10));
   if (request == "quittomenu") {
     // The pause menu's "quit to main menu" confirmation (confirmed; "disconnect" is stripped).
-    // Its object only exists once the pause menu has been opened; otherwise load the main
-    // menu map directly (untested).
+    // Its object (pGlobalUIManager.pPauseMenu) has existed in every session seen; if it's
+    // missing, load the main menu map directly (untested).
     auto* menu = ue3::find_instance("DisGFxMoviePlayerPauseMenu");
     auto* quit = ue3::find_object("Function DishonoredGame.DisGFxMoviePlayerPauseMenu.OnQuitGameConfirm");
     log("quittomenu: pause menu {}, OnQuitGameConfirm {}", ue3::full_name(menu), quit != nullptr);

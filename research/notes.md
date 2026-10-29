@@ -39,8 +39,8 @@ Script...) are sublevels streamed into it.
 
 ## Persistent maps -> zones
 
-The guesses come from file names only. Confirm each one in-game (load the area,
-read the map name in Cheat Engine or the console) and change "?" to "yes".
+Confirmed from the DLL's `mapchange`/`area` events in one low-chaos playthrough
+(2026-10-29). The high-chaos variants haven't been seen.
 
 | Persistent map | Zone (regions.json) | Confirmed |
 |---|---|---|
@@ -54,35 +54,35 @@ read the map name in Cheat Engine or the console) and change "?" to "yes".
 | `L_Galvani1_P` | Dr Galvani's Offices (HOC) | yes |
 | `L_Ovrsr_P` | High Overseer's Office | yes |
 | `L_Ovrsr_Back_P` | Backyard | yes |
-| `L_Ovrsr_Kennel_P` | Kennels (has a zone key but no region yet) | yes |
-| `L_Streets2_P` | Distillery District (HoP) | ? |
-| `L_Distillery2_P` | Old Dunwall Distillery (HoP) | ? |
-| `L_Galvani2_P` | Dr Galvani's Offices (HoP) | ? |
-| `L_ArtDealer_P` | Art Dealer's Apartment | ? |
-| `L_Brothel_P` | The Golden Cat Bathhouse | ? |
-| `L_Bridge_Part1a_P`, `_Part1b_P`, `_Part1c_P`, `_Part2_P` | Southside Gate / Drawbridge Control / Midrow Substation / North End (order unknown) | ? |
-| `L_Boyle_Ext_P` | Boyle Mansion Exterior | ? |
-| `L_Boyle_Int_P` | Boyle Mansion Interior | ? |
-| `L_TowerRtrn_Yard_P` | Tower Exterior | ? |
-| `L_TowerRtrn_Int_P` | Tower Interior | ? |
-| `L_Flooded_FIntro_P` | Rudshore Waterfront? | ? |
-| `L_Flooded_FStreets_P` | Central Rudshore? | ? |
-| `L_Flooded_FRefinery_P` | Greaves Refinery | ? |
-| `L_Flooded_FAssassins_P` | Daud's base (no region of its own?) | ? |
-| `L_Flooded_FGate_P` | Rudshore Gate | ? |
-| `L_Streetsewer_P` | Old Dunwall Sewers? | ? |
-| `L_Pub_Assault_P` | Hound Pits Pub (The Loyalists) | ? |
-| `L_Isl_LowChaos_P` / `L_Isl_HighChaos_P` | Kingsparrow Fort | ? |
-| `L_LightH_LowChaos_P` / `L_LightH_HighChaos_P` | Burrows Lighthouse | ? |
-| `L_Out_P`, `L_Out_HighChaos_*_P` | Ending ("Out" = outro?). **Possible goal signal** | ? |
-| `Dishonored_MainMenu` | Main menu | ? |
+| `L_Ovrsr_Kennel_P` | Kennels (has a zone key, but no region needs it and it holds no locations) | yes |
+| `L_Streets2_P` | Distillery District (HoP) | yes |
+| `L_Distillery2_P` | Old Dunwall Distillery (HoP) | yes |
+| `L_Galvani2_P` | Dr Galvani's Offices (HoP) | yes |
+| `L_ArtDealer_P` | Art Dealer's Apartment | yes |
+| `L_Brothel_P` | The Golden Cat Bathhouse (+ `L_Brothel_HighChaos`) | yes |
+| `L_Bridge_Part1a_P`, `_Part1b_P`, `_Part1c_P`, `_Part2_P` | Southside Gate / Drawbridge Control / Midrow Substation / North End, in that order | yes |
+| `L_Boyle_Ext_P` | Boyle Mansion Exterior | yes |
+| `L_Boyle_Int_P` | Boyle Mansion Interior | yes |
+| `L_TowerRtrn_Yard_P` | Tower Exterior (the rooftop too) | yes |
+| `L_TowerRtrn_Int_P` | Tower Interior | yes |
+| `L_Flooded_FIntro_P` | where Corvo wakes in the Flooded District (no zone) | yes |
+| `L_Flooded_FStreets_P` | Rudshore Waterfront | yes |
+| `L_Flooded_FRefinery_P` | Greaves Refinery | yes |
+| `L_Flooded_FAssassins_P` | Central Rudshore (Daud's base) | yes |
+| `L_Flooded_FGate_P` | Rudshore Gate | yes |
+| `L_Streetsewer_P` | Old Dunwall Sewers | yes |
+| `L_Pub_Assault_P` | Hound Pits Pub (The Loyalists) | yes |
+| `L_Isl_LowChaos_P` / `L_Isl_HighChaos_P` | Kingsparrow Fort | low chaos |
+| `L_LightH_LowChaos_P` / `L_LightH_HighChaos_P` | Burrows Lighthouse | low chaos |
+| `L_Out_P` (+ `L_Out_Env*` sublevels by outcome) | Ending (no zone). **The goal signal** | yes |
+| `Dishonored_MainMenu` | Main menu | yes |
 
 Other notes:
 - `L_Pub_From<Mission>_Script` packages: the pub loads a different script per
   mission you return from, so the pub's map plus that script tells you which
   mission just finished.
 - Chaos variants (`_HighChaos`/`_LowChaos`) mean the client must treat
-  several map names as the same zone.
+  several map names as the same zone (`LEVEL_PREFIX_ZONE_KEYS` in `client/zones.py`).
 
 ## Console commands
 

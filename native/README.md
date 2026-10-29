@@ -4,16 +4,21 @@ A 32-bit DLL that the game loads as `dinput8.dll`. It forwards that DLL's one
 function to the real system `dinput8.dll` and, inside the game:
 
 - hooks `UObject::ProcessEvent`, the engine function every script call goes through;
-- runs **console commands sent by the Python client** on the game thread
-  (`AddPower Blink 1`, ...), so received items are applied without typing;
+- **grants received items** sent by the Python client on the game thread (`AddPower`
+  console commands, upgrades through the pawn's own handler, bone charm capacity);
+- **blocks and removes what hasn't been received** (`limit` lines from the client):
+  shop and rune purchases, script grants, items in old saves, unreceived ammo and the sword;
+- **reports game events** (pickups, objectives, travel prompts, the current area) that
+  the client turns into location checks, and refuses travel prompts into keyless zones;
+- **draws messages** on the HUD (items sent and received, chat, a main menu notice);
 - optionally **logs game function calls**, the research tool for finding
   what fires when you pick up a rune.
 
 The Python client talks to it over the named pipe `\\.\pipe\dishonored_archipelago`
 (protocol in `src/pipe_server.hpp`). That is the client's default mode.
 
-**Status:** works in-game on the Steam build (powers granted automatically, pickups
-reported as events). Newer features are marked below until they've been tried.
+**Status:** everything below is confirmed in-game on the Steam build (a full seed played
+to its goal, 2026-10-29) unless it says otherwise.
 
 ## Install
 
@@ -43,7 +48,7 @@ To uninstall, delete `dinput8.dll`.
 4. Run `python tools/native_console.py "console GiveRunes 1"`. Your rune count
    should go up, and the log shows `console: GiveRunes 1`.
 5. Finally, the real thing: open **Dishonored Client** from the Archipelago Launcher.
-   Received powers are applied automatically.
+   Received items are applied automatically.
 
 ## Game events (for location checks)
 
@@ -72,16 +77,20 @@ and `python tools/native_console.py "event 0"` (1, 2, ...) reads them directly.
 To turn an event into a check, add a pattern to the location's `detect` list
 in `worlds/dishonored/data/locations.json`. A pattern matches when **every word
 in it appears in the event** (words compare exactly). `near=x,y,z` matches an
-event's `at=` within about 1.5 m.
+event's `at=` within about 1.5 m, and `!word` requires that word to be absent.
+Events tagged `(far)` never match.
 
 ```json
 "detect": ["pickup L_Streets1_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_19"]
 "detect": ["pickup Rune_AbsItm near=1200,-340,95"]
-"detect": ["objective DisSeqAct_CompleteObjective Optional_GrannyRagsHook"]
-"detect": ["mapchange L_Ovrsr_P"]
+"detect": ["pickup L_Boyle_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_68 !(load)"]
+"detect": ["grant pickup Rune_twk by L_Pub_FromBoyle_Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_GivePickup_0"]
+"detect": ["objective DisSeqAct_CompleteObjective Flooded_Gear"]
+"detect": ["additem ChapterLog_Hub_03"]
 ```
 
-Put a `detect` on the victory location to make finishing the game send the goal.
+The victory location's `detect` (`mapchange L_Out_P`, the ending) sends the goal.
+`python tools/check_log.py "<mission>"` replays a log against a mission's patterns.
 
 ## Blocking and removing what wasn't received
 
@@ -103,8 +112,8 @@ arrives). From then on the DLL:
   their upgrade for Corvo's Mask and hid them; the game's DLC gift code tracks statues by
   upgrade name, and saves made after that crashed on load or on waking up (2026-10-26).
   Statues swapped that way (stored in saves) get their own upgrade back and are shown
-  again (`restored world upgrade ...`). Picking one up gives a bone charm slot that isn't
-  taken away yet (honor system until the capacity can be compensated)
+  again (`restored world upgrade ...`). The slot a statue adds is cancelled through the
+  base capacity (next point)
 - keeps equipment not received at 0 (`limit ammo <type> <0|1>`, `limit item <name> <0|1>`):
   ammo of that type (`remove ammo ...`), a pistol/crossbow magazine loaded with it
   (`unload ...`) and collectables like the Rewire Tool (`remove item ...`); shop
@@ -150,8 +159,10 @@ python tools/native_console.py "message Hello from Archipelago"
 
 `notice <text>` sets one line drawn centered at the top of the **main menu** only, for up to
 60 s, cleared when a game is loaded. The client uses it to say why the player was sent back
-there (a missing zone key). Untested: whether the main menu draws the HUD at all; the log
-says `messages: drawing the main menu notice` the first time it's drawn.
+there (a missing zone key; confirmed in-game). The log says `messages: drawing the main
+menu notice` the first time it's drawn.
+
+`quittomenu` sends the player to the main menu through the pause menu's quit confirmation.
 
 The game's own `DisSeqAct_ShowHUDMessage` can't be used: it has no script handler.
 
@@ -252,9 +263,9 @@ Visual Studio build.
 
 ### If the Visual Studio build fails
 
-The MinGW build is checked by CI; the Visual Studio build hasn't been tried
-yet. Paste the first error and it should be a small fix. Meanwhile, use the CI
-download.
+The MinGW build is checked by CI. The MSVC toolchain (32-bit, with CMake and Ninja) has
+built the locally installed DLLs since 2026-10-19 and works. If it fails for you, paste the first
+error; meanwhile, use the CI download.
 
 ## Debugging
 

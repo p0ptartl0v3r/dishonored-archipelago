@@ -1,11 +1,10 @@
 """The boundary between the Archipelago client and the running game.
 
-The client only ever talks to the game through a ``GameInterface``. Today the
-only working backend is ``ManualInterface`` (nothing is read from the game; the
-player sends checks with ``/check``). ``MemoryInterface`` is where real
-detection goes once the research in ``research/`` has found what to read. If
-the work later moves into an injected DLL, a third backend that talks to that
-DLL over a pipe or socket slots in here without the client changing.
+The client only ever talks to the game through a ``GameInterface``. The default backend
+is ``NativeInterface``: it talks to the in-game DLL (``native/``) over a named pipe, sends
+received items and limits, and turns the DLL's events into checks. ``ManualInterface``
+reads nothing from the game (the player sends checks with ``/check``, like the Manual).
+``MemoryInterface`` is an unused stub from before the DLL existed.
 """
 
 from __future__ import annotations
@@ -119,9 +118,8 @@ class ManualInterface(GameInterface):
 class MemoryInterface(GameInterface):
     """Reads and writes Dishonored's memory from outside the process (pymem).
 
-    Nothing is implemented yet: each TODO below is a research task. Dishonored
-    is a 32-bit process, and addresses are only valid for one game build, so
-    record the build you found them on in research/.
+    Never implemented: the DLL (``NativeInterface``) does all of this from inside the
+    game. Kept as a stub; it behaves like the Manual.
     """
 
     name = "memory"

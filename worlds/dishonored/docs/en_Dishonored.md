@@ -27,10 +27,14 @@ replaying large parts of the game:
 
 Every other check can be reached whatever you decide.
 
-## Runes and powers
+## Runes, powers and equipment
 
-With the in-game mod installed, received powers are granted directly, so you
-don't need runes to unlock them.
+With the in-game mod installed, received items are granted directly: powers (so you
+don't need runes to unlock them), Piero's upgrades and bone charm slots. Until you
+receive an item you can't buy it, scripts don't hand it to you, and an old save that
+has it loses it (except Blink inside the Void, which you need to cross it). Unreceived ammo and gadgets stay at 0, and the sword is taken out of
+your hands until Progressive Sword arrives. "Corvo's Pistol" is the pistol *upgrade*:
+Corvo always has the pistol.
 
 ## Zone keys
 
@@ -39,6 +43,8 @@ received is refused ("Requires the ... Zone Key"). The story also moves you on b
 (the end of the Prologue takes you to Dunwall Prison); if that puts you in an area
 without its key, you're warned and sent back to the main menu after a few seconds,
 unless you walk back out first. Load a save from before, or wait for the key.
+The prompt that ends a mission is never refused, so a mission's victory never needs the
+next area's key.
 
 ## Options
 
