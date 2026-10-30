@@ -468,8 +468,8 @@ through `ProcessEvent`.
 - That Golden Cat prompt (`L_Streets2_Script...DialogScriptedChoice_9`, "Go to the Golden Cat")
   changed the map with `travel=0`: its option lacks the map-change flag, and `dump` doesn't
   list it. Since 2026-10-30 the DLL treats any option in the client's travel table as travel,
-  flag or not, and it's in `TRAVEL_PROMPTS` (compiled, untested in-game: does the prompt have
-  a "stay" option to fall back on?).
+  flag or not, and it's in `TRAVEL_PROMPTS`. Confirmed in-game 2026-10-30 (`limit travel` sent
+  by hand): refused, and its option 1 "Stay on Clavering Blvd" was picked instead.
 - With this, all 100 locations have detect patterns (every mission played at least once).
 
 ### Item meanings: read the Manual's PDF (`manual/Dishonored_Archipelago_Documentation.pdf`)
