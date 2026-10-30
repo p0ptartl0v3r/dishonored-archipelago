@@ -57,8 +57,9 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- named pip
       Only five places have variants (research/notes.md), all played: the Golden Cat and North
       End (same patterns), Kingsparrow and the lighthouse (the rune and the lighthouse prompt
       move to `L_Isl_Script_Master`, now matched), and both high-chaos endings (goal sent)
-- [ ] Choices not taken: e.g. killing both Boyle sisters (all three bedroom paintings
-      are listed), Emily's other hiding spots (matched by the grant, so any spot should work)
+- [ ] Choices not taken: Emily's other hiding spots (matched by the grant, so any spot should
+      work). Boyle: all three sisters killed (2026-10-30), the third bedroom painting (`_67`)
+      was detected and the unused two stayed silent
 - [ ] Reading a note produces no event yet (no location needs it so far)
 
 ### 4. Items (done)

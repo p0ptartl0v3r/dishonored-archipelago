@@ -385,7 +385,9 @@ through `ProcessEvent`.
   There are three bedroom paintings (`L_Boyle_Int_Script` `_67`, `_68`, `_69`, one per sister)
   and the script keeps one. Coming back into the mansion, the save removes the other two again
   *while loading*, like collected pickups, so the Bedroom Painting matches any of the three but
-  never a `(load)` event (detect word `!(load)`).
+  never a `(load)` event (detect word `!(load)`). All three seen in play: `_69` (first run),
+  `_68` (second), `_67` (2026-10-30, all three sisters killed); each time the other two were
+  removed on entry and tagged `(far)`, sending nothing.
 - The three "The Pub:" runes are in the pub afterwards (`L_Pub_Morning_P`): Spare a Boyle is
   placed (`L_Pub_FromBoyle_Script...DisAbstractItemPickup_0`, next to a note). Find Emily's rune
   spawns where Emily hid (a different spot each run) and the duel's is spawned too; both are
