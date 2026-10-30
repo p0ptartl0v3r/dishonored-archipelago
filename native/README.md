@@ -44,7 +44,8 @@ exist, so with the loader installed:
    `dinput8.dll`, `DishonoredLoader.dll` or `ModLoader.dll`, which the loader skips), with
    `archipelago_native.ini` next to it. The CI artifact has this layout in its `NativeMods` folder.
 3. The log is then `Binaries\Win32\NativeMods\archipelago_native.log`, and its first line says
-   where the DLL was loaded from.
+   where the DLL was loaded from. The loader's `Binaries\Win32\dinput8_proxy.log` should list
+   `ModFolders: loaded: archipelago_native.dll` (confirmed in-game with loader v1.3.15).
 
 If both copies end up installed, the second one to load stays idle ("another copy ... is
 already running"). If the loader hooked `ProcessEvent` first, the log says "already hooked by

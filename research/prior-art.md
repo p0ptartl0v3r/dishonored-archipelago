@@ -80,8 +80,10 @@ the same way.
   `Plg_QueryMenu`, `ModInfo`, and INI mods), then every DLL directly in the folders of
   `modloader.ini` `[Loader] ModFolders=` (default `Mods,NativeMods`), skipping `dinput8.dll`,
   `DishonoredLoader.dll` and `ModLoader.dll`. So our DLL runs from `NativeMods\` under another
-  name. It logs to `modloader.log` / `blink_bootstrap.log`. Whether it hooks `ProcessEvent`
-  is unknown; ours chains over an existing hook if it does.
+  name. It logs to `Binaries\Win32\dinput8_proxy.log` (what it loaded) and
+  `Mods\modloader.log`. Confirmed in-game 2026-10-30: `ModFolders: loaded:
+  archipelago_native.dll`, and ours still found `ProcessEvent` by its unhooked pattern, so the
+  loader doesn't hook it (its "Hook OK" is something else, likely the pause menu).
 - A closed-source co-op mod (installs a `d3d9.dll`) appeared in September 2026,
   which is part of why Nexus looks busy. Don't run closed-source DLLs on a
   machine you care about.

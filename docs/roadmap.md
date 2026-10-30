@@ -187,10 +187,11 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- named pip
       overlay draws non-ASCII Archipelago names (the engine's SmallFont may lack glyphs)
 - [ ] Other builds (GOG, Epic, older patches) may not match the ProcessEvent byte pattern or
       the GNames/GObjects offsets; the log says so on startup
-- [ ] Dishonored Mod Loader (Crimsab, Nexus 383): runs from its `NativeMods\` folder as
-      `archipelago_native.dll` (written 2026-10-30; compiled, untested in-game with the loader).
-      Only one copy runs if both are installed; chains over an existing `ProcessEvent` hook.
-      Later, optionally: a MODS-menu entry through its plugin format (`Mods\plugins\`)
+- [x] Dishonored Mod Loader (Crimsab, Nexus 383, v1.3.15): runs from its `NativeMods\` folder as
+      `archipelago_native.dll`. Confirmed in-game 2026-10-30: loaded by its proxy, items and
+      limits applied; the loader doesn't hook `ProcessEvent`. Only one copy runs if both are
+      installed; chains over an existing `ProcessEvent` hook (written for other mods; untested)
+- [ ] Optional: a MODS-menu entry through the loader's plugin format (`Mods\plugins\`)
 - [ ] Load as an `.asi` (Ultimate ASI Loader) next to other mods: the DLL starts everything
       when loaded, so this is mostly a rename plus not proxying `dinput8` when loaded that way
 

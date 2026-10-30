@@ -149,7 +149,7 @@ async def game_loop(ctx: DishonoredContext) -> None:
                 else:
                     next_attach = asyncio.get_running_loop().time() + 2
                     if not waiting_logged:
-                        logger.info("Waiting for Dishonored (with the Archipelago dinput8.dll installed)...")
+                        logger.info("Waiting for Dishonored (with the Archipelago module installed)...")
                         waiting_logged = True
 
             if ctx.slot:
