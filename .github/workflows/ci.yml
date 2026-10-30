@@ -67,12 +67,18 @@ jobs:
 
       # Two ways to install, both into Binaries\Win32: on its own as dinput8.dll, or with
       # Dishonored Mod Loader (its dinput8.dll loads every DLL in NativeMods\).
+      # The license and MinHook's notice go with every copy of the binary (BSD-2 requires it);
+      # prefixed so they don't look like the game's own files in Binaries\Win32.
       - name: Stage the DLL for both installs
         run: |
           mkdir -p staging/NativeMods
           cp native/build/mingw-x86/dinput8.dll native/archipelago_native.ini staging/
           cp native/build/mingw-x86/dinput8.dll staging/NativeMods/archipelago_native.dll
           cp native/archipelago_native.ini staging/NativeMods/
+          for dir in staging staging/NativeMods; do
+            cp LICENSE "$dir/archipelago_native-LICENSE.txt"
+            cp THIRD_PARTY_NOTICES.md "$dir/archipelago_native-THIRD_PARTY_NOTICES.txt"
+          done
 
       - uses: actions/upload-artifact@v4
         with:
@@ -110,7 +116,7 @@ jobs:
           v="${{ steps.version.outputs.version }}"
           mkdir -p release
           cp artifacts/dishonored.apworld/dishonored.apworld release/
-          (cd artifacts/native-dll && zip -q "../../release/dishonored-archipelago-$v-dll.zip" dinput8.dll archipelago_native.ini)
+          (cd artifacts/native-dll && zip -q "../../release/dishonored-archipelago-$v-dll.zip" dinput8.dll archipelago_native.ini archipelago_native-*.txt)
           (cd artifacts/native-dll && zip -q -r "../../release/dishonored-archipelago-$v-modloader.zip" NativeMods)
           ls -l release
 

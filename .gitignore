@@ -84,3 +84,7 @@ dist/
 .vs/
 .vscode/
 .idea/
+
+# Claude Code's project notes: kept locally, not published
+CLAUDE.md
+CLAUDE.local.md

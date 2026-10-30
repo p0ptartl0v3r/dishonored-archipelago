@@ -84,3 +84,20 @@ IDs are append-only: once a game build ships with an ID, never reuse or change i
 To make a location detected, add a `detect` pattern (event formats in
 [native/README.md](native/README.md)) and check it against a play log with
 `python tools/check_log.py "<mission>"`.
+
+## License
+
+The code and documentation in this repository are under the [MIT License](LICENSE), except:
+
+- **The Manual's design and files are greenranger1200's work.** That covers the item, location
+  and region design in `worlds/dishonored/data/` (taken from their Manual for Dishonored),
+  and everything in `manual/`: their Manual apworld, its YAML template and the
+  documentation PDF. Neither is covered by this repository's license. The Manual apworld
+  also contains the Manual framework, which keeps its own license.
+- **The in-game module includes MinHook** (BSD 2-Clause); see
+  [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). The release zips carry the same notice.
+- **The engine layout facts** (offsets, class names) are credited to ectrc/dismod. No code
+  from it is used.
+
+Dishonored is a trademark of ZeniMax Media Inc. This project is unofficial, and contains no
+files from the game.

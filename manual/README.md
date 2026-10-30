@@ -9,3 +9,7 @@ The Manual's `items.json`, `locations.json` and `regions.json` were copied to
 there and still want to ship the Manual, copy the files back into
 `manual_dishonored_greenranger1200/data/` and zip that folder as
 `manual_dishonored_greenranger1200.apworld`.
+
+This folder is greenranger1200's work (their Manual apworld for Dishonored, its YAML template
+and documentation), not covered by this repository's MIT license. The Manual framework code
+inside the apworld keeps its own license.
