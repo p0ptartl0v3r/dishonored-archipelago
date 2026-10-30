@@ -63,6 +63,20 @@ Install the DLL (`dinput8.dll` and `archipelago_native.ini` into the game's
 keep every check reachable, options) are in
 [worlds/dishonored/docs/en_Dishonored.md](worlds/dishonored/docs/en_Dishonored.md).
 
+## Releasing
+
+1. Set `world_version` in `worlds/dishonored/archipelago.json` to the new version, and
+   write the release text in `docs/releases/<version>.md` (optional: without it, GitHub
+   generates notes from the commits).
+2. Merge to `main`, then tag that commit and push the tag:
+   ```bash
+   git tag v0.9.0
+   git push origin v0.9.0
+   ```
+3. CI runs the tests and builds, checks that the tag matches `world_version`, and publishes
+   a GitHub release with `dishonored.apworld` and the DLL zips (normal install, and one for
+   Dishonored Mod Loader). Versions below 1.0 are marked as pre-releases.
+
 ## Adding or renaming items and locations
 
 Edit `worlds/dishonored/data/*.json`, then run `python tools/sync_ids.py`.
