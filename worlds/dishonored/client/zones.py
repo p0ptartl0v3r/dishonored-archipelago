@@ -102,6 +102,9 @@ TRAVEL_PROMPTS: dict[str, str] = {
     _seq("L_Galvani1_Scripts", 4, area="L_Galvani2_P"): "L_Streets2_P",  # Go to Clavering Blvd (dump)
     _seq("L_Streets2_Script", 10): "L_Brothel_P",  # Go to the Golden Cat
     _seq("L_Streets2_Script", 11): "L_Brothel_P",  # Go to the Golden Cat (dump)
+    # Go to the Golden Cat: changes the map without the map-change flag (travel=0), so `dump`
+    # doesn't list it; the DLL treats every option listed here as travel.
+    _seq("L_Streets2_Script", 9): "L_Brothel_P",
     _seq("L_Brothel_Script", 5): "L_Streets2_P",  # Go To Distillery District
     _seq("L_Brothel_Script", 2): "L_Streets2_P",  # Go to Clavering Blvd (dump)
     _seq("L_Brothel_Script", 4): "L_Streets2_P",  # Go to Captain's Chair Hotel (dump)

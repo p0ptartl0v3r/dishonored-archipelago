@@ -60,6 +60,11 @@ def test_boyle_mansion_doors():
     assert zone_key_for_travel(f"L_Boyle_Int_P.{choice}1#0") == "Lady Boyle's Last Party Exterior Zone Key"
 
 
+def test_golden_cat_door_without_the_travel_flag():
+    choice = "TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_"
+    assert zone_key_for_travel(f"L_Streets2_Script.{choice}9#0") == "The Golden Cat Bathhouse Zone Key"
+
+
 def test_tower_doors():
     choice = "TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_"
     assert zone_key_for_travel(f"L_TowerRtrn_Yard_Script.{choice}5#0") == "Tower Interior Zone Key"

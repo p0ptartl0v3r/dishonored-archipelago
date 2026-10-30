@@ -464,8 +464,10 @@ through `ProcessEvent`.
 - To test high chaos: `console AddDarkness 100` (via `tools/native_console.py`) in the mission
   *before* the one to test; F8 marks show `chaos=`.
 - That Golden Cat prompt (`L_Streets2_Script...DialogScriptedChoice_9`, "Go to the Golden Cat")
-  changed the map with `travel=0`: its option lacks the map-change flag, so the DLL doesn't see
-  it as travel and can't refuse it (the main-menu safety net still applies). Not in `TRAVEL_PROMPTS`.
+  changed the map with `travel=0`: its option lacks the map-change flag, and `dump` doesn't
+  list it. Since 2026-10-30 the DLL treats any option in the client's travel table as travel,
+  flag or not, and it's in `TRAVEL_PROMPTS` (compiled, untested in-game: does the prompt have
+  a "stay" option to fall back on?).
 - With this, all 100 locations have detect patterns (every mission played at least once).
 
 ### Item meanings: read the Manual's PDF (`manual/Dishonored_Archipelago_Documentation.pdf`)

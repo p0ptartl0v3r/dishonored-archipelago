@@ -1073,6 +1073,20 @@ bool travel_refused(const std::string& option, const std::string& areas) {
   return false;
 }
 
+// Is this option in the client's travel table (as "<option>" or "<area>|<option>")? Some
+// prompts change the map without the map-change flag (the Golden Cat's "Go to the Golden
+// Cat", L_Streets2_Script choice 9), so the table counts as well as the flag.
+bool travel_listed(const std::string& option, const std::string& areas) {
+  if (g_travel_allowed.contains(lower(option))) return true;
+  size_t start = 0;
+  while (start <= areas.size()) {
+    const size_t end = (std::min)(areas.find(',', start), areas.size());
+    if (g_travel_allowed.contains(lower(areas.substr(start, end - start) + "|" + option))) return true;
+    start = end + 1;
+  }
+  return false;
+}
+
 // Called on the game thread for every ProcessEvent, before the function runs
 // (so the object is still intact). Cheap integer compares unless something matches.
 void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
@@ -1165,8 +1179,15 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
       node = ue3::path_name(action);
       title = ue3::to_string(ue3::field<ue3::FString>(action, ue3::kScriptedChoiceTitle));
       const auto choices = ue3::field<ue3::TArray<uint8_t>>(action, ue3::kScriptedChoiceChoices);
+      auto* controller = local_player_controller();
+      const std::string areas =
+          current_areas(controller ? ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn) : nullptr);
+      // An option travels if the game flags it as a map change or the client lists it.
       const auto travels = [&](int32_t i) {
-        return (*reinterpret_cast<const uint32_t*>(choices.data + i * ue3::kChoiceInfoSize + ue3::kChoiceInfoFlags) & 1) != 0;
+        if (choices.data == nullptr) return false;
+        const bool flagged =
+            (*reinterpret_cast<const uint32_t*>(choices.data + i * ue3::kChoiceInfoSize + ue3::kChoiceInfoFlags) & 1) != 0;
+        return flagged || travel_listed(std::format("{}#{}", node, i), areas);
       };
       if (index >= 0 && index < choices.count && choices.data != nullptr) {
         text = ue3::to_string(*reinterpret_cast<const ue3::FString*>(choices.data + index * ue3::kChoiceInfoSize));
@@ -1176,15 +1197,12 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
         // The prompt's path and the option say where it goes (the destination is in the
         // next level's script, which isn't loaded yet); the client maps them to zones.
         const std::string option = std::format("{}#{}", node, index);
-        auto* controller = local_player_controller();
-        const std::string areas =
-            current_areas(controller ? ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn) : nullptr);
         emit_event(std::format("travel {} \"{}\" from {}", option, text, areas));
         if (g_limits_known && travel_refused(option, areas)) {
           // Pick the prompt's "stay" option instead: the prompt closes as if declined.
           int32_t stay = -1;
           for (int32_t i = 0; i < choices.count && stay < 0; ++i) {
-            if (!travels(i)) stay = i;
+            if (i != index && !travels(i)) stay = i;
           }
           if (stay >= 0) {
             emit_event(std::format("blocked travel {} from {}", option, areas));
@@ -1193,7 +1211,7 @@ void detect_events(ue3::UObject* self, ue3::UFunction* function, void* params) {
             }
             index = stay;
           } else {
-            log("travel prompt has no stay option; not refused");
+            log("travel prompt has no stay option ({} options); not refused", choices.count);
           }
         }
       }
