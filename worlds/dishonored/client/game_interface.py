@@ -1,11 +1,10 @@
 """The boundary between the Archipelago client and the running game.
 
-The client only ever talks to the game through a ``GameInterface``. Today the
-only working backend is ``ManualInterface`` (nothing is read from the game; the
-player sends checks with ``/check``). ``MemoryInterface`` is where real
-detection goes once the research in ``research/`` has found what to read. If
-the work later moves into an injected DLL, a third backend that talks to that
-DLL over a pipe or socket slots in here without the client changing.
+The client only ever talks to the game through a ``GameInterface``. The default backend
+is ``NativeInterface``: it talks to the in-game DLL (``native/``) over a named pipe, sends
+received items and limits, and turns the DLL's events into checks. ``ManualInterface``
+reads nothing from the game (the player sends checks with ``/check``, like the Manual).
+``MemoryInterface`` is an unused stub from before the DLL existed.
 """
 
 from __future__ import annotations
@@ -14,7 +13,8 @@ import logging
 from abc import ABC, abstractmethod
 
 from ..game_data import load as load_game_data
-from .item_commands import UNVERIFIED, commands_for
+from .item_commands import APPLIED_BY_LIMITS, UNVERIFIED, commands_for, console_commands
+from .zones import zone_key_for_level
 
 logger = logging.getLogger("DishonoredClient")
 
@@ -51,11 +51,41 @@ class GameInterface(ABC):
         so every received item must be applied again."""
         return False
 
+    def set_limits(self, lines: list[str]) -> bool:
+        """Tell the game what may be kept (item_commands.limits). Return False to retry later."""
+        return True
+
+    def show_message(self, text: str) -> bool:
+        """Show a line of text in-game (e.g. "Alice sent Blink to Bob"). Return False to retry later."""
+        return True
+
+    def take_zone_entered(self) -> str | None:
+        """The level of the zone the player is in, once after each load or transition settles
+        (None if none since)."""
+        return None
+
+    def take_zone_left(self) -> bool:
+        """True (once) when the player left the area since the last call (a mapchange)."""
+        return False
+
+    def quit_to_menu(self) -> bool:
+        """Send the player back to the main menu. Return False to retry later."""
+        return True
+
+    def show_notice(self, text: str) -> bool:
+        """Show a line at the top of the main menu (until a game is loaded). Return False to retry later."""
+        return True
+
+    def take_travel_blocked(self) -> tuple[str, str] | None:
+        """The travel prompt option ("<path>#<index>") the game last refused and the areas the
+        player was in, once (None if none since)."""
+        return None
+
 
 def log_unlock_for_player(item_name: str, level: int) -> None:
     """Tell the player what they got and, if known, what to type in the console."""
     logger.info(f"Unlocked: {item_name}" + (f" ({level})" if level > 1 else ""))
-    for command in commands_for(item_name, level):
+    for command in console_commands(commands_for(item_name, level)):
         note = " (unverified)" if item_name in UNVERIFIED else ""
         logger.info(f"    console: {command}{note}")
 
@@ -88,9 +118,8 @@ class ManualInterface(GameInterface):
 class MemoryInterface(GameInterface):
     """Reads and writes Dishonored's memory from outside the process (pymem).
 
-    Nothing is implemented yet: each TODO below is a research task. Dishonored
-    is a 32-bit process, and addresses are only valid for one game build, so
-    record the build you found them on in research/.
+    Never implemented: the DLL (``NativeInterface``) does all of this from inside the
+    game. Kept as a stub; it behaves like the Manual.
     """
 
     name = "memory"
@@ -160,12 +189,19 @@ def event_matches(pattern: str, event: str) -> bool:
 
     Words compare exactly, so "DisAbstractItemPickup_12" never matches "..._120".
     A "near=x,y,z" word matches an event's "at=x,y,z" within NEAR_DISTANCE, for
-    pickups spawned at runtime whose names aren't stable.
+    pickups spawned at runtime whose names aren't stable. Pickups the DLL tags "(far)"
+    were destroyed by a script away from the player and never match. A "!word" must
+    not be in the event ("!(load)" for pickups a script may also remove).
     """
     words = event.split()
+    if "(far)" in words:
+        return False
     position = next((_position(w) for w in words if w.startswith("at=")), None)
     for token in pattern.split():
-        if token.startswith("near="):
+        if token.startswith("!"):
+            if token[1:] in words:
+                return False
+        elif token.startswith("near="):
             target = _position(token)
             if position is None or target is None:
                 return False
@@ -193,6 +229,9 @@ class NativeInterface(GameInterface):
         self._goal_reached = False
         self._warned_no_cheats = False
         self._resync = False
+        self._zone_entered: str | None = None
+        self._zone_left = False
+        self._travel_blocked: tuple[str, str] | None = None
         self._shown: set[tuple[str, int]] = set()  # manual unlocks already shown to the player
         data = load_game_data()
         # (event prefix, location id or None for the goal)
@@ -263,6 +302,17 @@ class NativeInterface(GameInterface):
             while (reply := self._request(f"event {self._next_event}")) != "none":
                 _, _, text = reply.split(" ", 2)
                 self._next_event += 1
+                if text.startswith("mapchange "):
+                    self._zone_entered = None  # an `area` event follows once the level settles
+                    self._zone_left = True
+                if text.startswith("area "):
+                    # Only the latest counts: replayed events after reconnecting would
+                    # otherwise act on every zone visited since the game started.
+                    zones = [level for level in text.split()[1].split(",") if zone_key_for_level(level)]
+                    self._zone_entered = zones[0] if zones else None
+                if text.startswith("blocked travel "):
+                    words = text.split()  # blocked travel <option> from <areas>
+                    self._travel_blocked = (words[2], words[4] if len(words) > 4 else "")
                 if text == "gameplay":
                     # A save was loaded (or a new level started): the game may have
                     # forgotten items granted since that save, so grant them all again.
@@ -288,9 +338,51 @@ class NativeInterface(GameInterface):
         resync, self._resync = self._resync, False
         return resync
 
+    def take_zone_entered(self) -> str | None:
+        entered, self._zone_entered = self._zone_entered, None
+        return entered
+
+    def take_zone_left(self) -> bool:
+        left, self._zone_left = self._zone_left, False
+        return left
+
+    def take_travel_blocked(self) -> tuple[str, str] | None:
+        blocked, self._travel_blocked = self._travel_blocked, None
+        return blocked
+
+    def quit_to_menu(self) -> bool:
+        try:
+            return self._request("quittomenu") == "queued"
+        except OSError:
+            return False
+
+    def show_notice(self, text: str) -> bool:
+        try:
+            return self._request("notice " + " ".join(text.split())) == "ok"
+        except OSError:
+            return False
+
+    def set_limits(self, lines: list[str]) -> bool:
+        try:
+            return all(self._request(line) == "ok" for line in lines)
+        except OSError:
+            return False
+
+    def show_message(self, text: str) -> bool:
+        try:
+            return self._request("message " + " ".join(text.split())) == "ok"
+        except OSError:
+            return False
+
     def give_item(self, item_id: int, item_name: str, level: int) -> bool:
         commands = commands_for(item_name, level)
         # Unverified command names would silently do nothing, so show those to the player instead.
+        if not commands and item_name in APPLIED_BY_LIMITS:
+            # Takes effect through the limits the client sends (e.g. ammo allowed).
+            if (item_name, level) not in self._shown:
+                logger.info(f"Unlocked: {item_name}" + (f" ({level})" if level > 1 else "") + " (applied in-game)")
+                self._shown.add((item_name, level))
+            return True
         if not commands or item_name in UNVERIFIED:
             if (item_name, level) not in self._shown:  # don't repeat on every reload
                 log_unlock_for_player(item_name, level)
@@ -301,7 +393,7 @@ class NativeInterface(GameInterface):
             if not self._ready():
                 return False
             for command in commands:
-                if self._request(f"console {command}") != "queued":
+                if self._request(command) != "queued":
                     return False
         except OSError:
             return False

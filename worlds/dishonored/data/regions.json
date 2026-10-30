@@ -89,7 +89,7 @@
     "connects_to": [
       "Drawbridge Control"
     ],
-    "requires": "|Old Dunwall Distillery (HoP) Zone Key| AND |Dr Galvani's Offices (HoP) Zone Key| AND |Art Dealer's Apartment Zone Key|"
+    "requires": "|Southside Gate Zone Key| AND |Old Dunwall Distillery (HoP) Zone Key| AND |Dr Galvani's Offices (HoP) Zone Key| AND |Art Dealer's Apartment Zone Key|"
   },
   "Drawbridge Control": {
     "connects_to": [

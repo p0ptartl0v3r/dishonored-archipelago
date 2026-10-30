@@ -8,7 +8,7 @@ game. The apworld and client also run on Linux and macOS.
 | Work | Tool | Why |
 |---|---|---|
 | apworld, client, tools (Python) | **VS Code** | Python + Pylance extensions are all you need. |
-| Injected DLL (C++, later) | **Visual Studio 2022 Community** | Easiest way to get the 32-bit MSVC toolchain and to debug a DLL running inside `Dishonored.exe`. |
+| Injected DLL (C++, `native/`) | **Visual Studio 2022 Community** | Easiest way to get the 32-bit MSVC toolchain and to debug a DLL running inside `Dishonored.exe`. |
 
 You can start with VS Code alone and keep using it for the Python side. Install
 Visual Studio when you start on `native/`. VS Code with CMake Tools and the MSVC
@@ -26,12 +26,13 @@ when you attach to the game, break inside a hook and inspect memory.
   - the **release** (installer), to play and run the Launcher normally
   - a **source checkout**, to run the world's tests and generate seeds from your working copy
 
-**Reverse engineering (step 1 and 2 of the roadmap)**
+**Reverse engineering (optional now; most of it is in `research/notes.md`)**
 - [UE Explorer](https://github.com/UE-Explorer/UE-Explorer): opens Dishonored's
   `.upk` packages and decompiles the UnrealScript. Start here; it shows you which
   classes and functions exist.
-- [Cheat Engine](https://www.cheatengine.org/): find values in memory (rune
-  count, current map, loading state) and pointer paths to them.
+- The DLL's own tools usually beat a memory scanner: `dump`, F8 marks and call logging
+  (`native/README.md`). [Cheat Engine](https://www.cheatengine.org/) can still help to
+  find values in memory.
 - [x64dbg](https://x64dbg.com/): ships **x32dbg** too, which is the one you need,
   since Dishonored is a 32-bit process.
 - [Ghidra](https://ghidra-sre.org/): static analysis of `Dishonored.exe`. You need
@@ -45,9 +46,8 @@ You can skip installing anything at first: CI builds `dinput8.dll` with MinGW
 change the C++ and debug it inside the game.
 
 - Visual Studio 2022 Community with the **Desktop development with C++** workload
-- CMake (bundled with Visual Studio)
-- vcpkg for libraries (MinHook for hooking, apclientpp if the DLL ever talks to the
-  server itself)
+- CMake (bundled with Visual Studio). The build downloads MinHook itself (with git), so
+  no package manager is needed
 
 ## Setting up the source checkout
 
@@ -84,9 +84,10 @@ it), and point VS Code at that interpreter so imports like `BaseClasses` resolve
 
 ```bash
 pip install pytest
-python -m pytest tests          # requirement parser, data files, ID table
+python -m pytest tests          # parser, data files, IDs, zones, real event lines
 python tools/sync_ids.py        # after adding items/locations
 python tools/build_apworld.py   # writes dist/dishonored.apworld
+python tools/check_log.py "High Overseer Campbell"   # which locations a play log detected
 ```
 
 ## Game setup for research

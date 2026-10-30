@@ -1,100 +1,100 @@
 location_id,name,kind,mission,region,detection,game_object,notes
-219480065,Prologue: Hide And Seek,Other,Intro,Prologue,,,
-219480066,Dishonored (Mission): Victory,Mission,Intro,Dunwall Sewers,,,
-219480067,The Pub: Shop Rune,Rune,Intro,Hound Pits Pub,,,
-219480068,The Pub: River Rune,Rune,Intro,Hound Pits Pub,,,
-219480069,The Void: Outsider's Gift Rune,Rune,Intro,The Void,,,
+219480065,Prologue: Hide And Seek,Other,Intro,Prologue,objective,TowerEmpress_HideNSeek completed,a FailObjective for it fires later; ignore
+219480066,Dishonored (Mission): Victory,Mission,Intro,Dunwall Sewers,objective,Prison_Escape completed,end of the sewers
+219480067,The Pub: Shop Rune,Rune,Intro,Hound Pits Pub,buy,Rune_AbsItm bought for 500 coins,"bought at Piero's shop; the rune's pickup spawns at a different spot each run, so position matching failed"
+219480068,The Pub: River Rune,Rune,Intro,Hound Pits Pub,pickup (spawned),"Rune_AbsItm at -11585,-5794,-528",
+219480069,The Void: Outsider's Gift Rune,Rune,Intro,The Void,pickup,L_OutsiderDream_Script...DisAbstractItemPickup_0,
 219480070,Distillery District: Granny Rags Shrine Rune,Rune,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisAbstractItemPickup_19,Granny Rags' basement
 219480071,Distillery District: Granny Rags Gentlemen Callers Reward Rune,Rune,High Overseer Campbell,Distillery District (HOC),pickup (spawned),"DishonoredGameFull_P...DisAbstractItemPickup_N at -6138,-5804,3261",spawns on Granny's top floor after the gentlemen callers
-219480072,Distillery District: Granny Rags Poison Bootleg Elixer Reward Rune,Rune,High Overseer Campbell,Old Dunwall Distillery (HOC),,,
+219480072,Distillery District: Granny Rags Poison Bootleg Elixer Reward Rune,Rune,High Overseer Campbell,Old Dunwall Distillery (HOC),objective,Optional_HelpGrannyRags completed,reward rune spawns where the Gentlemen Callers one did; told apart by the objective
 219480073,Distillery District: Boulevard Confiscated Rune,Rune,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisAbstractItemPickup_26,guard station before the Overseer's office
 219480074,High Overseer's Office: Meeting Room Rune,Rune,High Overseer Campbell,High Overseer's Office,pickup,L_Ovrsr_Script...DisAbstractItemPickup_2,meeting room
-219480075,High Overseer Campbell: Victory,Mission,High Overseer Campbell,Backyard,,,
+219480075,High Overseer Campbell: Victory,Mission,High Overseer Campbell,Backyard,objective,Strt1Obj_ReturnToSamuel completed,
 219480076,High Overseer's Office: Campbell's Secret Room Rune,Rune,High Overseer Campbell,High Overseer's Office,pickup,L_Ovrsr_Script...DisAbstractItemPickup_74,Campbell's secret room in the basement
-219480077,Backyard: Workshop Rune,Rune,High Overseer Campbell,Backyard,,,
-219480078,The Pub: Weeper Chest Rune,Rune,High Overseer Campbell,Backyard,,,
-219480079,The Pub: Weeper Underwater Rune,Rune,High Overseer Campbell,Backyard,,,
-219480080,Dr Galvani's Offices: Galvani's Secret Room Rune,Rune,House of Pleasure,Dr Galvani's Offices (HoP),,,
-219480081,Art Dealer's Apartment: Art Dealer's Safe,Other,House of Pleasure,Art Dealer's Apartment,,,
-219480082,The Golden Cat Bathhouse: Opposite Golden Cat Rune,Rune,House of Pleasure,The Golden Cat Bathhouse,,,
-219480083,The Golden Cat Bathhouse: Golden Cat Second Floor Rune,Rune,House of Pleasure,The Golden Cat Bathhouse,,,
-219480084,The Golden Cat Bathhouse: Courtesans Room Rune,Rune,House of Pleasure,The Golden Cat Bathhouse,,,
-219480085,House of Pleasure: Victory,Mission,House of Pleasure,The Golden Cat Bathhouse,,,
-219480086,Southside Gate: Apartment Rune,Rune,The Royal Physician,Southside Gate,,,
-219480087,Drawbridge Control: Pratchett's Safe Rune,Rune,The Royal Physician,Drawbridge Control,,,
-219480088,Drawbridge Control: Outsider Shrine Rune,Rune,The Royal Physician,Drawbridge Control,,,
-219480089,Midrow Substation: Rune outside entry,Rune,The Royal Physician,Midrow Substation,,,
-219480090,North End: Sokolov's Laboratory Rune,Rune,The Royal Physician,North End,,,
-219480091,The Royal Physician: Victory,Mission,The Royal Physician,North End,,,
-219480092,Boyle Mansion Exterior: Outsider Shrine Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
-219480093,Boyle Mansion Exterior: Waterway Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
-219480094,Boyle Mansion Interior: Underground Vault Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,,,
-219480095,The Pub: Spare a Boyle Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,,,
-219480096,The Pub: Find Emily Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,,,
-219480097,The Pub: Reward for a duel with Shaw Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,,,
-219480098,Return to the Tower: Bunkhouse Rune,Rune,Return to the Tower,Tower Exterior,,,
-219480099,Return to the Tower: Torture Chamber Shrine Rune,Rune,Return to the Tower,Tower Interior,,,
-219480100,Return to the Tower: Bedroom Rune,Rune,Return to the Tower,Tower Interior,,,
-219480101,Return to the Tower: Safehouse Rune,Rune,Return to the Tower,Tower Exterior,,,
-219480102,The Flooded District: Refinery Rune,Rune,The Flooded District,Greaves Refinery,,,
-219480103,The Flooded District: Sewer Exit Rune,Rune,The Flooded District,Central Rudshore,,,
-219480104,The Flooded District: Rudshore Gate Rooftop Rune,Rune,The Flooded District,Rudshore Gate,,,
-219480105,The Flooded District: Granny's Outsider Shrine Rune,Rune,The Flooded District,Old Dunwall Sewers,,,
-219480106,The Flooded District: Survivor Camp Rune,Rune,The Flooded District,Old Dunwall Sewers,,,
-219480107,The Loyalists: Piero's Workshop Rune,Rune,The Loyalists,Hound Pits Pub (The Loyalists),,,
-219480108,The Light at the End: Drainage Rune,Rune,The Light at the End,Kingsparrow Fort,,,
-219480109,Lady Boyle's Last Party: Victory,Mission,Lady Boyle's Last Party,Boyle Mansion Interior,,,
-219480110,Return to the Tower: Victory,Mission,Return to the Tower,Tower Interior,,,
-219480111,The Flooded District: Victory,Mission,The Flooded District,Old Dunwall Sewers,,,
-219480112,The Loyalists: Victory,Mission,The Loyalists,Hound Pits Pub (The Loyalists),,,
-219480113,The Void: Receive the Mark,Other,Intro,The Void,,,
-219480114,Dishonored (Mission): Clockwork Explosive,Other,Intro,Dunwall Prison,,,
-219480115,High Overseer's Office: Campbell's Secret Room Painting,Painting,High Overseer Campbell,High Overseer's Office,,,
-219480116,Art Dealer's Apartment: Second Floor Painting,Painting,House of Pleasure,Art Dealer's Apartment,,,
-219480117,Art Dealer's Apartment: Third Floor Painting,Painting,House of Pleasure,Art Dealer's Apartment,,,
-219480118,Art Dealer's Apartment: Inside Safe Painting,Painting,House of Pleasure,Art Dealer's Apartment,,,
-219480119,North End: Sokolov's Safehouse Painting,Painting,The Royal Physician,North End,,,
-219480120,Dishonored (Mission): Corvo's Cell Key,Other,Intro,Dunwall Prison,,,
-219480121,Prologue: Get Framed,Other,Intro,Prologue,,,
-219480122,Dishonored (Mission): Folding Blade and Crossbow,Other,Intro,Dunwall Sewers,,,
-219480123,Dishonored (Mission): Open Jelly's Safe,Other,Intro,Dunwall Sewers,,,
-219480124,Boyle Mansion Interior: Bedroom Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,,,
-219480125,Boyle Mansion Interior: Display Room Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,,,
-219480126,Tower Interior: Piano Room Painting,Painting,Return to the Tower,Tower Interior,,,
-219480127,Rudshore Waterfront: Weeper Room Painting,Painting,The Flooded District,Rudshore Waterfront,,,
-219480128,Central Rudshore: Daud's Base Exit Painting,Painting,The Flooded District,Central Rudshore,,,
-219480129,Old Dunwall Sewers: Granny Rags Painting,Painting,The Flooded District,Old Dunwall Sewers,,,
-219480130,Distillery District: Griff's Shop Lens Magnification Blueprint,Blueprint,High Overseer Campbell,Distillery District (HOC),,,
-219480131,Distillery District: Griff's Shop Sokolov's Formula Blueprint,Blueprint,High Overseer Campbell,Distillery District (HOC),,,
-219480132,Backyard: Bonded Galvani Weave Blueprint,Blueprint,High Overseer Campbell,Backyard,,,
-219480133,Old Dunwall Distillery: Incandescent Paste Blueprint,Blueprint,House of Pleasure,Old Dunwall Distillery (HoP),,,
-219480134,Southside Gate: Folded Galvani Resin Blueprint,Blueprint,The Royal Physician,Southside Gate,,,
-219480135,Boyle Mansion Exterior: Spiked Grenade Housing Blueprint,Blueprint,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
-219480136,Tower Interior: Small-scale Combustion Refinement Blueprint,Blueprint,Return to the Tower,Tower Interior,,,
+219480077,Backyard: Workshop Rune,Rune,High Overseer Campbell,Backyard,pickup,L_Ovrsr_Back_Script...DisAbstractItemPickup_2,
+219480078,The Pub: Weeper Chest Rune,Rune,High Overseer Campbell,Backyard,pickup (spawned),"Rune_AbsItm at 1128,-3197,-619",in the pub after the mission; region Backyard = after the mission
+219480079,The Pub: Weeper Underwater Rune,Rune,High Overseer Campbell,Backyard,pickup (spawned),"Rune_AbsItm at 1638,-3551,-870",in the pub after the mission; region Backyard = after the mission
+219480080,Dr Galvani's Offices: Galvani's Secret Room Rune,Rune,House of Pleasure,Dr Galvani's Offices (HoP),pickup,L_Galvani1_Strt2_Scripts...DisAbstractItemPickup_32,
+219480081,Art Dealer's Apartment: Art Dealer's Safe,Other,House of Pleasure,Art Dealer's Apartment,pickup,L_ArtDealer_Scripts...DisAbstractItemPickup_5,the rune inside the safe (opening the safe gives no event)
+219480082,The Golden Cat Bathhouse: Opposite Golden Cat Rune,Rune,House of Pleasure,The Golden Cat Bathhouse,pickup,L_Brothel_Script...DisAbstractItemPickup_17,
+219480083,The Golden Cat Bathhouse: Golden Cat Second Floor Rune,Rune,House of Pleasure,The Golden Cat Bathhouse,pickup,L_Brothel_Script...DisAbstractItemPickup_20,
+219480084,The Golden Cat Bathhouse: Courtesans Room Rune,Rune,House of Pleasure,The Golden Cat Bathhouse,pickup,L_Brothel_Script...DisAbstractItemPickup_60,
+219480085,House of Pleasure: Victory,Mission,House of Pleasure,The Golden Cat Bathhouse,additem,ChapterLog_Hub_03,written as Samuel takes Corvo back to the pub (fromStreets2_toHub)
+219480086,Southside Gate: Apartment Rune,Rune,The Royal Physician,Southside Gate,pickup,L_Bridge_Part1a_Script...DisAbstractItemPickup_40,
+219480087,Drawbridge Control: Pratchett's Safe Rune,Rune,The Royal Physician,Drawbridge Control,pickup,L_Bridge_Part1b_Script...DisAbstractItemPickup_3,
+219480088,Drawbridge Control: Outsider Shrine Rune,Rune,The Royal Physician,Drawbridge Control,pickup,L_Bridge_Part1b_Script...DisAbstractItemPickup_4,
+219480089,Midrow Substation: Rune outside entry,Rune,The Royal Physician,Midrow Substation,pickup,L_Bridge_Part1c_Script...DisAbstractItemPickup_77,
+219480090,North End: Sokolov's Laboratory Rune,Rune,The Royal Physician,North End,pickup,L_Bridge_Part2_Script...DisAbstractItemPickup_0,
+219480091,The Royal Physician: Victory,Mission,The Royal Physician,North End,additem,ChapterLog_Hub_04,written as Corvo is taken back to the pub (fromBridge_toHub)
+219480092,Boyle Mansion Exterior: Outsider Shrine Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Exterior,pickup,L_Boyle_Ext_Script...DisAbstractItemPickup_0,
+219480093,Boyle Mansion Exterior: Waterway Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Exterior,pickup,L_BoyleStreet_Ext_Script...DisAbstractItemPickup_68,
+219480094,Boyle Mansion Interior: Underground Vault Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,L_Boyle_Int_Script...DisAbstractItemPickup_1,
+219480095,The Pub: Spare a Boyle Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,L_Pub_FromBoyle_Script...DisAbstractItemPickup_0,"in the pub after this mission (L_Pub_Morning_P), next to a note"
+219480096,The Pub: Find Emily Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,grant,L_Pub_FromBoyle_Script...DisSeqAct_GivePickup_0,"in the pub after this mission; the rune spawns where Emily hid, so matched by the script action that gives it"
+219480097,The Pub: Reward for a duel with Shaw Rune,Rune,Lady Boyle's Last Party,Boyle Mansion Interior,grant,L_Pub_FromBoyle_Script...DisSeqAct_GivePickup_2,"in the pub after this mission; the rune is spawned, so matched by the script action that gives it"
+219480098,Return to the Tower: Bunkhouse Rune,Rune,Return to the Tower,Tower Exterior,pickup,L_TowerRtrn_Yard_Script...DisAbstractItemPickup_47,
+219480099,Return to the Tower: Torture Chamber Shrine Rune,Rune,Return to the Tower,Tower Interior,pickup,L_TowerRtrn_Int_Script...DisAbstractItemPickup_6,
+219480100,Return to the Tower: Bedroom Rune,Rune,Return to the Tower,Tower Interior,pickup,L_TowerRtrn_Int_Script...DisAbstractItemPickup_28,
+219480101,Return to the Tower: Safehouse Rune,Rune,Return to the Tower,Tower Exterior,pickup,L_TowerRtrn_Yard_Script...DisAbstractItemPickup_6,"on the rooftop, reached from the interior"
+219480102,The Flooded District: Refinery Rune,Rune,The Flooded District,Greaves Refinery,pickup,L_Flooded_FRefinery_PickUps...DisAbstractItemPickup_81,
+219480103,The Flooded District: Sewer Exit Rune,Rune,The Flooded District,Central Rudshore,pickup,L_Flooded_FAssassins_PickUps...DisAbstractItemPickup_23,
+219480104,The Flooded District: Rudshore Gate Rooftop Rune,Rune,The Flooded District,Rudshore Gate,pickup,L_Flooded_FGate_PickUps...DisAbstractItemPickup_3,
+219480105,The Flooded District: Granny's Outsider Shrine Rune,Rune,The Flooded District,Old Dunwall Sewers,pickup,DishonoredGameFull_P...DisAbstractItemPickup_213 (spawned),"spawned at runtime, so matched by position; taken as Strt3Obj_HelpGranny completes"
+219480106,The Flooded District: Survivor Camp Rune,Rune,The Flooded District,Old Dunwall Sewers,pickup,L_Streetsewer_Script...DisAbstractItemPickup_16,
+219480107,The Loyalists: Piero's Workshop Rune,Rune,The Loyalists,Hound Pits Pub (The Loyalists),pickup,L_Pub_FromFlooded_Script...DisAbstractItemPickup_217,
+219480108,The Light at the End: Drainage Rune,Rune,The Light at the End,Kingsparrow Fort,pickup,L_Isl_Script_Slave...DisAbstractItemPickup_30,low chaos; high chaos: L_Isl_Script_Master...DisAbstractItemPickup_30
+219480109,Lady Boyle's Last Party: Victory,Mission,Lady Boyle's Last Party,Boyle Mansion Interior,additem,ChapterLog_Hub_05,written as Corvo is taken back to the pub (fromBoyle_toHub)
+219480110,Return to the Tower: Victory,Mission,Return to the Tower,Tower Interior,additem,ChapterLog_Hub_06,written as the boat reaches the pub (fromTowerReturn_toHub)
+219480111,The Flooded District: Victory,Mission,The Flooded District,Old Dunwall Sewers,additem,ChapterLog_Loyalists,"written on arriving at the pub (L_Pub_FromFlooded_Script), after the Go to Hound Pits Pub prompt"
+219480112,The Loyalists: Victory,Mission,The Loyalists,Hound Pits Pub (The Loyalists),additem,ChapterLog_Lighthouse,written as the boat reaches Kingsparrow Island (L_Isl_Script_Slave)
+219480113,The Void: Receive the Mark,Other,Intro,The Void,grant,OnAddPower Blink 1,the Outsider gives Blink with the mark
+219480114,Dishonored (Mission): Clockwork Explosive,Other,Intro,Dunwall Prison,pickup,L_Prison_Script...DisAbstractItemPickup_0 ExplosiveDevice_AbsItm,
+219480115,High Overseer's Office: Campbell's Secret Room Painting,Painting,High Overseer Campbell,High Overseer's Office,pickup,L_Ovrsr_Script...DisAbstractItemPickup_29,a valuable worth 300 coins (paintings turn into coins)
+219480116,Art Dealer's Apartment: Second Floor Painting,Painting,House of Pleasure,Art Dealer's Apartment,pickup,L_ArtDealer_Scripts...DisAbstractItemPickup_6,a valuable: turns into 300 coins
+219480117,Art Dealer's Apartment: Third Floor Painting,Painting,House of Pleasure,Art Dealer's Apartment,pickup,L_ArtDealer_Scripts...DisAbstractItemPickup_4,a valuable: turns into 300 coins
+219480118,Art Dealer's Apartment: Inside Safe Painting,Painting,House of Pleasure,Art Dealer's Apartment,pickup,L_ArtDealer_Scripts...DisAbstractItemPickup_9,a valuable: turns into 300 coins
+219480119,North End: Sokolov's Safehouse Painting,Painting,The Royal Physician,North End,pickup,L_Bridge_Part2_Script...DisAbstractItemPickup_1,a valuable: turns into 300 coins
+219480120,Dishonored (Mission): Corvo's Cell Key,Other,Intro,Dunwall Prison,pickup,L_Prison_Script...DisKey_Base_1,key from the bread tray
+219480121,Prologue: Get Framed,Other,Intro,Prologue,mapchange,L_Prison_P,arriving in Coldridge after the assassination
+219480122,Dishonored (Mission): Folding Blade and Crossbow,Other,Intro,Dunwall Sewers,grant,Twk_Inv_CrossbowCorvo (and Twk_Inv_SwordCorvo) by Corvo_SpecialGear,cutscene after the note to the Lord Protector
+219480123,Dishonored (Mission): Open Jelly's Safe,Other,Intro,Dunwall Sewers,pickup,"L_PrsnSewer_Script...DisAbstractItemPickup_79 (valuable, 50 coins) or DisElixirHealth_1","the safe's two items, near 6560,4390,3430; same in two runs"
+219480124,Boyle Mansion Interior: Bedroom Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,L_Boyle_Int_Script...DisAbstractItemPickup_67/_68/_69,"a valuable: turns into 300 coins. One per sister's bedroom; the script removes the other two (again while loading on every return), so loads never count"
+219480125,Boyle Mansion Interior: Display Room Painting,Painting,Lady Boyle's Last Party,Boyle Mansion Interior,pickup,L_Boyle_Int_Script...DisAbstractItemPickup_66,a valuable: turns into 300 coins
+219480126,Tower Interior: Piano Room Painting,Painting,Return to the Tower,Tower Interior,pickup,L_TowerRtrn_Int_Script...DisAbstractItemPickup_8,a valuable: turns into 300 coins
+219480127,Rudshore Waterfront: Weeper Room Painting,Painting,The Flooded District,Rudshore Waterfront,pickup,L_Flooded_FStreets_PickUps...DisAbstractItemPickup_12,a valuable: turns into 300 coins
+219480128,Central Rudshore: Daud's Base Exit Painting,Painting,The Flooded District,Central Rudshore,pickup,L_Flooded_FAssassins_Script...DisAbstractItemPickup_168,a valuable: turns into 300 coins
+219480129,Old Dunwall Sewers: Granny Rags Painting,Painting,The Flooded District,Old Dunwall Sewers,pickup,L_Streetsewer_Script...DisAbstractItemPickup_10,a valuable: turns into 300 coins
+219480130,Distillery District: Griff's Shop Lens Magnification Blueprint,Blueprint,High Overseer Campbell,Distillery District (HOC),buy,BP_SpyglassZoom_AbsItm (200 coins),bought at Griff's shop; its pickup is spawned
+219480131,Distillery District: Griff's Shop Sokolov's Formula Blueprint,Blueprint,High Overseer Campbell,Distillery District (HOC),buy,BP_HealthPotion_AbsItm (200 coins),bought at Griff's shop; its pickup is spawned
+219480132,Backyard: Bonded Galvani Weave Blueprint,Blueprint,High Overseer Campbell,Backyard,pickup,L_Ovrsr_Back_Script...DisAbstractItemPickup_65 BP_ArmorIncrease_AbsItm,
+219480133,Old Dunwall Distillery: Incandescent Paste Blueprint,Blueprint,House of Pleasure,Old Dunwall Distillery (HoP),pickup,L_Distillery2_Script...DisAbstractItemPickup_213,BP_FlareBolt_AbsItm (incendiary bolts)
+219480134,Southside Gate: Folded Galvani Resin Blueprint,Blueprint,The Royal Physician,Southside Gate,pickup,L_Bridge_Part1a_Script...DisAbstractItemPickup_10,BP_SilentRunning_AbsItm
+219480135,Boyle Mansion Exterior: Spiked Grenade Housing Blueprint,Blueprint,Lady Boyle's Last Party,Boyle Mansion Exterior,pickup,L_BoyleStreet_Ext_Script...DisAbstractItemPickup_66,BP_StickyGrenade_AbsItm
+219480136,Tower Interior: Small-scale Combustion Refinement Blueprint,Blueprint,Return to the Tower,Tower Interior,pickup,L_TowerRtrn_Int_Script...DisAbstractItemPickup_3,BP_ExpBullets_AbsItm
 219480137,Distillery District: Bridge End Bone Charm,Bone Charm,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisWhaleBoneCharm_0,"behind the gate where guards unload bodies (seen twice as (load), at 642,-10745,2985)"
 219480138,Distillery District: Griff's Building Bone Charm,Bone Charm,High Overseer Campbell,Distillery District (HOC),pickup,L_Streets1_Script...DisWhaleBoneCharm_1,2nd floor of the building where Griff is saved
-219480139,Old Dunwall Distillery: Rafter Bone Charm,Bone Charm,High Overseer Campbell,Old Dunwall Distillery (HOC),,,
-219480140,Backyard: Rat Infested Building Bone Charm,Bone Charm,High Overseer Campbell,Backyard,,,
-219480141,Backyard: Overseer Stolen Bone Charm,Bone Charm,High Overseer Campbell,Backyard,,,
-219480142,Distillery District: Apartment Bone Charm,Bone Charm,House of Pleasure,Distillery District (HoP),,,
-219480143,Distillery District: Granny Rags Bone Charm,Bone Charm,House of Pleasure,Distillery District (HoP),,,
-219480144,Distillery District: Captain's Chair Hotel Bone Charm,Bone Charm,House of Pleasure,Distillery District (HOC),,,
-219480145,The Golden Cat Bathhouse: Stairwell Room Bone Charm,Bone Charm,House of Pleasure,The Golden Cat Bathhouse,,,
-219480146,Old Dunwall Distillery: Weeper Containment Room Bone Charm,Bone Charm,House of Pleasure,Old Dunwall Distillery (HoP),,,
-219480147,Southside Gate: Past Metal Bridge Bone Charm,Bone Charm,The Royal Physician,Southside Gate,,,
-219480148,Midrow Substation: Rat Infested Basement Bone Charm,Bone Charm,The Royal Physician,Midrow Substation,,,
-219480149,North End: Building By Entry Bone Charm,Bone Charm,The Royal Physician,North End,,,
-219480150,Hound Pits Pub: Abandoned Apartment Bone Charm,Bone Charm,The Royal Physician,North End,,,
-219480151,Boyle Mansion Exterior: Outsider's Shrine Room Bone Charm,Bone Charm,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
-219480152,Boyle Mansion Exterior: Building by Mansion Bone Charm,Bone Charm,Lady Boyle's Last Party,Boyle Mansion Exterior,,,
-219480153,Tower Exterior: Waterlock Bone Charm,Bone Charm,Return to the Tower,Tower Exterior,,,
-219480154,Tower Interior: Jessamine's Secret Room Bone Charm,Bone Charm,Return to the Tower,Tower Interior,,,
-219480155,Rudshore Waterfront: End of Street Bone Charm,Bone Charm,The Flooded District,Rudshore Waterfront,,,
-219480156,Greaves Refinery: Back of Tower Bone Charm,Bone Charm,The Flooded District,Greaves Refinery,,,
-219480157,Central Rudshore: Wolfhound Guarded Bone Charm,Bone Charm,The Flooded District,Central Rudshore,,,
-219480158,Central Rudshore: Daud's Bone Charm,Bone Charm,The Flooded District,Central Rudshore,,,
-219480159,Rudshore Gate: Zone Entry Bone Charm,Bone Charm,The Flooded District,Rudshore Gate,,,
-219480160,Old Dunwall Sewers: Collapsed Building Bone Charm,Bone Charm,The Flooded District,Old Dunwall Sewers,,,
-219480161,Old Dunwall Sewers: Safe Bone Charm,Bone Charm,The Flooded District,Old Dunwall Sewers,,,
-219480162,Old Dunwall Sewers: Past Survivor's Camp Bone Charm,Bone Charm,The Flooded District,Old Dunwall Sewers,,,
-219480163,Greaves Refinery: Retrieve your Gear,Other,The Flooded District,Greaves Refinery,,,
+219480139,Old Dunwall Distillery: Rafter Bone Charm,Bone Charm,High Overseer Campbell,Old Dunwall Distillery (HOC),pickup,L_Distillery_Strt1Script...DisWhaleBoneCharm_1,
+219480140,Backyard: Rat Infested Building Bone Charm,Bone Charm,High Overseer Campbell,Backyard,pickup,Ovrsr_PhysBoneCharm near=-10714,-30305,-107,"held in a vise: opening it destroys the static Ovrsr_NoPhysBoneCharm (DisWhaleBoneCharm_2) and spawns a loose Ovrsr_PhysBoneCharm, numbered at runtime; was swapped with Overseer Stolen until 2026-10-26"
+219480141,Backyard: Overseer Stolen Bone Charm,Bone Charm,High Overseer Campbell,Backyard,pickup,L_Ovrsr_Back_Script...DisWhaleBoneCharm_0,an ordinary WhaleBoneCharm_01_twk
+219480142,Distillery District: Apartment Bone Charm,Bone Charm,House of Pleasure,Distillery District (HoP),pickup,L_Streets2_Script...DisWhaleBoneCharm_0,
+219480143,Distillery District: Granny Rags Bone Charm,Bone Charm,House of Pleasure,Distillery District (HoP),pickup,L_Streets2_Script...DisWhaleBoneCharm_1,
+219480144,Distillery District: Captain's Chair Hotel Bone Charm,Bone Charm,House of Pleasure,Distillery District (HoP),pickup,L_Streets2_Script...DisWhaleBoneCharm_4,picked up in House of Pleasure's Distillery District with the hotel key Slackjaw gives after his jobs (Galvani's, Old Distillery); the Manual had it in the HOC region (moved 2026-10-26)
+219480145,The Golden Cat Bathhouse: Stairwell Room Bone Charm,Bone Charm,House of Pleasure,The Golden Cat Bathhouse,pickup,L_Brothel_Script...DisWhaleBoneCharm_0,
+219480146,Old Dunwall Distillery: Weeper Containment Room Bone Charm,Bone Charm,House of Pleasure,Old Dunwall Distillery (HoP),pickup,L_Distillery2_Script...DisWhaleBoneCharm_0,
+219480147,Southside Gate: Past Metal Bridge Bone Charm,Bone Charm,The Royal Physician,Southside Gate,pickup,L_Bridge_Part1a_Script...DisWhaleBoneCharm_0,
+219480148,Midrow Substation: Rat Infested Basement Bone Charm,Bone Charm,The Royal Physician,Midrow Substation,pickup,L_Bridge_Part1c_Script...DisWhaleBoneCharm_2,
+219480149,North End: Building By Entry Bone Charm,Bone Charm,The Royal Physician,North End,pickup,L_Bridge_Part2_Script...DisWhaleBoneCharm_1,
+219480150,Hound Pits Pub: Abandoned Apartment Bone Charm,Bone Charm,The Royal Physician,North End,pickup,DishonoredGameFull_P...DisWhaleBoneCharm_5 (spawned),"in the pub after this mission (L_Pub_Night_P); spawned at runtime, so matched by position"
+219480151,Boyle Mansion Exterior: Outsider's Shrine Room Bone Charm,Bone Charm,Lady Boyle's Last Party,Boyle Mansion Exterior,pickup,L_Boyle_Ext_Audio...DisWhaleBoneCharm_0,placed in the level's audio package
+219480152,Boyle Mansion Exterior: Building by Mansion Bone Charm,Bone Charm,Lady Boyle's Last Party,Boyle Mansion Exterior,pickup,L_BoyleStreet_Ext_Script...DisWhaleBoneCharm_1,
+219480153,Tower Exterior: Waterlock Bone Charm,Bone Charm,Return to the Tower,Tower Exterior,pickup,L_TowerRtrn_Yard_Script...DisWhaleBoneCharm_0,
+219480154,Tower Interior: Jessamine's Secret Room Bone Charm,Bone Charm,Return to the Tower,Tower Interior,pickup,L_TowerRtrn_Int_Script...DisWhaleBoneCharm_0,next to the Empress's journal (AG_Tower_Empress)
+219480155,Rudshore Waterfront: End of Street Bone Charm,Bone Charm,The Flooded District,Rudshore Waterfront,pickup,L_Flooded_FStreets_PickUps...DisWhaleBoneCharm_0,
+219480156,Greaves Refinery: Back of Tower Bone Charm,Bone Charm,The Flooded District,Greaves Refinery,pickup,L_Flooded_FRefinery_PickUps...DisWhaleBoneCharm_0,
+219480157,Central Rudshore: Wolfhound Guarded Bone Charm,Bone Charm,The Flooded District,Central Rudshore,pickup,L_Flooded_FAssassins_PickUps...DisWhaleBoneCharm_1,
+219480158,Central Rudshore: Daud's Bone Charm,Bone Charm,The Flooded District,Central Rudshore,grant,L_Flooded_FAssassins_Script...Daud_Behavior.DisSeqAct_GivePickup_1,given by Daud's script (spawns DishonoredGameFull_P...DisWhaleBoneCharm_2)
+219480159,Rudshore Gate: Zone Entry Bone Charm,Bone Charm,The Flooded District,Rudshore Gate,pickup,L_Flooded_FGate_Script...DisWhaleBoneCharm_0,
+219480160,Old Dunwall Sewers: Collapsed Building Bone Charm,Bone Charm,The Flooded District,Old Dunwall Sewers,pickup,L_Streetsewer_Script...DisWhaleBoneCharm_1,
+219480161,Old Dunwall Sewers: Safe Bone Charm,Bone Charm,The Flooded District,Old Dunwall Sewers,pickup,L_Streetsewer_Script...DisWhaleBoneCharm_0,
+219480162,Old Dunwall Sewers: Past Survivor's Camp Bone Charm,Bone Charm,The Flooded District,Old Dunwall Sewers,pickup,L_Streetsewer_Block...DisWhaleBoneCharm_1,
+219480163,Greaves Refinery: Retrieve your Gear,Other,The Flooded District,Greaves Refinery,objective,Flooded_Gear,completing the objective; the game then gives back every item and journal entry at once

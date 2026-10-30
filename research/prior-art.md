@@ -74,6 +74,16 @@ the same way.
   definition. Mods that use it install into `Binaries/Win32`. No public source
   found. Could later host our connection settings (server, slot), but the core
   shouldn't depend on it.
+  Inspected v1.3.15 without running it (2026-10-30; exports, imports, strings): its
+  `dinput8.dll` forwards DirectInput to the system DLL, loads `Mods\DishonoredLoader.dll`
+  (the framework: MODS pause-menu entry, `Mods\plugins\*.dll` plugins exporting `Plg_Init`,
+  `Plg_QueryMenu`, `ModInfo`, and INI mods), then every DLL directly in the folders of
+  `modloader.ini` `[Loader] ModFolders=` (default `Mods,NativeMods`), skipping `dinput8.dll`,
+  `DishonoredLoader.dll` and `ModLoader.dll`. So our DLL runs from `NativeMods\` under another
+  name. It logs to `Binaries\Win32\dinput8_proxy.log` (what it loaded) and
+  `Mods\modloader.log`. Confirmed in-game 2026-10-30: `ModFolders: loaded:
+  archipelago_native.dll`, and ours still found `ProcessEvent` by its unhooked pattern, so the
+  loader doesn't hook it (its "Hook OK" is something else, likely the pause menu).
 - A closed-source co-op mod (installs a `d3d9.dll`) appeared in September 2026,
   which is part of why Nexus looks busy. Don't run closed-source DLLs on a
   machine you care about.

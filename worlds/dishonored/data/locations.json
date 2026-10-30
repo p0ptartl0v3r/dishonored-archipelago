@@ -5,7 +5,10 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "objective DisSeqAct_CompleteObjective TowerEmpress_HideNSeek"
+    ]
   },
   {
     "region": "Dunwall Sewers",
@@ -13,7 +16,10 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "objective DisSeqAct_CompleteObjective Prison_Escape"
+    ]
   },
   {
     "region": "Hound Pits Pub",
@@ -21,7 +27,10 @@
     "category": [
       "Intro"
     ],
-    "requires": "|The Void Zone Key|"
+    "requires": "|The Void Zone Key|",
+    "detect": [
+      "buy item Rune_AbsItm"
+    ]
   },
   {
     "name": "The Pub: River Rune",
@@ -29,7 +38,10 @@
     "category": [
       "Intro"
     ],
-    "requires": "|The Void Zone Key|"
+    "requires": "|The Void Zone Key|",
+    "detect": [
+      "pickup Rune_AbsItm near=-11585,-5794,-528"
+    ]
   },
   {
     "region": "The Void",
@@ -37,7 +49,10 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_OutsiderDream_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_0 Rune_AbsItm"
+    ]
   },
   {
     "region": "Distillery District (HOC)",
@@ -67,7 +82,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": "|Dr Galvani's Offices (HOC) Zone Key|"
+    "requires": "|Dr Galvani's Offices (HOC) Zone Key|",
+    "detect": [
+      "objective DisSeqAct_CompleteObjective Optional_HelpGrannyRags"
+    ]
   },
   {
     "region": "Distillery District (HOC)",
@@ -98,7 +116,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": "|Old Dunwall Distillery (HOC) Zone Key| AND |Dr Galvani's Offices (HOC) Zone Key|"
+    "requires": "|Old Dunwall Distillery (HOC) Zone Key| AND |Dr Galvani's Offices (HOC) Zone Key|",
+    "detect": [
+      "objective DisSeqAct_CompleteObjective Strt1Obj_ReturnToSamuel"
+    ]
   },
   {
     "name": "High Overseer's Office: Campbell's Secret Room Rune",
@@ -117,7 +138,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Ovrsr_Back_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_2"
+    ]
   },
   {
     "region": "Backyard",
@@ -125,7 +149,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup Rune_AbsItm near=1128,-3197,-619"
+    ]
   },
   {
     "region": "Backyard",
@@ -133,7 +160,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup Rune_AbsItm near=1638,-3551,-870"
+    ]
   },
   {
     "region": "Dr Galvani's Offices (HoP)",
@@ -141,7 +171,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Galvani1_Strt2_Scripts.TheWorld.PersistentLevel.DisAbstractItemPickup_32"
+    ]
   },
   {
     "name": "Art Dealer's Apartment: Art Dealer's Safe",
@@ -149,7 +182,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": "|The Golden Cat Bathhouse Zone Key|"
+    "requires": "|The Golden Cat Bathhouse Zone Key|",
+    "detect": [
+      "pickup L_ArtDealer_Scripts.TheWorld.PersistentLevel.DisAbstractItemPickup_5"
+    ]
   },
   {
     "region": "The Golden Cat Bathhouse",
@@ -157,7 +193,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Brothel_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_17"
+    ]
   },
   {
     "region": "The Golden Cat Bathhouse",
@@ -165,7 +204,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Brothel_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_20"
+    ]
   },
   {
     "region": "The Golden Cat Bathhouse",
@@ -173,7 +215,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Brothel_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_60"
+    ]
   },
   {
     "name": "House of Pleasure: Victory",
@@ -181,7 +226,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": "|Art Dealer's Apartment Zone Key| AND |Old Dunwall Distillery (HoP) Zone Key| AND |Dr Galvani's Offices (HoP) Zone Key|"
+    "requires": "|Art Dealer's Apartment Zone Key| AND |Old Dunwall Distillery (HoP) Zone Key| AND |Dr Galvani's Offices (HoP) Zone Key|",
+    "detect": [
+      "additem ChapterLog_Hub_03"
+    ]
   },
   {
     "region": "Southside Gate",
@@ -189,7 +237,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part1a_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_40"
+    ]
   },
   {
     "region": "Drawbridge Control",
@@ -197,7 +248,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part1b_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_3"
+    ]
   },
   {
     "region": "Drawbridge Control",
@@ -205,7 +259,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part1b_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_4"
+    ]
   },
   {
     "name": "Midrow Substation: Rune outside entry",
@@ -213,7 +270,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part1c_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_77"
+    ]
   },
   {
     "name": "North End: Sokolov's Laboratory Rune",
@@ -221,7 +281,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part2_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_0"
+    ]
   },
   {
     "region": "North End",
@@ -229,7 +292,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "additem ChapterLog_Hub_04"
+    ]
   },
   {
     "region": "Boyle Mansion Exterior",
@@ -237,7 +303,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Boyle_Ext_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_0"
+    ]
   },
   {
     "name": "Boyle Mansion Exterior: Waterway Rune",
@@ -245,7 +314,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_BoyleStreet_Ext_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_68"
+    ]
   },
   {
     "name": "Boyle Mansion Interior: Underground Vault Rune",
@@ -253,7 +325,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Boyle_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_1"
+    ]
   },
   {
     "name": "The Pub: Spare a Boyle Rune",
@@ -261,7 +336,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Pub_FromBoyle_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_0"
+    ]
   },
   {
     "name": "The Pub: Find Emily Rune",
@@ -269,7 +347,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "grant pickup Rune_twk by L_Pub_FromBoyle_Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_GivePickup_0"
+    ]
   },
   {
     "name": "The Pub: Reward for a duel with Shaw Rune",
@@ -277,7 +358,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": "|Progressive Bullets| OR |Progressive Crossbow Bolts| OR |Progressive Sleep Darts|"
+    "requires": "|Progressive Bullets| OR |Progressive Crossbow Bolts| OR |Progressive Sleep Darts|",
+    "detect": [
+      "grant pickup Rune_twk by L_Pub_FromBoyle_Script.TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_GivePickup_2"
+    ]
   },
   {
     "region": "Tower Exterior",
@@ -285,7 +369,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_TowerRtrn_Yard_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_47"
+    ]
   },
   {
     "region": "Tower Interior",
@@ -293,7 +380,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_TowerRtrn_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_6"
+    ]
   },
   {
     "name": "Return to the Tower: Bedroom Rune",
@@ -301,7 +391,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_TowerRtrn_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_28"
+    ]
   },
   {
     "region": "Tower Exterior",
@@ -309,7 +402,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": "|Tower Interior Zone Key|"
+    "requires": "|Tower Interior Zone Key|",
+    "detect": [
+      "pickup L_TowerRtrn_Yard_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_6"
+    ]
   },
   {
     "region": "Greaves Refinery",
@@ -317,7 +413,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Flooded_FRefinery_PickUps.TheWorld.PersistentLevel.DisAbstractItemPickup_81"
+    ]
   },
   {
     "region": "Central Rudshore",
@@ -325,7 +424,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Flooded_FAssassins_PickUps.TheWorld.PersistentLevel.DisAbstractItemPickup_23"
+    ]
   },
   {
     "region": "Rudshore Gate",
@@ -333,7 +435,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Flooded_FGate_PickUps.TheWorld.PersistentLevel.DisAbstractItemPickup_3"
+    ]
   },
   {
     "name": "The Flooded District: Granny's Outsider Shrine Rune",
@@ -341,7 +446,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup Rune_AbsItm near=-6778,4192,1167"
+    ]
   },
   {
     "name": "The Flooded District: Survivor Camp Rune",
@@ -349,7 +457,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Streetsewer_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_16"
+    ]
   },
   {
     "region": "Hound Pits Pub (The Loyalists)",
@@ -357,7 +468,10 @@
     "category": [
       "The Loyalists"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Pub_FromFlooded_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_217"
+    ]
   },
   {
     "region": "Kingsparrow Fort",
@@ -365,7 +479,11 @@
     "category": [
       "The Light at the End"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Isl_Script_Slave.TheWorld.PersistentLevel.DisAbstractItemPickup_30",
+      "pickup L_Isl_Script_Master.TheWorld.PersistentLevel.DisAbstractItemPickup_30"
+    ]
   },
   {
     "region": "Boyle Mansion Interior",
@@ -373,7 +491,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "additem ChapterLog_Hub_05"
+    ]
   },
   {
     "region": "Tower Interior",
@@ -381,7 +502,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "additem ChapterLog_Hub_06"
+    ]
   },
   {
     "region": "Old Dunwall Sewers",
@@ -389,7 +513,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "additem ChapterLog_Loyalists"
+    ]
   },
   {
     "region": "Hound Pits Pub (The Loyalists)",
@@ -397,7 +524,10 @@
     "category": [
       "The Loyalists"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "additem ChapterLog_Lighthouse"
+    ]
   },
   {
     "region": "Burrows Lighthouse",
@@ -406,7 +536,13 @@
     "category": [
       "The Light at the End"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "mapchange L_Out_P",
+      "mapchange L_Out_HighChaos_EmilyAlive_P",
+      "mapchange L_Out_HighChaos_emilyDead_P",
+      "mapchange L_Out_HighChaos_EmilyDead_P"
+    ]
   },
   {
     "name": "The Void: Receive the Mark",
@@ -417,6 +553,9 @@
     "requires": [],
     "place_item": [
       "Progressive Blink"
+    ],
+    "detect": [
+      "grant power Blink"
     ]
   },
   {
@@ -425,7 +564,10 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Prison_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_0 ExplosiveDevice_AbsItm"
+    ]
   },
   {
     "name": "High Overseer's Office: Campbell's Secret Room Painting",
@@ -433,7 +575,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Ovrsr_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_29"
+    ]
   },
   {
     "region": "Art Dealer's Apartment",
@@ -441,7 +586,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_ArtDealer_Scripts.TheWorld.PersistentLevel.DisAbstractItemPickup_6"
+    ]
   },
   {
     "region": "Art Dealer's Apartment",
@@ -449,7 +597,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_ArtDealer_Scripts.TheWorld.PersistentLevel.DisAbstractItemPickup_4"
+    ]
   },
   {
     "region": "Art Dealer's Apartment",
@@ -457,7 +608,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": "|The Golden Cat Bathhouse Zone Key|"
+    "requires": "|The Golden Cat Bathhouse Zone Key|",
+    "detect": [
+      "pickup L_ArtDealer_Scripts.TheWorld.PersistentLevel.DisAbstractItemPickup_9"
+    ]
   },
   {
     "name": "North End: Sokolov's Safehouse Painting",
@@ -465,7 +619,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part2_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_1"
+    ]
   },
   {
     "name": "Dishonored (Mission): Corvo's Cell Key",
@@ -473,7 +630,10 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Prison_Script.TheWorld.PersistentLevel.DisKey_Base_1"
+    ]
   },
   {
     "name": "Prologue: Get Framed",
@@ -481,7 +641,10 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "mapchange L_Prison_P"
+    ]
   },
   {
     "name": "Dishonored (Mission): Folding Blade and Crossbow",
@@ -489,7 +652,10 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "grant inventory Twk_Inv_CrossbowCorvo"
+    ]
   },
   {
     "name": "Dishonored (Mission): Open Jelly's Safe",
@@ -497,7 +663,11 @@
     "category": [
       "Intro"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_PrsnSewer_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_79",
+      "pickup L_PrsnSewer_Script.TheWorld.PersistentLevel.DisElixirHealth_1"
+    ]
   },
   {
     "name": "Boyle Mansion Interior: Bedroom Painting",
@@ -505,7 +675,12 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Boyle_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_67 !(load)",
+      "pickup L_Boyle_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_68 !(load)",
+      "pickup L_Boyle_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_69 !(load)"
+    ]
   },
   {
     "name": "Boyle Mansion Interior: Display Room Painting",
@@ -513,7 +688,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Boyle_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_66"
+    ]
   },
   {
     "region": "Tower Interior",
@@ -521,7 +699,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_TowerRtrn_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_8"
+    ]
   },
   {
     "region": "Rudshore Waterfront",
@@ -529,7 +710,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Flooded_FStreets_PickUps.TheWorld.PersistentLevel.DisAbstractItemPickup_12"
+    ]
   },
   {
     "name": "Central Rudshore: Daud's Base Exit Painting",
@@ -537,7 +721,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Flooded_FAssassins_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_168"
+    ]
   },
   {
     "region": "Old Dunwall Sewers",
@@ -545,7 +732,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Streetsewer_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_10"
+    ]
   },
   {
     "region": "Distillery District (HOC)",
@@ -553,7 +743,11 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "buy item BP_SpyglassZoom_AbsItm",
+      "pickup BP_SpyglassZoom_AbsItm"
+    ]
   },
   {
     "region": "Distillery District (HOC)",
@@ -561,7 +755,11 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "buy item BP_HealthPotion_AbsItm",
+      "pickup BP_HealthPotion_AbsItm"
+    ]
   },
   {
     "region": "Backyard",
@@ -569,7 +767,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Ovrsr_Back_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_65"
+    ]
   },
   {
     "name": "Old Dunwall Distillery: Incandescent Paste Blueprint",
@@ -577,7 +778,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Distillery2_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_213"
+    ]
   },
   {
     "name": "Southside Gate: Folded Galvani Resin Blueprint",
@@ -585,7 +789,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part1a_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_10"
+    ]
   },
   {
     "name": "Boyle Mansion Exterior: Spiked Grenade Housing Blueprint",
@@ -593,7 +800,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_BoyleStreet_Ext_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_66"
+    ]
   },
   {
     "name": "Tower Interior: Small-scale Combustion Refinement Blueprint",
@@ -601,7 +811,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_TowerRtrn_Int_Script.TheWorld.PersistentLevel.DisAbstractItemPickup_3"
+    ]
   },
   {
     "region": "Distillery District (HOC)",
@@ -631,7 +844,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Distillery_Strt1Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_1"
+    ]
   },
   {
     "region": "Backyard",
@@ -639,7 +855,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup Ovrsr_PhysBoneCharm near=-10714,-30305,-107"
+    ]
   },
   {
     "region": "Backyard",
@@ -647,7 +866,10 @@
     "category": [
       "High Overseer Campbell"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Ovrsr_Back_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Distillery District (HoP)",
@@ -655,7 +877,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Streets2_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Distillery District (HoP)",
@@ -663,15 +888,21 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Streets2_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_1"
+    ]
   },
   {
-    "region": "Distillery District (HOC)",
+    "region": "Distillery District (HoP)",
     "name": "Distillery District: Captain's Chair Hotel Bone Charm",
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": "|Dr Galvani's Offices (HoP) Zone Key| AND |Old Dunwall Distillery (HoP) Zone Key|",
+    "detect": [
+      "pickup L_Streets2_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_4"
+    ]
   },
   {
     "region": "The Golden Cat Bathhouse",
@@ -679,7 +910,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Brothel_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Old Dunwall Distillery (HoP)",
@@ -687,7 +921,10 @@
     "category": [
       "House of Pleasure"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Distillery2_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Southside Gate",
@@ -695,7 +932,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part1a_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Midrow Substation",
@@ -703,7 +943,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part1c_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_2"
+    ]
   },
   {
     "name": "North End: Building By Entry Bone Charm",
@@ -711,7 +954,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Bridge_Part2_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_1"
+    ]
   },
   {
     "name": "Hound Pits Pub: Abandoned Apartment Bone Charm",
@@ -719,7 +965,10 @@
     "category": [
       "The Royal Physician"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup WhaleBoneCharm_01_twk near=-1886,2977,457"
+    ]
   },
   {
     "region": "Boyle Mansion Exterior",
@@ -727,7 +976,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Boyle_Ext_Audio.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Boyle Mansion Exterior",
@@ -735,7 +987,10 @@
     "category": [
       "Lady Boyle's Last Party"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_BoyleStreet_Ext_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_1"
+    ]
   },
   {
     "name": "Tower Exterior: Waterlock Bone Charm",
@@ -743,7 +998,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": "|Progressive Blink:2|"
+    "requires": "|Progressive Blink:2|",
+    "detect": [
+      "pickup L_TowerRtrn_Yard_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Tower Interior",
@@ -751,7 +1009,10 @@
     "category": [
       "Return to the Tower"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_TowerRtrn_Int_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Rudshore Waterfront",
@@ -759,7 +1020,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Flooded_FStreets_PickUps.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Greaves Refinery",
@@ -767,7 +1031,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Flooded_FRefinery_PickUps.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Central Rudshore",
@@ -775,7 +1042,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Flooded_FAssassins_PickUps.TheWorld.PersistentLevel.DisWhaleBoneCharm_1"
+    ]
   },
   {
     "region": "Central Rudshore",
@@ -783,7 +1053,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "grant pickup WhaleBoneCharm_01_twk by L_Flooded_FAssassins_Script.TheWorld.PersistentLevel.Main_Sequence.Daud_Behavior.DisSeqAct_GivePickup_1"
+    ]
   },
   {
     "region": "Rudshore Gate",
@@ -791,7 +1064,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Flooded_FGate_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Old Dunwall Sewers",
@@ -799,7 +1075,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Streetsewer_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_1"
+    ]
   },
   {
     "region": "Old Dunwall Sewers",
@@ -807,7 +1086,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Streetsewer_Script.TheWorld.PersistentLevel.DisWhaleBoneCharm_0"
+    ]
   },
   {
     "region": "Old Dunwall Sewers",
@@ -815,7 +1097,10 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "pickup L_Streetsewer_Block.TheWorld.PersistentLevel.DisWhaleBoneCharm_1"
+    ]
   },
   {
     "region": "Greaves Refinery",
@@ -823,6 +1108,9 @@
     "category": [
       "The Flooded District"
     ],
-    "requires": []
+    "requires": [],
+    "detect": [
+      "objective DisSeqAct_CompleteObjective Flooded_Gear"
+    ]
   }
 ]

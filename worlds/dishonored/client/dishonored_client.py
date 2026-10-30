@@ -2,15 +2,21 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import time
+from collections import Counter
 from typing import Any
 
 from CommonClient import ClientCommandProcessor, CommonContext, gui_enabled, logger, server_loop
-from NetUtils import ClientStatus
+from NetUtils import ClientStatus, NetworkItem
 
 from ..game_data import GAME_NAME
 from .game_interface import BACKENDS, GameInterface
+from .item_commands import limits
+from .messages import chat_line, missing_key_line, received_line, requires_key_line, sent_line, sent_to_menu_notice
+from .zones import zone_key_for_level, zone_key_for_travel
 
 POLL_SECONDS = 0.5
+LEAVE_ZONE_SECONDS = 6  # time to read the warning (or turn back) before being sent to the main menu
 
 
 class DishonoredCommandProcessor(ClientCommandProcessor):
@@ -66,6 +72,10 @@ class DishonoredContext(CommonContext):
         # Index into items_received of the next item to apply. Reset to 0 (replay
         # everything) whenever the game reports that a save was loaded.
         self.items_applied = 0
+        self.limits_sent: list[str] | None = None  # last limits the game accepted
+        self.game_messages: list[str] = []  # waiting to be shown in-game
+        self.leave_zone: tuple[str, float] | None = None  # (missing zone key, when to quit to the menu)
+        self.connected_at = 0.0
         self.slot_data: dict[str, Any] = {}
 
     async def server_auth(self, password_requested: bool = False) -> None:
@@ -74,10 +84,44 @@ class DishonoredContext(CommonContext):
         await self.get_username()
         await self.send_connect()
 
+    def on_print_json(self, args: dict) -> None:
+        super().on_print_json(args)
+        # Items found here for other players are shown in-game; received ones come from
+        # ReceivedItems below (which also covers cheats and starting items).
+        if args.get("type") == "Chat":
+            speaker = args.get("slot")
+            self.game_messages.append(chat_line(
+                self.player_names.get(speaker, f"Player {speaker}"), speaker == self.slot, args.get("message", "")))
+        elif args.get("type") == "ServerChat":
+            self.game_messages.append(chat_line("Server", False, args.get("message", "")))
+        if args.get("type") == "ItemSend" and self.slot is not None:
+            item = NetworkItem(*args["item"]) if isinstance(args["item"], (list, tuple)) else args["item"]
+            receiver = args["receiving"]
+            if item.player == self.slot and not self.slot_concerns_self(receiver):
+                self.game_messages.append(sent_line(
+                    self.item_names.lookup_in_slot(item.item, receiver), item.flags,
+                    self.player_names.get(receiver, f"Player {receiver}"),
+                    self.location_names.lookup_in_slot(item.location, item.player)))
+
+    def show_received(self, args: dict) -> None:
+        # The packet right after connecting resends everything received so far: not news.
+        if args["index"] == 0 and time.monotonic() - self.connected_at < 5:
+            return
+        for raw in args["items"]:
+            item = NetworkItem(*raw) if isinstance(raw, (list, tuple)) else raw
+            self.game_messages.append(received_line(
+                self.item_names.lookup_in_slot(item.item, self.slot), item.flags,
+                self.player_names.get(item.player, f"Player {item.player}"), item.player == self.slot,
+                self.location_names.lookup_in_slot(item.location, item.player)))
+
     def on_package(self, cmd: str, args: dict) -> None:
+        if cmd == "ReceivedItems":
+            self.show_received(args)
         if cmd == "Connected":
+            self.connected_at = time.monotonic()
             self.slot_data = args.get("slot_data", {})
             self.items_applied = 0
+            self.limits_sent = None
             self.goal_sent = False
 
     async def disconnect(self, allow_autoreconnect: bool = False) -> None:
@@ -105,7 +149,7 @@ async def game_loop(ctx: DishonoredContext) -> None:
                 else:
                     next_attach = asyncio.get_running_loop().time() + 2
                     if not waiting_logged:
-                        logger.info("Waiting for Dishonored (with the Archipelago dinput8.dll installed)...")
+                        logger.info("Waiting for Dishonored (with the Archipelago module installed)...")
                         waiting_logged = True
 
             if ctx.slot:
@@ -137,11 +181,50 @@ async def send_checks_and_goal(ctx: DishonoredContext, found: set[int], goal: bo
 async def sync_with_game(ctx: DishonoredContext, game: GameInterface) -> None:
     await send_checks_and_goal(ctx, game.poll_checked_locations(), game.poll_goal_reached())
 
+    def has(item: str) -> bool:
+        return any(ctx.item_names.lookup_in_game(i.item) == item for i in ctx.items_received)
+
+    # Being in a zone without its key (a story transition, a save load, mission select;
+    # travel prompts into it are refused) sends the player to the main menu after a warning.
+    if game.take_zone_left():
+        ctx.leave_zone = None  # walked out (or a load started): the next area decides
+    entered = game.take_zone_entered()
+    if entered and ctx.slot:
+        key = zone_key_for_level(entered)
+        if key and not has(key):
+            logger.warning(f"In {entered} without the {key}: returning to the main menu")
+            ctx.game_messages.append(missing_key_line(key))
+            ctx.leave_zone = (key, time.monotonic() + LEAVE_ZONE_SECONDS)
+        else:
+            ctx.leave_zone = None
+    if ctx.leave_zone and time.monotonic() >= ctx.leave_zone[1]:
+        if has(ctx.leave_zone[0]) or (game.show_notice(sent_to_menu_notice(ctx.leave_zone[0])) and game.quit_to_menu()):
+            ctx.leave_zone = None
+
+    blocked = game.take_travel_blocked()
+    key = zone_key_for_travel(*blocked) if blocked else None
+    if key:
+        logger.info(f"Travel refused: requires the {key}")
+        ctx.game_messages.append(requires_key_line(key))
+
+    while ctx.game_messages and game.show_message(ctx.game_messages[0]):
+        ctx.game_messages.pop(0)
+
     # After a save is loaded the game may lack items granted since that save, so
     # replay everything. Commands set absolute state (AddPower Blink 2), so
     # replaying is safe.
     if game.take_resync_request():
         ctx.items_applied = 0
+        ctx.limits_sent = None
+
+    # What the game may keep: sent before the items themselves, and again whenever an
+    # item arrives or the game was reset, so the DLL never removes something just received.
+    received = Counter(ctx.item_names.lookup_in_game(i.item) for i in ctx.items_received)
+    lines = limits(received)
+    if lines != ctx.limits_sent:
+        if not game.set_limits(lines):
+            return
+        ctx.limits_sent = lines
 
     # Received items wait here until the game can take them (give_item returns False).
     while ctx.items_applied < len(ctx.items_received):

@@ -8,6 +8,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include <vector>
 
 namespace ue3 {
 
@@ -67,6 +68,68 @@ inline constexpr size_t kPickupTweaks = 0x3B8;                   // ADisAbstract
 inline constexpr size_t kAbstractPickupTweaksItem = 0xDC;        // UDisTweaks_AbstractItemPickup::m_pAbstractItem
 inline constexpr size_t kAddAbstractItemActionItem = 0xF8;       // UDisSeqAct_AddAbstractItem::m_pItemToAdd
 inline constexpr size_t kObjectiveActionObjectives = 0xFC;       // UDisSeqAct_ObjectiveAction::m_Objectives
+inline constexpr size_t kGiveUpgradeActionUpgrade = 0xF8;        // UDisSeqAct_GiveUpgrade::m_pUpgrade
+inline constexpr size_t kRemovePowerActionName = 0xF8;           // UDisSeqAct_RemovePower::m_PowerName (FString)
+inline constexpr size_t kPlayerPawnPowers = 0xA38;               // ADishonoredPlayerPawn::m_pPowersComponent
+inline constexpr size_t kPowersComponentPowers = 0x54;           // UDishonoredPowersComponent::m_Powers (FDishonoredPower)
+inline constexpr size_t kPowerSize = 0x1C;                       // FDishonoredPower: m_Name (FName) at 0
+inline constexpr size_t kPowerCurrentLevel = 0x18;               // FDishonoredPower::m_CurrentLevel
+inline constexpr size_t kActivePowerName = 0x6C;                 // UDishonoredActivePowerComponent::m_PowerName (FName)
+inline constexpr size_t kActivePowerOwner = 0x80;                // UDishonoredActivePowerComponent::m_pOwnerPlayerPawn
+inline constexpr size_t kActivePowerLevel = 0x88;                // UDishonoredActivePowerComponent::m_CurrentLevel
+inline constexpr size_t kGivePickupActionPickup = 0xF8;          // UDisSeqAct_GivePickup::m_pPickup
+inline constexpr size_t kAddInventoryActionItem = 0xF8;          // UDisSeqAct_AddInventoryItem::m_pItemToAdd
+inline constexpr size_t kAddPowerActionName = 0xF8;              // UDisSeqAct_AddPower::m_PowerName (FString)
+inline constexpr size_t kAddPowerActionLevel = 0x104;            // UDisSeqAct_AddPower::m_PowerLevel
+inline constexpr size_t kPawnInventory = 0x59C;                  // ADishonoredPawn::m_pInventory
+inline constexpr size_t kPlayerPawnBoneCharmSlots = 0xB10;       // ADishonoredPlayerPawn::m_WhaleBoneCharmSlots[10]
+inline constexpr size_t kPlayerPawnUpgrades = 0xB50;             // ADishonoredPlayerPawn::m_Upgrades
+inline constexpr size_t kPlayerPawnDarknessManager = 0xA94;      // ADishonoredPlayerPawn::m_pDarknessManager
+inline constexpr size_t kDarknessScore = 0x38;                   // UDisDarknessManager::m_DarknessScore (chaos)
+inline constexpr size_t kStoreDisplayedItems = 0x1C4;            // UDisGFxMoviePlayerStore::m_DisplayedItems (FDisStoreItem*?)
+inline constexpr size_t kStoreItemItem = 0x5C;                   // FDisStoreItem::m_Item (UDisTweaksBase*)
+inline constexpr size_t kScriptedChoiceActive = 0x5C;            // UStatePlayerMasterInScriptedChoice::m_pActiveScriptedChoice
+inline constexpr size_t kScriptedChoiceTitle = 0x10C;            // UDisSeqAct_DialogScriptedChoice::m_Title (FString)
+inline constexpr size_t kScriptedChoiceChoices = 0x118;          // ::m_Choices (FDisPlayerChoiceInfo: FString text, flags; 0x10 each)
+inline constexpr size_t kChoiceInfoSize = 0x10;
+inline constexpr size_t kChoiceInfoFlags = 0xC;                  // bit 0: m_bDisablePlayerInputUntilMapChange (a travel prompt)
+inline constexpr size_t kDialogActiveChoice = 0x64;              // UStatePlayerMasterInDialog::m_pActivePlayerChoice
+inline constexpr size_t kPlayerChoiceTexts = 0xA0;               // UDisConv_PlayerChoice::m_Choices (FString)
+inline constexpr size_t kActorWorldInfo = 0x160;                 // AActor::WorldInfo
+inline constexpr size_t kWorldStreamingLevels = 0x314;           // AWorldInfo::StreamingLevels (ULevelStreaming*)
+inline constexpr size_t kStreamingPackageName = 0x38;            // ULevelStreaming::PackageName (FName)
+inline constexpr size_t kStreamingLoadedLevel = 0x40;            // ULevelStreaming::LoadedLevel (non-null = loaded)
+inline constexpr size_t kStreamingFlags = 0x5C;                  // bIsVisible (bit 0), bShouldBeVisible (bit 8)
+inline constexpr size_t kHudCanvas = 0x494;                      // AHUD::Canvas (valid during PostRender)
+inline constexpr size_t kCanvasFont = 0x38;                      // UCanvas::Font
+inline constexpr size_t kCanvasClipX = 0x44;                     // UCanvas::ClipX (screen width)
+inline constexpr size_t kCanvasClipY = 0x48;                     // UCanvas::ClipY (screen height)
+inline constexpr size_t kSequenceOpInputLinks = 0xA0;            // USequenceOp::InputLinks (FSeqOpInputLink, 0x30 each)
+inline constexpr size_t kInputLinkSize = 0x30;
+inline constexpr size_t kInputLinkHasImpulse = 0xC;              // FSeqOpInputLink::bHasImpulse (bit 0)
+inline constexpr size_t kInventoryEquipUsage = 0x44;
+inline constexpr size_t kInventoryFlags = 0xE0;                  // m_bInitialized (bit 0), m_bBackupIsValid (bit 1)             // UDishonoredInventory::m_EquipUsageInfo[3] (0x28 each)
+inline constexpr size_t kEquipUsageSize = 0x28;                  // FDisEquipUsageInfo: m_iEquippedSlot at 0
+inline constexpr size_t kEquipActionItemType = 0xF8;             // UDisSeqAct_EquipItemType::m_pItemTypeToEquip (UClass*)
+inline constexpr size_t kEquipActionUsage = 0xFC;                // UDisSeqAct_EquipItemType::m_PreferredUsage (EDisEquipUsage)
+inline constexpr size_t kEquipActionFlags = 0x100;               // m_bDoInstantly (bit 0), m_bAffectsAIIntention (bit 1)
+inline constexpr size_t kRangedCurAmmoType = 0x118;              // UDishonoredWeapon_Ranged::m_CurAmmoType (EeDisAmmoType)
+inline constexpr size_t kRangedLoadedAmmo = 0x124;               // UDishonoredWeapon_Ranged::m_LoadedAmmoInfo (count, capacity)
+inline constexpr size_t kPawnTweaksBoneCharmBase = 0x210;        // UDisTweaks_PlayerPawn::m_MaxActivatedBoneCharmCount
+inline constexpr size_t kWorldUpgradeMesh = 0x258;               // ADisUpgrade::m_pMesh (UStaticMeshComponent*)
+inline constexpr size_t kStaticMeshComponentMesh = 0x1DC;        // UStaticMeshComponent::StaticMesh
+inline constexpr size_t kUpgradeMesh = 0x8C;                     // UDisTweaks_Upgrade::m_pMesh (UStaticMesh*)
+inline constexpr size_t kWorldUpgradeTweaks = 0x254;            // ADisUpgrade::m_pTweaks (an upgrade lying in the world)
+inline constexpr size_t kUpgradeAttributes = 0x9C;               // UDisTweaks_Upgrade::m_Attributes (FName, float: 0xC each)
+inline constexpr size_t kRemoveModifierActionAttribute = 0xF8;   // UDisSeqAct_RemoveAttributeModifier::m_AttributeName
+inline constexpr size_t kRemoveModifierActionModifier = 0x100;   // UDisSeqAct_RemoveAttributeModifier::m_ModifierName
+inline constexpr size_t kUpgradeHostItemType = 0x90;             // UDisTweaks_Upgrade::m_pHostItemType (UClass*)
+inline constexpr size_t kUpgradeDisplayName = 0xB8;              // UDisTweaks_Upgrade::m_Name (FString, localized)
+inline constexpr size_t kUpgradeParent = 0xE0;                   // UDisTweaks_Upgrade::m_pParentUpgrade
+inline constexpr size_t kInventorySlots = 0x38;                  // UDishonoredInventory::m_Slots (FPawnInventorySlot, 0xC each)
+inline constexpr size_t kInventoryAmmo = 0xBC;                   // UDishonoredInventory::m_AmmoInfo (count, capacity)
+inline constexpr size_t kInventoryElixirs = 0xD4;                // UDishonoredInventory::m_ElixirCounts[2] (health, mana)
+inline constexpr size_t kInventoryAbstractItems = 0xC8;          // UDishonoredInventory::m_AbstractItem (item, quantity, flags)
 
 template <typename T>
 T field(const UObject* object, size_t offset) {
@@ -85,6 +148,8 @@ static_assert(sizeof(FString) == 12);
 // don't look right for this build of the game.
 bool init(uintptr_t gnames_address, uintptr_t gobjects_address, std::string& error);
 bool ready();
+// True if [address, address + size) is committed, readable memory (slow: a system call).
+bool is_readable(const void* address, size_t size);
 
 std::string name_string(FName name);
 int32_t find_name_index(const std::string& name);  // -1 if absent
@@ -103,5 +168,10 @@ bool is_a(const UObject* object, int32_t class_name_index);
 UObject* find_object(const std::string& full);
 // First object of this class that isn't a class default object ("Default__...").
 UObject* find_instance(const std::string& class_name);
+// Every object of this exact class (by name index), class default objects excluded.
+std::vector<UObject*> find_instances(int32_t class_name_index);
+// Same, but also objects of subclasses.
+std::vector<UObject*> find_instances_of_subclasses(int32_t class_name_index);
+std::string to_string(const FString& text);
 
 }  // namespace ue3
