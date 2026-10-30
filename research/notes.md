@@ -442,6 +442,11 @@ through `ProcessEvent`.
 - Chaos-variant packages in CookedPCConsole (2026-10-30): `L_Brothel_HighChaos`
   (Golden Cat), `L_Bridge_Part2_HighChaos` (North End), `L_Isl_High/LowChaos_*`,
   `L_LightH_High/LowChaos_*`, `L_Out_HighChaos_*`. No other mission has one.
+  `DishonoredGameInfo.m_MissionsGame` confirms the spellings (`L_Out_HighChaos_emilyDead_P`).
+- Chaos is "Darkness" in the scripts (`DisDarknessManager` on the pawn, `DisSeqAct_AddDarkness`
+  = "Dis Add Chaos"). `DishonoredCheatManager` has native `exec AddDarkness(int)` and
+  `DebugDarkness()`; untested whether they survived the release build like `AddPower` did.
+  Per-mission thresholds: `DishonoredGameInfo.m_MissionChaosThreshold` (1..7).
 - With this, all 100 locations have detect patterns (every mission played at least once).
 
 ### Item meanings: read the Manual's PDF (`manual/Dishonored_Archipelago_Documentation.pdf`)
