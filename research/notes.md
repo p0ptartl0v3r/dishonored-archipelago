@@ -451,10 +451,13 @@ through `ProcessEvent`.
   Golden Cat", loaded `L_Brothel_HighChaos` with the brothel (its own `mapchange`). The
   score is `DisDarknessManager.m_DarknessScore` (pawn +0xA94, then +0x38); chaos levels
   start at 10/20/30 (`DisTweaks_PlayerPawn.m_DarknessLevels`). F8 marks and `dump` show it.
-- North End's `L_Bridge_Part2_HighChaos` did *not* load after `AddDarkness` 50/100/80 on the
-  way through the bridge (2026-10-30). It's referenced from `L_Bridge_Part2_Script` too
-  (the Golden Cat's only from `L_Brothel_P`), so a level script probably streams it at some
-  later point or on another condition.
+- Golden Cat at high chaos (2026-10-30): its 4 locations were detected with the same patterns.
+- North End's `L_Bridge_Part2_HighChaos` never loaded (2026-10-30), with chaos 364-388 from
+  `AddDarkness`, through the whole of North End, back and forth to Midrow, and the mission's
+  end. It's referenced from `L_Bridge_Part2_Script` too (the Golden Cat's only from
+  `L_Brothel_P`), so a level script streams it on some other condition (perhaps chaos from
+  earlier missions, or real kills). North End's 3 locations and the Victory were detected
+  in that run, and they live in `L_Bridge_Part2_Script`, which loads either way.
 - That Golden Cat prompt (`L_Streets2_Script...DialogScriptedChoice_9`, "Go to the Golden Cat")
   changed the map with `travel=0`: its option lacks the map-change flag, so the DLL doesn't see
   it as travel and can't refuse it (the main-menu safety net still applies). Not in `TRAVEL_PROMPTS`.

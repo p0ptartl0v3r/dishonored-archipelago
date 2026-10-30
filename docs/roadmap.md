@@ -53,9 +53,11 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- named pip
       `research/locations.csv` filled in and `tools/check_log.py` to replay a log
 - [x] Pickups a mission script removes far from the player are tagged `(far)` and never
       count; `!word` excludes events (Boyle's spare bedroom paintings, removed again on load)
-- [ ] High chaos: Kingsparrow and the lighthouse load `_HighChaos_P` levels, and other
-      missions have chaos variants (`L_Brothel_HighChaos`): replay those to confirm the
-      same names match, or add theirs
+- [ ] High chaos (chaos raised with the `AddDarkness` cheat). Only five places have
+      variants (research/notes.md). Golden Cat: confirmed, same patterns. North End: its
+      layer (`L_Bridge_Part2_HighChaos`) wouldn't load, but its checks were detected anyway.
+      Still to play: Kingsparrow and the lighthouse (`_HighChaos_P` levels) and the
+      high-chaos endings (`L_Out_HighChaos_*`, already in the goal's detect)
 - [ ] Choices not taken: e.g. killing both Boyle sisters (all three bedroom paintings
       are listed), Emily's other hiding spots (matched by the grant, so any spot should work)
 - [ ] Reading a note produces no event yet (no location needs it so far)
