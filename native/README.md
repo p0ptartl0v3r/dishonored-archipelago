@@ -195,8 +195,8 @@ In `archipelago_native.ini`, set `[Research] LogCalls=`:
   of the pickup. That object name is what `research/locations.csv` needs.
   This is slow; expect low frame rates while it's on.
 
-**F8** also works during normal play: it writes `==== MARK (F8) at=x,y,z ====` with
-the player's position, to flag a check that produced no event. **F9** pauses/resumes call logging.
+**F8** also works during normal play: it writes `==== MARK (F8) at=x,y,z chaos=N ====` with
+the player's position and chaos score, to flag a check that produced no event. **F9** pauses/resumes call logging.
 
 ## Troubleshooting
 

@@ -907,9 +907,17 @@ std::string current_areas(ue3::UObject* pawn) {
   return areas.empty() ? "-" : areas;
 }
 
+// " chaos=<score>" (the darkness manager's score; level thresholds 10/20/30), or "" when
+// not playing as Corvo.
+std::string chaos_suffix(ue3::UObject* player_controller) {
+  ue3::UObject* pawn = player_controller ? player_pawn(player_controller) : nullptr;
+  auto* manager = pawn ? ue3::field<ue3::UObject*>(pawn, ue3::kPlayerPawnDarknessManager) : nullptr;
+  return manager ? std::format(" chaos={}", ue3::field<int32_t>(manager, ue3::kDarknessScore)) : "";
+}
+
 void dump_player_state(ue3::UObject* player_controller) {
   ue3::UObject* pawn = player_pawn(player_controller);
-  log("==== dump ====");
+  log("==== dump ===={}", chaos_suffix(player_controller));
   for (auto* upgrade : ue3::find_instances(g_names.upgrade_tweaks)) {
     log("upgrade {} \"{}\" item={} parent={} attributes={}{}", ue3::object_name(upgrade),
         ue3::to_string(ue3::field<ue3::FString>(upgrade, ue3::kUpgradeDisplayName)),
@@ -1479,8 +1487,9 @@ void __fastcall process_event_hook(ue3::UObject* self, void* edx, ue3::UFunction
       g_in_gameplay = in_gameplay;
       const bool settled = in_gameplay && !g_in_menu && now - g_gameplay_started_tick >= kSettleMs;
       if (g_mark_requested.exchange(false)) {
-        log("==== MARK (F8) {} ====",
-            location_of(controller ? ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn) : nullptr));
+        log("==== MARK (F8) {}{} ====",
+            location_of(controller ? ue3::field<ue3::UObject*>(controller, ue3::kControllerPawn) : nullptr),
+            chaos_suffix(controller));
       }
       if (settled && g_area_reported_for != g_gameplay_started_tick) {
         // Once per load or transition: where the player is (a save load emits no mapchange).

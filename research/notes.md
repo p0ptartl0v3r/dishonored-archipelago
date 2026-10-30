@@ -447,6 +447,17 @@ through `ProcessEvent`.
   = "Dis Add Chaos"). `DishonoredCheatManager` has native `exec AddDarkness(int)` and
   `DebugDarkness()`; untested whether they survived the release build like `AddPower` did.
   Per-mission thresholds: `DishonoredGameInfo.m_MissionChaosThreshold` (1..7).
+  Confirmed 2026-10-30: `AddDarkness 50` in the HoP Distillery District, then "Go to the
+  Golden Cat", loaded `L_Brothel_HighChaos` with the brothel (its own `mapchange`). The
+  score is `DisDarknessManager.m_DarknessScore` (pawn +0xA94, then +0x38); chaos levels
+  start at 10/20/30 (`DisTweaks_PlayerPawn.m_DarknessLevels`). F8 marks and `dump` show it.
+- North End's `L_Bridge_Part2_HighChaos` did *not* load after `AddDarkness` 50/100/80 on the
+  way through the bridge (2026-10-30). It's referenced from `L_Bridge_Part2_Script` too
+  (the Golden Cat's only from `L_Brothel_P`), so a level script probably streams it at some
+  later point or on another condition.
+- That Golden Cat prompt (`L_Streets2_Script...DialogScriptedChoice_9`, "Go to the Golden Cat")
+  changed the map with `travel=0`: its option lacks the map-change flag, so the DLL doesn't see
+  it as travel and can't refuse it (the main-menu safety net still applies). Not in `TRAVEL_PROMPTS`.
 - With this, all 100 locations have detect patterns (every mission played at least once).
 
 ### Item meanings: read the Manual's PDF (`manual/Dishonored_Archipelago_Documentation.pdf`)
