@@ -26,6 +26,8 @@ from dishonored.game_data import load  # noqa: E402
 
 LOGS = [
     Path(r"C:\Program Files (x86)\Steam\steamapps\common\Dishonored\Binaries\Win32\archipelago_native.log"),
+    # Installed for Dishonored Mod Loader: the log sits next to the DLL.
+    Path(r"C:\Program Files (x86)\Steam\steamapps\common\Dishonored\Binaries\Win32\NativeMods\archipelago_native.log"),
     Path(os.environ.get("LOCALAPPDATA", "")) / "DishonoredArchipelago" / "archipelago_native.log",
 ]
 
@@ -33,10 +35,10 @@ LOGS = [
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("mission", help='location category, e.g. "High Overseer Campbell" or "Intro"')
-    parser.add_argument("--log", type=Path, help="the DLL's log (default: the game folder's, then %%LOCALAPPDATA%%)")
+    parser.add_argument("--log", type=Path, help="the DLL's log (default: the newest of the usual places)")
     parser.add_argument("--since", default="", help="only events at or after this time (HH:MM:SS)")
     args = parser.parse_args()
-    log = args.log or next((p for p in LOGS if p.is_file()), None)
+    log = args.log or max((p for p in LOGS if p.is_file()), key=lambda p: p.stat().st_mtime, default=None)
     if log is None:
         sys.exit("archipelago_native.log not found; pass --log")
 

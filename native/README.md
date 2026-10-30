@@ -32,6 +32,25 @@ to its goal, 2026-10-29) unless it says otherwise.
 
 To uninstall, delete `dinput8.dll`.
 
+### With Dishonored Mod Loader
+
+[Dishonored Mod Loader](https://www.nexusmods.com/dishonored/mods/383) (Crimsab) brings its own
+`dinput8.dll`, which loads every DLL directly inside `Binaries\Win32\Mods\` and
+`Binaries\Win32\NativeMods\` (folders set in its `modloader.ini`). Only one `dinput8.dll` can
+exist, so with the loader installed:
+
+1. Keep the loader's `dinput8.dll` in `Binaries\Win32` (not ours).
+2. Put ours in `Binaries\Win32\NativeMods\` as `archipelago_native.dll` (any name but
+   `dinput8.dll`, `DishonoredLoader.dll` or `ModLoader.dll`, which the loader skips), with
+   `archipelago_native.ini` next to it. The CI artifact has this layout in its `NativeMods` folder.
+3. The log is then `Binaries\Win32\NativeMods\archipelago_native.log`, and its first line says
+   where the DLL was loaded from.
+
+If both copies end up installed, the second one to load stays idle ("another copy ... is
+already running"). If the loader hooked `ProcessEvent` first, the log says "already hooked by
+another mod; hooking on top of it" and both hooks run. Archipelago doesn't appear in the
+loader's MODS menu (that needs its plugin format in `Mods\plugins\`).
+
 ## First test
 
 1. Start the game and load a save, so you're in gameplay rather than the menu.

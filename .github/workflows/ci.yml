@@ -62,9 +62,16 @@ jobs:
           cmake --preset mingw-x86
           cmake --build --preset mingw-x86
 
+      # Two ways to install, both into Binaries\Win32: on its own as dinput8.dll, or with
+      # Dishonored Mod Loader (its dinput8.dll loads every DLL in NativeMods\).
+      - name: Stage the DLL for both installs
+        run: |
+          mkdir -p staging/NativeMods
+          cp native/build/mingw-x86/dinput8.dll native/archipelago_native.ini staging/
+          cp native/build/mingw-x86/dinput8.dll staging/NativeMods/archipelago_native.dll
+          cp native/archipelago_native.ini staging/NativeMods/
+
       - uses: actions/upload-artifact@v4
         with:
           name: native-dll
-          path: |
-            native/build/mingw-x86/dinput8.dll
-            native/archipelago_native.ini
+          path: staging/

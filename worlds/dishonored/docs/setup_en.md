@@ -15,6 +15,8 @@
 
 1. Install the in-game module: copy `dinput8.dll` and `archipelago_native.ini`
    next to `Dishonored.exe` (in `Binaries\Win32`). Tested on the Steam version.
+   If you use Dishonored Mod Loader, keep its `dinput8.dll` and instead copy the
+   `NativeMods` folder (`archipelago_native.dll` and its ini) into `Binaries\Win32`.
 2. Open **Dishonored Client** from the Archipelago Launcher and connect.
 3. Start Dishonored. The client says "Connected to the Dishonored native module".
 

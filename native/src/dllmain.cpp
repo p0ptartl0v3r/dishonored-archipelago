@@ -1,6 +1,7 @@
 // Entry point. The game loads this as dinput8.dll; we forward the one function
 // it actually uses to the real system dinput8.dll and start our own code on a
-// background thread.
+// background thread. With Dishonored Mod Loader installed, its own dinput8.dll loads
+// this one instead from Binaries\Win32\NativeMods\ (any name but dinput8.dll there).
 
 #include <windows.h>
 
@@ -15,6 +16,13 @@
 namespace {
 
 HMODULE g_module = nullptr;
+
+std::string utf8(const wchar_t* text) {
+  const int size = WideCharToMultiByte(CP_UTF8, 0, text, -1, nullptr, 0, nullptr, nullptr);
+  std::string out(size > 0 ? size - 1 : 0, '\0');
+  if (size > 1) WideCharToMultiByte(CP_UTF8, 0, text, -1, out.data(), size, nullptr, nullptr);
+  return out;
+}
 
 std::wstring path_next_to_dll(const wchar_t* file_name) {
   wchar_t path[MAX_PATH] = {};
@@ -33,7 +41,17 @@ DWORD WINAPI hotkey_thread(LPVOID) {
 
 DWORD WINAPI init_thread(LPVOID) {
   ap::log_init(path_next_to_dll(L"archipelago_native.log"));
-  ap::log("Archipelago native module loaded");
+  wchar_t own_path[MAX_PATH] = {};
+  GetModuleFileNameW(g_module, own_path, MAX_PATH);
+  ap::log("Archipelago native module loaded from {}", utf8(own_path));
+  // Only one copy may run (e.g. dinput8.dll and a NativeMods copy both installed): two
+  // would hook every call twice and fight over the pipe.
+  const std::wstring mutex_name = L"Local\\DishonoredArchipelagoNative_" + std::to_wstring(GetCurrentProcessId());
+  CreateMutexW(nullptr, FALSE, mutex_name.c_str());  // kept for the process's lifetime
+  if (GetLastError() == ERROR_ALREADY_EXISTS) {
+    ap::log("another copy of the Archipelago module is already running in this game; this one stays idle");
+    return 0;
+  }
   const ap::Config config = ap::load_config(path_next_to_dll(L"archipelago_native.ini"));
 
   if (!ap::install_hooks(config)) return 1;

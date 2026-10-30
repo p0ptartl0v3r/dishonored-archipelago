@@ -1536,6 +1536,13 @@ bool install_hooks(const Config& config) {
     target = reinterpret_cast<uintptr_t>(GetModuleHandleW(nullptr)) + config.process_event_offset;
   } else {
     target = find_pattern(kProcessEventPattern);
+    if (target == 0) {
+      // Another mod (e.g. a mod loader loaded before us) may have hooked it already: its
+      // jump replaces the first 5 bytes. MinHook can hook over that jump, chaining both.
+      target = find_pattern(std::string("?? ?? ?? ?? ?? ") + (kProcessEventPattern + 15));
+      if (target != 0 && *reinterpret_cast<const uint8_t*>(target) != 0xE9) target = 0;
+      if (target != 0) log("ProcessEvent is already hooked by another mod; hooking on top of it");
+    }
   }
   if (target == 0) {
     log("ERROR: ProcessEvent not found (pattern did not match exactly once). Set ProcessEventOffset.");
