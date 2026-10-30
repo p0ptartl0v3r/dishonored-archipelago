@@ -128,6 +128,13 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- named pip
       shows why (`notice`)
 - [x] Option `starting_zone_keys` (none / prison / intro) so the end of the Prologue
       doesn't depend on other players
+- [ ] Optional: refuse *starting* a mission without its first zone's key. Samuel's boat is
+      offered through conversation choices (`DisConv_PlayerChoice_*`, `travel=0`; Kingsparrow's
+      is a scripted choice in `L_Pub_FromFlooded_Script...Samuel_Behavior`), so today the player
+      takes the boat and the safety net sends them to the menu on arrival (in logic, just not
+      graceful). Conversations have no "stay" option to pick instead: needs research.
+      Mission-*ending* choices ("Yes, let's get Sokolov back.") must stay unrefused: each
+      Victory is detected during the transition, before the next area's key is checked
 - [ ] Show received zone keys in the journal's Key Ring tab: give a key through the
       pawn's native `OnAddKey` (`DisSeqAct_AddKey`: `m_Name`, `m_KeyTweaks`) like
       upgrades. Open question: can the entry show a custom name?
