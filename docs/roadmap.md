@@ -53,12 +53,10 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- named pip
       `research/locations.csv` filled in and `tools/check_log.py` to replay a log
 - [x] Pickups a mission script removes far from the player are tagged `(far)` and never
       count; `!word` excludes events (Boyle's spare bedroom paintings, removed again on load)
-- [ ] High chaos (chaos raised with the `AddDarkness` cheat). Only five places have
-      variants (research/notes.md). Golden Cat: confirmed, same patterns. North End: its
-      layer (`L_Bridge_Part2_HighChaos`) wouldn't load, but its checks were detected anyway.
-      Kingsparrow, the lighthouse and the EmilyAlive ending: confirmed (the rune and the
-      lighthouse prompt are in `L_Isl_Script_Master` there, now matched). Not seen: the
-      `L_Out_HighChaos_emilyDead_P` ending (in the goal's detect from the game's map list)
+- [x] High chaos (2026-10-30, chaos raised with the `AddDarkness` cheat before each mission).
+      Only five places have variants (research/notes.md), all played: the Golden Cat and North
+      End (same patterns), Kingsparrow and the lighthouse (the rune and the lighthouse prompt
+      move to `L_Isl_Script_Master`, now matched), and both high-chaos endings (goal sent)
 - [ ] Choices not taken: e.g. killing both Boyle sisters (all three bedroom paintings
       are listed), Emily's other hiding spots (matched by the grant, so any spot should work)
 - [ ] Reading a note produces no event yet (no location needs it so far)

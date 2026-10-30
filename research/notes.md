@@ -454,12 +454,15 @@ through `ProcessEvent`.
   score is `DisDarknessManager.m_DarknessScore` (pawn +0xA94, then +0x38); chaos levels
   start at 10/20/30 (`DisTweaks_PlayerPawn.m_DarknessLevels`). F8 marks and `dump` show it.
 - Golden Cat at high chaos (2026-10-30): its 4 locations were detected with the same patterns.
-- North End's `L_Bridge_Part2_HighChaos` never loaded (2026-10-30), with chaos 364-388 from
-  `AddDarkness`, through the whole of North End, back and forth to Midrow, and the mission's
-  end. It's referenced from `L_Bridge_Part2_Script` too (the Golden Cat's only from
-  `L_Brothel_P`), so a level script streams it on some other condition (perhaps chaos from
-  earlier missions, or real kills). North End's 3 locations and the Victory were detected
-  in that run, and they live in `L_Bridge_Part2_Script`, which loads either way.
+- North End's `L_Bridge_Part2_HighChaos` depends on the chaos when the mission *starts*:
+  `AddDarkness` during The Royal Physician (chaos 364-388) never loaded it, but `AddDarkness
+  100` during House of Pleasure did (it streamed in with "Go to North End", 2026-10-30).
+  Kingsparrow behaves the same (chaos added before the boat). North End's 3 locations, the
+  Victory and the pub's Abandoned Apartment Bone Charm were detected with the layer loaded.
+- Both high-chaos endings seen (2026-10-30): `L_Out_HighChaos_EmilyAlive_P` and
+  `L_Out_HighChaos_emilyDead_P` (that capitalization); both sent the goal.
+- To test high chaos: `console AddDarkness 100` (via `tools/native_console.py`) in the mission
+  *before* the one to test; F8 marks show `chaos=`.
 - That Golden Cat prompt (`L_Streets2_Script...DialogScriptedChoice_9`, "Go to the Golden Cat")
   changed the map with `travel=0`: its option lacks the map-change flag, so the DLL doesn't see
   it as travel and can't refuse it (the main-menu safety net still applies). Not in `TRAVEL_PROMPTS`.
