@@ -434,8 +434,10 @@ through `ProcessEvent`.
   chosen by what happened (`L_Out_EnvSamAlive`, ...): `mapchange L_Out_P` is the goal.
 - Drainage Rune is `L_Isl_Script_Slave...DisAbstractItemPickup_30`. High chaos loads
   `_HighChaos_P` levels; whether their pickups and prompts share these names is unchecked.
-  `*_Slave` packages (`L_Isl_Script_Slave`, `L_LightH_Script_Slave`, ...) exist once and
-  look shared by both variants, so the rune and the lighthouse prompt probably carry over.
+  Confirmed at high chaos (2026-10-30): the fort's actors move to `L_Isl_Script_Master`
+  (low chaos: `L_Isl_Script_Slave`) with the same object names: the rune is
+  `..._Master...DisAbstractItemPickup_30`, the lighthouse prompt `..._Master` choice 0, which
+  loads `L_LightH_HighChaos_P`. The ending was `L_Out_HighChaos_EmilyAlive_P` (goal sent).
 - High chaos ends in `L_Out_HighChaos_EmilyAlive_P` or `L_Out_HighChaos_emilyDead_P`
   instead of `L_Out_P` (package names in CookedPCConsole). The goal's detect lists them,
   in both capitalizations of "emilyDead" since the event's case is unknown.

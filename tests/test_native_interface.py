@@ -555,7 +555,12 @@ def test_real_events_from_the_flooded_district():
         assert game.match_event(event) == [ids[location]], event
     # The ending level loading is the goal (no location id).
     assert game.match_event("mapchange L_Out_P") == [None]
-    # High chaos ends in one of two other levels (package names; not seen in play yet).
+    # High chaos (2026-10-30): the rune is in L_Isl_Script_Master instead.
+    assert game.match_event(
+        "pickup L_Isl_Script_Master.TheWorld.PersistentLevel.DisAbstractItemPickup_30 DisAbstractItemPickup "
+        "Rune_AbsItm at=1669,-9482,2064"
+    ) == [ids["The Light at the End: Drainage Rune"]]
+    # High chaos ends in one of two other levels (EmilyAlive seen in play).
     assert game.match_event("mapchange L_Out_HighChaos_EmilyAlive_P") == [None]
     assert game.match_event("mapchange L_Out_HighChaos_emilyDead_P") == [None]
     assert game.match_event("mapchange L_Out_EnvSamAlive") == []

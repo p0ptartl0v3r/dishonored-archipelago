@@ -481,7 +481,8 @@
     ],
     "requires": [],
     "detect": [
-      "pickup L_Isl_Script_Slave.TheWorld.PersistentLevel.DisAbstractItemPickup_30"
+      "pickup L_Isl_Script_Slave.TheWorld.PersistentLevel.DisAbstractItemPickup_30",
+      "pickup L_Isl_Script_Master.TheWorld.PersistentLevel.DisAbstractItemPickup_30"
     ]
   },
   {

@@ -56,8 +56,9 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- named pip
 - [ ] High chaos (chaos raised with the `AddDarkness` cheat). Only five places have
       variants (research/notes.md). Golden Cat: confirmed, same patterns. North End: its
       layer (`L_Bridge_Part2_HighChaos`) wouldn't load, but its checks were detected anyway.
-      Still to play: Kingsparrow and the lighthouse (`_HighChaos_P` levels) and the
-      high-chaos endings (`L_Out_HighChaos_*`, already in the goal's detect)
+      Kingsparrow, the lighthouse and the EmilyAlive ending: confirmed (the rune and the
+      lighthouse prompt are in `L_Isl_Script_Master` there, now matched). Not seen: the
+      `L_Out_HighChaos_emilyDead_P` ending (in the goal's detect from the game's map list)
 - [ ] Choices not taken: e.g. killing both Boyle sisters (all three bedroom paintings
       are listed), Emily's other hiding spots (matched by the grant, so any spot should work)
 - [ ] Reading a note produces no event yet (no location needs it so far)

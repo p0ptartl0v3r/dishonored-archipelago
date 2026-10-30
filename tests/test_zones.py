@@ -82,4 +82,6 @@ def test_the_light_at_the_end():
     choice = "TheWorld.PersistentLevel.Main_Sequence.DisSeqAct_DialogScriptedChoice_"
     assert zone_key_for_level("L_Isl_LowChaos_P") == "Kingsparrow Fort Zone Key"
     assert zone_key_for_travel(f"L_Isl_Script_Slave.{choice}0#0") == "Burrows Lighthouse Zone Key"
+    assert zone_key_for_travel(f"L_Isl_Script_Master.{choice}0#0") == "Burrows Lighthouse Zone Key"  # high chaos
+    assert zone_key_for_level("L_Isl_HighChaos_P") == "Kingsparrow Fort Zone Key"
     assert zone_key_for_level("L_Out_P") is None

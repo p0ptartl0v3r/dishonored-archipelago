@@ -42,7 +42,7 @@ location_id,name,kind,mission,region,detection,game_object,notes
 219480105,The Flooded District: Granny's Outsider Shrine Rune,Rune,The Flooded District,Old Dunwall Sewers,pickup,DishonoredGameFull_P...DisAbstractItemPickup_213 (spawned),"spawned at runtime, so matched by position; taken as Strt3Obj_HelpGranny completes"
 219480106,The Flooded District: Survivor Camp Rune,Rune,The Flooded District,Old Dunwall Sewers,pickup,L_Streetsewer_Script...DisAbstractItemPickup_16,
 219480107,The Loyalists: Piero's Workshop Rune,Rune,The Loyalists,Hound Pits Pub (The Loyalists),pickup,L_Pub_FromFlooded_Script...DisAbstractItemPickup_217,
-219480108,The Light at the End: Drainage Rune,Rune,The Light at the End,Kingsparrow Fort,pickup,L_Isl_Script_Slave...DisAbstractItemPickup_30,seen in L_Isl_LowChaos_P; high chaos not checked
+219480108,The Light at the End: Drainage Rune,Rune,The Light at the End,Kingsparrow Fort,pickup,L_Isl_Script_Slave...DisAbstractItemPickup_30,low chaos; high chaos: L_Isl_Script_Master...DisAbstractItemPickup_30
 219480109,Lady Boyle's Last Party: Victory,Mission,Lady Boyle's Last Party,Boyle Mansion Interior,additem,ChapterLog_Hub_05,written as Corvo is taken back to the pub (fromBoyle_toHub)
 219480110,Return to the Tower: Victory,Mission,Return to the Tower,Tower Interior,additem,ChapterLog_Hub_06,written as the boat reaches the pub (fromTowerReturn_toHub)
 219480111,The Flooded District: Victory,Mission,The Flooded District,Old Dunwall Sewers,additem,ChapterLog_Loyalists,"written on arriving at the pub (L_Pub_FromFlooded_Script), after the Go to Hound Pits Pub prompt"

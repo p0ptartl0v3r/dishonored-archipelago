@@ -140,8 +140,9 @@ TRAVEL_PROMPTS: dict[str, str] = {
     _seq("L_Streetsewer_Script", 1): "L_Flooded_FGate_P",  # Go to Rudshore Gate
     # Not listed: L_Streetsewer_Script #4 "Go to Hound Pits Pub" ends the mission, and its
     # Victory doesn't need the pub's key (the pub's own safety net applies after it).
-    # The Light at the End (taken in play)
+    # The Light at the End (taken in play; low chaos runs L_Isl_Script_Slave, high chaos _Master)
     _seq("L_Isl_Script_Slave", 0): "L_LightH_LowChaos_P",  # Go to Burrows Lighthouse
+    _seq("L_Isl_Script_Master", 0): "L_LightH_HighChaos_P",  # Go to Burrows Lighthouse
 }
 
 
