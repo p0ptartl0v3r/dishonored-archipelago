@@ -555,6 +555,9 @@ def test_real_events_from_the_flooded_district():
         assert game.match_event(event) == [ids[location]], event
     # The ending level loading is the goal (no location id).
     assert game.match_event("mapchange L_Out_P") == [None]
+    # High chaos ends in one of two other levels (package names; not seen in play yet).
+    assert game.match_event("mapchange L_Out_HighChaos_EmilyAlive_P") == [None]
+    assert game.match_event("mapchange L_Out_HighChaos_emilyDead_P") == [None]
     assert game.match_event("mapchange L_Out_EnvSamAlive") == []
     # Same number in the other package of the same level.
     assert game.match_event(base.replace("_PickUps", "_Script") + "DisAbstractItemPickup_23 "

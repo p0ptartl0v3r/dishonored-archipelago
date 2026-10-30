@@ -434,6 +434,14 @@ through `ProcessEvent`.
   chosen by what happened (`L_Out_EnvSamAlive`, ...): `mapchange L_Out_P` is the goal.
 - Drainage Rune is `L_Isl_Script_Slave...DisAbstractItemPickup_30`. High chaos loads
   `_HighChaos_P` levels; whether their pickups and prompts share these names is unchecked.
+  `*_Slave` packages (`L_Isl_Script_Slave`, `L_LightH_Script_Slave`, ...) exist once and
+  look shared by both variants, so the rune and the lighthouse prompt probably carry over.
+- High chaos ends in `L_Out_HighChaos_EmilyAlive_P` or `L_Out_HighChaos_emilyDead_P`
+  instead of `L_Out_P` (package names in CookedPCConsole). The goal's detect lists them,
+  in both capitalizations of "emilyDead" since the event's case is unknown.
+- Chaos-variant packages in CookedPCConsole (2026-10-30): `L_Brothel_HighChaos`
+  (Golden Cat), `L_Bridge_Part2_HighChaos` (North End), `L_Isl_High/LowChaos_*`,
+  `L_LightH_High/LowChaos_*`, `L_Out_HighChaos_*`. No other mission has one.
 - With this, all 100 locations have detect patterns (every mission played at least once).
 
 ### Item meanings: read the Manual's PDF (`manual/Dishonored_Archipelago_Documentation.pdf`)

@@ -537,7 +537,10 @@
     ],
     "requires": [],
     "detect": [
-      "mapchange L_Out_P"
+      "mapchange L_Out_P",
+      "mapchange L_Out_HighChaos_EmilyAlive_P",
+      "mapchange L_Out_HighChaos_emilyDead_P",
+      "mapchange L_Out_HighChaos_EmilyDead_P"
     ]
   },
   {
