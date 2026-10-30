@@ -52,21 +52,26 @@ def chat_line(speaker: str, from_self: bool, text: str) -> str:
 WARNING = "FA8072"
 
 
+def _the(zone_key: str) -> str:
+    """The article before a key's name: none when the name starts with "The" already."""
+    return "" if zone_key.lower().startswith("the ") else "the "
+
+
 def missing_key_line(zone_key: str) -> str:
     """Shown when the player is in a zone without its key, before being sent to the main menu."""
-    return colored("You don't have the ", WARNING) + colored(zone_key, item_color(PROGRESSION)) + \
+    return colored(f"You don't have {_the(zone_key)}", WARNING) + colored(zone_key, item_color(PROGRESSION)) + \
         colored(" yet: returning to the main menu", WARNING)
 
 
 def sent_to_menu_notice(zone_key: str) -> str:
     """Shown at the top of the main menu after being sent there for a missing zone key."""
-    return colored("Sent back to the main menu: you don't have the ", WARNING) + \
+    return colored(f"Sent back to the main menu: you don't have {_the(zone_key)}", WARNING) + \
         colored(zone_key, item_color(PROGRESSION)) + colored(" yet", WARNING)
 
 
 def requires_key_line(zone_key: str) -> str:
     """Shown when a travel prompt was refused because its zone key hasn't been received."""
-    return colored("Requires the ", WARNING) + colored(zone_key, item_color(PROGRESSION))
+    return colored(f"Requires {_the(zone_key)}", WARNING) + colored(zone_key, item_color(PROGRESSION))
 
 
 def sent_line(item: str, flags: int, receiver: str, location: str) -> str:

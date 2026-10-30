@@ -41,3 +41,11 @@ def test_main_menu_notice_names_the_missing_key():
     notice = sent_to_menu_notice("Kennels Zone Key")
     assert notice.startswith("{FA8072}Sent back to the main menu: you don't have the ")
     assert "{AF99EF}Kennels Zone Key{FA8072} yet" in notice
+
+
+def test_key_names_starting_with_the_get_no_second_article():
+    from dishonored.client.messages import requires_key_line
+
+    assert requires_key_line("The Golden Cat Bathhouse Zone Key") == \
+        "{FA8072}Requires {AF99EF}The Golden Cat Bathhouse Zone Key"
+    assert requires_key_line("Kennels Zone Key") == "{FA8072}Requires the {AF99EF}Kennels Zone Key"
