@@ -1,5 +1,7 @@
 # Dishonored
 
+Logic built off the Manual created by greenranger1200.
+
 ## What does randomization do to this game?
 
 Your powers, sword, equipment, equipment upgrades and bone charm slots are shuffled

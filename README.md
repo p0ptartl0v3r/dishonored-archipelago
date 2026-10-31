@@ -4,8 +4,10 @@ An [Archipelago](https://archipelago.gg) multiworld randomizer integration for
 *Dishonored* (2012, PC).
 
 Powers, equipment, upgrades, bone charm slots and zone keys are shuffled. Runes,
-bone charms, paintings, blueprints and mission completions are the checks. The
-item and location design comes from the Manual version by greenranger1200 (see `manual/`).
+bone charms, paintings, blueprints and mission completions are the checks.
+
+**Logic built off the Manual created by greenranger1200** (their Manual apworld for
+Dishonored, kept for reference in `manual/`), used with their permission.
 
 **Status:** playable start to finish with the in-game DLL from `native/` (one full
 seed played to its goal on the Steam build, low chaos). The client and DLL:
@@ -89,11 +91,14 @@ To make a location detected, add a `detect` pattern (event formats in
 
 The code and documentation in this repository are under the [MIT License](LICENSE), except:
 
-- **The Manual's design and files are greenranger1200's work.** That covers the item, location
-  and region design in `worlds/dishonored/data/` (taken from their Manual for Dishonored),
-  and everything in `manual/`: their Manual apworld, its YAML template and the
-  documentation PDF. Neither is covered by this repository's license. The Manual apworld
-  also contains the Manual framework, which keeps its own license.
+- **The Manual's design and files are greenranger1200's work**, used and included with their
+  permission. That covers the item, location and region design in `worlds/dishonored/data/`
+  (taken from their Manual for Dishonored), and everything in `manual/`: their Manual
+  apworld, its YAML template and the documentation PDF.
+- **The Manual framework** ([Manual for Archipelago](https://github.com/ManualForArchipelago/Manual)),
+  which the Manual apworld in `manual/` is built on, is under the MIT License, © 2023 Manual
+  for Archipelago; see [manual/MANUAL_FRAMEWORK_LICENSE.txt](manual/MANUAL_FRAMEWORK_LICENSE.txt).
+  The apworld in `worlds/dishonored/` uses the Manual's data format but none of its code.
 - **The in-game module includes MinHook** (BSD 2-Clause); see
   [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). The release zips carry the same notice.
 - **The engine layout facts** (offsets, class names) are credited to ectrc/dismod. No code

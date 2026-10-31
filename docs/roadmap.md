@@ -197,7 +197,10 @@ Archipelago server  <-- websocket -->  Dishonored Client (Python)  <-- named pip
 
 ### Later
 - Knife of Dunwall / Brigmore Witches, Dunwall City Trials, "smooth intro"
-  (these are mostly data plus options in the apworld)
+  (these are mostly data plus options in the apworld). greenranger1200 plans DLC logic for
+  the Manual and offered to help design it here too
+- Coinsanity and other checks a Manual can't track: greenranger1200 offered to help with the
+  logic
 - DeathLink (already an option; the client needs to detect and cause deaths)
 
 ## Possible issues in the Manual data

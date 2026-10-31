@@ -11,5 +11,7 @@ there and still want to ship the Manual, copy the files back into
 `manual_dishonored_greenranger1200.apworld`.
 
 This folder is greenranger1200's work (their Manual apworld for Dishonored, its YAML template
-and documentation), not covered by this repository's MIT license. The Manual framework code
-inside the apworld keeps its own license.
+and documentation), included with their permission (2026-10-30). The apworld is built with the
+[Manual for Archipelago](https://github.com/ManualForArchipelago/Manual) framework, whose MIT
+license is in [MANUAL_FRAMEWORK_LICENSE.txt](MANUAL_FRAMEWORK_LICENSE.txt). The Manual was
+published in the Archipelago Discord; it has no repository of its own.
