@@ -59,7 +59,7 @@ class DishonoredWeb(WebWorld):
             "English",
             "setup_en.md",
             "setup/en",
-            ["greenranger1200"],
+            ["p0ptartl0v3r"],
         )
     ]
 
