@@ -9,8 +9,9 @@ bone charms, paintings, blueprints and mission completions are the checks.
 **Logic built off the Manual created by greenranger1200** (their Manual apworld for
 Dishonored, kept for reference in `manual/`), used with their permission.
 
-**Status:** playable start to finish with the in-game DLL from `native/` (one full
-seed played to its goal on the Steam build, low chaos). The client and DLL:
+**Status:** 0.9.0 beta, [released](https://github.com/p0ptartl0v3r/dishonored-archipelago/releases).
+Playable start to finish with the in-game DLL from `native/` (one full seed played to its
+goal on the Steam build; every location also verified at high chaos). The client and DLL:
 
 - grant received powers, upgrades, equipment and bone charm slots, and take away or
   block what hasn't been received (shop purchases, script grants, old saves);
@@ -20,8 +21,8 @@ seed played to its goal on the Steam build, low chaos). The client and DLL:
 - show items sent and received, and Archipelago chat, in-game.
 
 Without the DLL, the client plays the same as the Manual (`/check`, `/goal`, items
-listed for you to apply by hand). Not verified yet: high-chaos levels, other game
-languages, GOG/Epic builds. See [docs/roadmap.md](docs/roadmap.md).
+listed for you to apply by hand). Not verified yet: other game languages, GOG/Epic
+builds. See [docs/roadmap.md](docs/roadmap.md).
 
 ## Layout
 

@@ -4,10 +4,13 @@ The goal is to automate, one piece at a time, what the Manual makes the player d
 by hand. Every step leaves something playable behind: anything not automated yet
 stays on the Manual's honor system.
 
-Status (2026-10-29): a full seed has been played to its goal with the DLL. Items are
-granted and held to what was received, all 100 locations are detected, zone keys are
-enforced, and Archipelago messages show in-game. What's left is verification (high chaos,
-other choices, other builds), comfort features and new options.
+Status (2026-11-05): 0.9.0, the first beta, is released
+(https://github.com/p0ptartl0v3r/dishonored-archipelago/releases/tag/v0.9.0). A full seed has
+been played to its goal with the DLL. Items are granted and held to what was received, all
+100 locations are detected at low and high chaos, zone keys are enforced, and Archipelago
+messages show in-game; it also runs under Dishonored Mod Loader. What's left is verification
+on other builds and languages, comfort features and new options (DLC and coinsanity logic
+with greenranger1200's help).
 
 ## Architecture
 
